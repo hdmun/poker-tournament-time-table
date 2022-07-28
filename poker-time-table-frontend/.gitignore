@@ -1,4 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
+# Storybook
+.nuxt-storybook
+storybook-static
+
 ### Node template
 # Logs
 /logs

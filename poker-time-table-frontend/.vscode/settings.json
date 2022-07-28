@@ -1,7 +1,9 @@
 {
     "files.exclude": {
         "**/node_modules": true,
-        "**/.nuxt": true
+        "**/.nuxt": true,
+        "**/.nuxt-storybook": true,
+        "**/storybook-static": true
     },
     "editor.tabSize": 2
 }
