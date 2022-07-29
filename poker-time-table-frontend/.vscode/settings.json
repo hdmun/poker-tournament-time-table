@@ -5,5 +5,9 @@
         "**/.nuxt-storybook": true,
         "**/storybook-static": true
     },
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+    "[vue]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "Vue.volar"
+    }
 }
