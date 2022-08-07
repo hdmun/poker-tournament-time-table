@@ -9,11 +9,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import TournamentTable from '~/components/tournamentTable.vue'
 // import TournamentClock from '~/components/tournamentClock.vue'
-// import tournamentTable from '~/components/tournamentTable.vue'
 
 @Component({
   components: {
+    TournamentTable
   }
 })
 export default class IndexPage extends Vue {
