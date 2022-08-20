@@ -1,13 +1,21 @@
 <template>
   <v-card height="100%">
     <v-row justify="center">
+      <v-col>
+        <v-card-title class="justify-center">
+          {{ data.title }}
+        </v-card-title>
+      </v-col>
+    </v-row>
+
+    <v-row justify="center">
       <v-col lg="2">
         <v-card-title class="justify-center">
           PLAY TIME
         </v-card-title>
 
-        <v-card-title class="justify-center pt-0">
-          {{ playTime }}
+        <v-card-title class="justify-center pt-0" style="font-size: 3em; line-height: 3rem;">
+          {{ data.playTime }}
         </v-card-title>
       </v-col>
 
@@ -16,8 +24,8 @@
           NEXT BREAK
         </v-card-title>
 
-        <v-card-title class="justify-center pt-0">
-          {{ nextBreakTime }}
+        <v-card-title class="justify-center pt-0" style="font-size: 3em; line-height: 3rem;">
+          {{ data.nextBreakTime }}
         </v-card-title>
       </v-col>
     </v-row>
@@ -25,7 +33,7 @@
     <v-row class="mt-0">
       <v-col>
         <v-card-title class="justify-center" style="font-size: 12em; line-height: 12rem;">
-          {{ remainTime }}
+          {{ data.remainTime }}
         </v-card-title>
       </v-col>
     </v-row>
@@ -51,86 +59,79 @@
       </v-btn>
     </v-row>
 
-    <v-list-item two-line>
-      <v-list-item-content>
-        <v-list-item-title class="text-h5 text-center">
-          Level {{ level }}
-        </v-list-item-title>
-        <v-list-item-subtitle class="text-center">{{ title }}</v-list-item-subtitle>
-      </v-list-item-content>
-    </v-list-item>
+    <v-row justify="center">
+      <v-col cols="9">
+        <v-row justify="center">
+          <v-col cols="9" class="pa-0">
+            <v-card outlined tile>
+              <v-row class="align-center">
+                <v-col>
+                  <v-card-title class="justify-center" style="font-size: 2em; line-height: 2rem;">
+                    Level {{ data.level }}
+                  </v-card-title>
+                </v-col>
+                <v-col>
+                  <v-card-text class="text-center pb-0">
+                    BLINDS
+                  </v-card-text>
+                  <v-card-title class="justify-center" style="font-size: 2em; line-height: 2rem;">
+                    {{ data.smallBlind }} / {{ data.bigBlind }}
+                  </v-card-title>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+        </v-row>
 
-    <v-card-text>
-      <v-row justify="center">
-        <v-col class="text-h4 text-center">
-          {{ smallBlind }} / {{ bigBlind }}
-        </v-col>
-      </v-row>
-    </v-card-text>
+        <v-row justify="center">
+          <v-col cols="3" class="pa-0">
+            <v-card outlined tile>
+              <v-card-title class="justify-center">CHIPS IN PLAY</v-card-title>
+              <v-card-title class="justify-center pt-0" style="font-size: 2em; line-height: 2rem;">
+                {{ data.chipsInPlay }}
+              </v-card-title>
+            </v-card>
+          </v-col>
 
-    <v-list-item>
-      <v-list-item-title class="text-center">
-        Next Blind: {{ nextSmallBlind }} / {{ nextBigBlind }}
-      </v-list-item-title>
-    </v-list-item>
+          <v-col cols="3" class="pa-0">
+            <v-card outlined tile>
+              <v-card-title class="justify-center">PLAYER</v-card-title>
+              <v-card-title class="justify-center pt-0" style="font-size: 2em; line-height: 2rem;">
+                {{ data.player }} / {{ data.totalPlayer }}
+              </v-card-title>
+            </v-card>
+          </v-col>
+
+          <v-col cols="3" class="pa-0">
+            <v-card outlined tile>
+              <v-card-title class="justify-center">AVERAGE STACK</v-card-title>
+              <v-card-title class="justify-center pt-0" style="font-size: 2em; line-height: 2rem;">
+                {{ data.averageStack }}
+              </v-card-title>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
 
   </v-card>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-
-interface TournamentClockDto {
-  level: number
-  title: string
-  remainTime: string
-  smallBlind: number
-  bigBlind: number
-  nextSmallBlind: number
-  nextBigBlind: number
-}
-
-import dummyData from '~/data/tournamentClockDto'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { TournamentClockDto } from '~/dto/tournamentClockDto'
 
 @Component
 export default class TournamentClock extends Vue {
-  level: number = 1
-  title: string = ''
-
-  playTime: string = '03:27:04'
-  nextBreakTime: string = '58:42'
-  remainTime: string = '00:00'
-
-  timer: number = 0
-
-  smallBlind: number = 0
-  bigBlind: number = 0
-  nextSmallBlind: number = 0
-  nextBigBlind: number = 0
+  @Prop({ type: Object as () => TournamentClockDto, required: true })
+  data!: TournamentClockDto
 
   playing: boolean = false
 
   created() { }
 
-  mounted() {
-    this.timer = this.startTimer()
-  }
+  mounted() { }
 
-  beforeDestroy() {
-    window.clearInterval(this.timer)
-  }
-
-  startTimer() {
-    return window.setInterval(() => {
-      const data: TournamentClockDto = dummyData
-      this.level = data.level
-      this.title = data.title
-      this.remainTime = data.remainTime
-      this.smallBlind = data.smallBlind
-      this.bigBlind = data.bigBlind
-      this.nextSmallBlind = data.nextSmallBlind
-      this.nextBigBlind = data.nextBigBlind
-    }, 500)
-  }
+  beforeDestroy() { }
 }
 </script>
