@@ -1,10 +1,10 @@
 import { VApp } from 'vuetify/lib'
 
 export default {
-  title: 'TournamentClock'
+  title: 'Tournament',
 }
 
-const Template = (args) => ({
+const ClockTemplate = (args) => ({
   components: { VApp },
   setup() {
     return { args }
@@ -12,8 +12,8 @@ const Template = (args) => ({
   template: '<v-app><TournamentClock :data=args.data /></v-app>'
 })
 
-export const TournamentClock = Template.bind({})
-TournamentClock.args = {
+export const Clock = ClockTemplate.bind({})
+Clock.args = {
   data: {
     playTime: '03:27:04',
     nextBreakTime: '58:42',

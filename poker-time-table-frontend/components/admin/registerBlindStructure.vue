@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-flex>
     <v-row>
       <v-col lg="3">
         <BlindStructureTemplate :structure.sync="structure" />
@@ -92,7 +92,7 @@
         </v-card>
       </v-col>
     </v-row>
-  </v-container>
+  </v-flex>
 </template>
 
 <script lang="ts">
@@ -150,6 +150,7 @@ export default class RegisterBlindStructure extends Vue {
     this.smallBlind = this.bigBlind / 2
 
     this.structure.push({
+      sn: this.structure.length + 1,
       level: this.structure.length + 1,
       smallBlind: this.smallBlind,
       bigBlind: this.bigBlind,

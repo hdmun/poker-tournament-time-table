@@ -1,5 +1,5 @@
 <template>
-  <v-card height="100%">
+  <v-card height="100%" outlined tile>
     <v-row justify="center">
       <v-col>
         <v-card-title class="justify-center">
@@ -9,7 +9,7 @@
     </v-row>
 
     <v-row justify="center">
-      <v-col lg="2">
+      <v-col lg="3">
         <v-card-title class="justify-center">
           PLAY TIME
         </v-card-title>
@@ -19,7 +19,7 @@
         </v-card-title>
       </v-col>
 
-      <v-col lg="2">
+      <v-col lg="3">
         <v-card-title class="justify-center">
           NEXT BREAK
         </v-card-title>
