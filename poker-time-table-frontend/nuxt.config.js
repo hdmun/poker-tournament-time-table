@@ -1,6 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
+  ssr: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - poker-time-table-frontend',
@@ -76,8 +77,6 @@ export default {
 
   // StoryBook Options: https://storybook.nuxtjs.org/api/options
   storybook: {
-    decorators: [
-      '<v-app><story/></v-app>'
-    ]
-  }
+    decorators: ['<v-app><story/></v-app>'],
+  },
 }
