@@ -1,5 +1,7 @@
 import { VApp } from 'vuetify/lib'
 
+import AdminRegisterBlindStructure from './registerBlindStructure.vue'
+
 export default {
   title: 'Admin',
 }
@@ -19,15 +21,15 @@ const blindStructure = [
 ]
 
 const template = (args) => ({
-  components: { VApp },
+  components: { VApp, AdminRegisterBlindStructure },
   setup() {
     return { args }
   },
   template:
-    '<v-app><AdminBlindStructureTemplate :blindstructure=args.blindStructure /></v-app>',
+    '<v-app><AdminRegisterBlindStructure :editstructure=args.blindStructure /></v-app>',
 })
 
-export const StructureTemplate = template.bind({})
-StructureTemplate.args = {
+export const BlindStructure = template.bind({})
+BlindStructure.args = {
   blindStructure,
 }

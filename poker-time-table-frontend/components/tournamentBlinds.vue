@@ -32,7 +32,7 @@
       </v-col>
     </v-row>
 
-    <v-row justify="center" class="ma-0" v-for="blind in blindStructure" :key="blind.sn">
+    <v-row justify="center" class="ma-0" v-for="blind in blindStructures" :key="blind.sn">
       <template v-if="blind.level > 0">
         <v-col class="pa-0">
           <v-card class="pa-0" :color="currentColorText(blind.sn)" outlined tile>
@@ -79,7 +79,7 @@ export default class TournamentBlinds extends Vue {
   // headers: string[] = ['Lv.', 'S.B', 'B.B', '시간']
 
   @PropSync('structure', { type: Array as PropType<Array<BlindStructureDto>> })
-  blindStructure!: BlindStructureDto[]  // fixed length is 11
+  blindStructures!: BlindStructureDto[]  // fixed length is 11
 
   @Prop({ type: Number, required: true })
   currentStep!: number
