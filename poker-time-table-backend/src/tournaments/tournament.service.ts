@@ -14,6 +14,21 @@ export class TournamentService {
     private readonly blindStructureRepo: BlindStructureRepository,
   ) {}
 
+  async blindStructureTemplateAll() {
+    return await this.blindStructureMetaRepo.find();
+  }
+
+  async blindStructureTemplate(id: number) {
+    const template = await this.blindStructureMetaRepo.findOneBy({ id });
+    if (!template) {
+      return [];
+    }
+
+    return await this.blindStructureRepo.findBy({
+      metaId: template.id,
+    });
+  }
+
   async registerBlindStructure(
     name: string,
     structureDto: BlindStructureDto[],
