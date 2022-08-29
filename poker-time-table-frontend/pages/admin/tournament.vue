@@ -1,6 +1,6 @@
 <template>
   <v-flex>
-    <v-row>
+    <v-row class="pa-6">
       <v-col lg="8">
         <TournamentTable />
       </v-col>
@@ -22,5 +22,9 @@ import AdminRegisterTournament from '~/components/admin/registerTournament.vue'
     TournamentTable,
   },
 })
-export default class AdminTournament extends Vue {}
+export default class AdminTournament extends Vue {
+  onRegister() {
+    console.log(`AdminTournament.onRegister`)
+  }
+}
 </script>

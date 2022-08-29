@@ -143,25 +143,28 @@
 </template>
 
 <script lang="ts">
-import { Component, PropSync, Vue } from 'nuxt-property-decorator'
+import { Component, Emit, PropSync, Vue } from 'nuxt-property-decorator'
 import { PropType } from 'vue'
 
-import { BlindStructureDto } from '~/dto/blindStructureDto'
+import {
+  BlindStructureDto,
+  RegisterBlindStructureDto,
+} from '~/dto/blindStructureDto'
 
 @Component
 export default class AdminRegisterBlindStructure extends Vue {
-  // 백앤드 연동할 때 데이터 @PropSync 로 뺄 수 있는 애들은 다 빼버리자
-  templateName: string = ''
-
-  smallBlind: number = 5
-  bigBlind: number = 10
-  bigBlindInc: number = 10
-  minute: number = 3
+  @PropSync('name', { type: String })
+  templateName!: string
 
   @PropSync('editstructure', {
     type: Array as PropType<Array<BlindStructureDto>>,
   })
   editStructures!: BlindStructureDto[]
+
+  smallBlind: number = 5
+  bigBlind: number = 10
+  bigBlindInc: number = 10
+  minute: number = 3
 
   templates: string[] = []
   selectTemplate: string = ''
@@ -175,7 +178,7 @@ export default class AdminRegisterBlindStructure extends Vue {
   }
 
   get disabledEditButton() {
-    return this.level < 10 || this.templateName !== ''
+    return this.level < 10 || this.templateName.length === 0
   }
 
   onClickMinus() {
@@ -196,7 +199,6 @@ export default class AdminRegisterBlindStructure extends Vue {
     this.smallBlind = this.bigBlind / 2
 
     this.editStructures.push({
-      sn: this.editStructures.length + 1,
       level: this.editStructures.length + 1,
       smallBlind: this.smallBlind,
       bigBlind: this.bigBlind,
@@ -204,10 +206,12 @@ export default class AdminRegisterBlindStructure extends Vue {
     })
   }
 
+  @Emit('register')
   onClickEdit() {
-    if (this.level > 0) {
-      // todo
-    }
+    return {
+      name: this.templateName,
+      structures: this.editStructures,
+    } as RegisterBlindStructureDto
   }
 }
 </script>

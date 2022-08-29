@@ -26,10 +26,11 @@ const template = (args) => ({
     return { args }
   },
   template:
-    '<v-app><AdminRegisterBlindStructure :editstructure=args.blindStructure /></v-app>',
+    '<v-app><AdminRegisterBlindStructure :structureMetaName=args.metaName :editstructure=args.blindStructure /></v-app>',
 })
 
 export const BlindStructure = template.bind({})
 BlindStructure.args = {
+  metaName: '',
   blindStructure,
 }
