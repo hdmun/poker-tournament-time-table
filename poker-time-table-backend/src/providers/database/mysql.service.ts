@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { BlindStructureMeta } from '~/tournaments/entities/blind-structure-meta.entity';
+import { BlindStructure } from '~/tournaments/entities/blind-structure.entity';
 
 @Injectable()
 export class MySqlConfigService implements TypeOrmOptionsFactory {
@@ -14,7 +16,9 @@ export class MySqlConfigService implements TypeOrmOptionsFactory {
       username: this.config.get<string>('DB_USER'),
       password: this.config.get<string>('DB_PASSWORD'),
       database: this.config.get<string>('DB_DATABASE'),
-      entities: ['dist/**/**/*.entity{.ts,.js}'],
+      synchronize: process.env.NODE_ENV === 'dev',
+      entities: [BlindStructureMeta, BlindStructure],
+      logging: process.env.NODE_ENV === 'dev' ? ['query', 'error'] : undefined,
     };
   }
 }
