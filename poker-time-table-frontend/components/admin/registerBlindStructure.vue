@@ -10,9 +10,13 @@
               <v-autocomplete
                 v-model="selectTemplate"
                 :items="templates"
+                clearable
                 dense
                 filled
-                label="불러오기"
+                item-text="name"
+                return-object
+                label="템플릿 리스트"
+                @change="onChangeSelectTemplate()"
               >
               </v-autocomplete>
             </v-col>
@@ -23,7 +27,6 @@
               <v-text-field
                 v-model="templateName"
                 label="템플릿 이름"
-                clearable
                 required
               />
             </v-col>
@@ -143,11 +146,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, PropSync, Vue } from 'nuxt-property-decorator'
+import { Component, Emit, Prop, PropSync, Vue } from 'nuxt-property-decorator'
 import { PropType } from 'vue'
 
 import {
   BlindStructureDto,
+  BlindStructureTemplateDto,
   RegisterBlindStructureDto,
 } from '~/dto/blindStructureDto'
 
@@ -161,16 +165,36 @@ export default class AdminRegisterBlindStructure extends Vue {
   })
   editStructures!: BlindStructureDto[]
 
+  @Prop({ type: Array as PropType<Array<BlindStructureTemplateDto>> })
+  templates!: BlindStructureTemplateDto[]
+
+  selectTemplate: BlindStructureTemplateDto | null = null
+
   smallBlind: number = 5
   bigBlind: number = 10
   bigBlindInc: number = 10
   minute: number = 3
 
-  templates: string[] = []
-  selectTemplate: string = ''
+  async onChangeSelectTemplate() {
+    if (this.selectTemplate === null) {
+      this.templateName = ''
+      this.editStructures = []
+      return
+    }
+
+    if (this.selectTemplate.id > 0) {
+      const res = await this.$axios.get<BlindStructureDto[]>(
+        `/api/tournaments/blind-structure-templates/${this.selectTemplate.id}`
+      )
+
+      this.editStructures = res.data
+    }
+
+    this.templateName = this.selectTemplate.name
+  }
 
   get level() {
-    return this.editStructures.length
+    return this.editStructures?.length ?? 0
   }
 
   get bigBlindRule() {
@@ -178,7 +202,8 @@ export default class AdminRegisterBlindStructure extends Vue {
   }
 
   get disabledEditButton() {
-    return this.level < 10 || this.templateName.length === 0
+    if (this.level < 10) return true
+    return !(this.templateName?.length > 0)
   }
 
   onClickMinus() {

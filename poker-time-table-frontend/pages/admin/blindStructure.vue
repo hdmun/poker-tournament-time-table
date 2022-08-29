@@ -4,6 +4,7 @@
       <v-col>
         <AdminRegisterBlindStructure
           :name.sync="metaName"
+          :templates="blindTemplates"
           :editstructure.sync="structure"
           @register="onRegister"
         />
@@ -21,6 +22,7 @@ import AdminBlindStructureTemplate from '~/components/admin/blindStructureTempla
 import AdminRegisterBlindStructure from '~/components/admin/registerBlindStructure.vue'
 import {
   BlindStructureDto,
+  BlindStructureTemplateDto,
   RegisterBlindStructureDto,
 } from '~/dto/blindStructureDto'
 
@@ -32,12 +34,27 @@ import {
 })
 export default class AdminBlindStructure extends Vue {
   metaName: string = ''
+  blindTemplates: BlindStructureTemplateDto[] = []
   structure: BlindStructureDto[] = []
 
-  onRegister(dto: RegisterBlindStructureDto) {
-    console.log(`AdminBlindStructure.onRegister`)
+  mounted() {
+    this.loadTemplates()
+  }
 
-    this.$axios.post(`/api/tournaments/blind-structures-meta`, dto)
+  async loadTemplates() {
+    const res = await this.$axios.get<BlindStructureTemplateDto[]>(
+      `/api/tournaments/blind-structure-templates`
+    )
+    this.blindTemplates = res.data.sort((a, b) => {
+      if (a.name < b.name) return -1
+      if (a.name > b.name) return 1
+      return 0
+    })
+  }
+
+  async onRegister(dto: RegisterBlindStructureDto) {
+    await this.$axios.post(`/api/tournaments/blind-structures-meta`, dto)
+    this.loadTemplates()
   }
 }
 </script>

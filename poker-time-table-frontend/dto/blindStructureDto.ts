@@ -1,3 +1,8 @@
+export interface BlindStructureTemplateDto {
+  id: number
+  name: string
+}
+
 export interface BlindStructureDto {
   level: number
   smallBlind: number
