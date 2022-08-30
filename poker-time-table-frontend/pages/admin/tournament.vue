@@ -2,19 +2,20 @@
   <v-flex>
     <v-row class="pa-6">
       <v-col lg="8">
-        <TournamentTable />
+        <TournamentTable ref="tournamentTable" />
       </v-col>
       <v-col lg="4">
-        <AdminRegisterTournament />
+        <AdminRegisterTournament @register="onRegister" />
       </v-col>
     </v-row>
   </v-flex>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Ref, Vue } from 'nuxt-property-decorator'
 import TournamentTable from '~/components/tournamentTable.vue'
 import AdminRegisterTournament from '~/components/admin/registerTournament.vue'
+import { RegisterTournamentDto } from '~/dto/tournamentDto'
 
 @Component({
   components: {
@@ -23,8 +24,11 @@ import AdminRegisterTournament from '~/components/admin/registerTournament.vue'
   },
 })
 export default class AdminTournament extends Vue {
-  onRegister() {
-    console.log(`AdminTournament.onRegister`)
+  @Ref() tournamentTable!: TournamentTable
+
+  async onRegister(dto: RegisterTournamentDto) {
+    await this.$axios.post(`/api/tournaments`, dto)
+    this.tournamentTable.loadTournaments()
   }
 }
 </script>

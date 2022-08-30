@@ -28,7 +28,7 @@
               offset-y
               min-width="auto"
             >
-              <template v-slot:activator="{ on, attrs }">
+              <template #activator="{ on, attrs }">
                 <v-text-field
                   v-model="startDate"
                   label="Start Date"
@@ -57,7 +57,7 @@
               max-width="290px"
               min-width="290px"
             >
-              <template v-slot:activator="{ on, attrs }">
+              <template #activator="{ on, attrs }">
                 <v-text-field
                   v-model="startTime"
                   label="Start Time"
@@ -79,9 +79,26 @@
         </v-row>
 
         <v-row>
+          <v-col lg="6">
+            <v-text-field
+              v-model="breakTime"
+              label="Break Time"
+              prepend-icon="mdi-coffee-outline"
+            />
+          </v-col>
+          <v-col lg="6"
+            ><v-text-field
+              v-model="breakTimeTerm"
+              label="Break Time 간격(level)"
+              prepend-icon="mdi-currency-usd"
+            />
+          </v-col>
+        </v-row>
+
+        <v-row>
           <v-col>
             <v-text-field
-              v-model="tournamentName"
+              v-model="buyIn"
               counter="25"
               label="Buy-in"
               prepend-icon="mdi-currency-usd"
@@ -92,11 +109,13 @@
         <v-row>
           <v-col>
             <v-select
-              v-model="selectBlindStructure"
-              :items="blindStructures"
+              v-model="selectBlindTemplate"
+              :items="blindTemplates"
               label="Blind Structure"
               prepend-icon="mdi-table"
+              item-text="name"
               single-line
+              return-object
               :rules="[(v) => !!v || 'This field is required']"
               required
             >
@@ -130,13 +149,14 @@
           <v-col>
             <v-text-field
               v-model="prize"
-              v-bind:label="`${prizePool.length + 1} Rank Prize`"
+              :label="`${prizePool.length + 1} Rank Prize`"
               prepend-icon="mdi-pencil-outline"
+              type="number"
             >
               <v-btn
+                slot="append"
                 text
                 :disabled="prize === ''"
-                slot="append"
                 color="primary"
                 @click="onClickAddPrize"
               >
@@ -153,8 +173,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import { BlindStructureDto } from '~/dto/blindStructureDto'
+import { Component, Emit, Vue } from 'nuxt-property-decorator'
+import { BlindStructureTemplateDto } from '~/dto/blindStructureDto'
+import { RegisterTournamentDto } from '~/dto/tournamentDto'
 
 @Component
 export default class RegisterTournament extends Vue {
@@ -162,16 +183,33 @@ export default class RegisterTournament extends Vue {
   startDate: string = new Date().toISOString().substring(0, 10)
   startTime: string = new Date().toTimeString().substring(0, 5)
   buyIn: number = 0
-  // maxEntry: number = 0
-  selectBlindStructure?: BlindStructureDto
 
-  blindStructures: BlindStructureDto[] = []
+  blindTemplates: BlindStructureTemplateDto[] = []
+  selectBlindTemplate: BlindStructureTemplateDto | null = null
 
-  prizePool: string[] = []
-  prize: string = ''
+  breakTime: number = 20
+  breakTimeTerm: number = 3
+
+  prizePool: number[] = []
+  prize: number = 0
 
   showDatePicker: boolean = false
   showTimePicker: boolean = false
+
+  mounted() {
+    this.loadTemplates()
+  }
+
+  async loadTemplates() {
+    const res = await this.$axios.get<BlindStructureTemplateDto[]>(
+      `/api/tournaments/blind-structure-templates`
+    )
+    this.blindTemplates = res.data.sort((a, b) => {
+      if (a.name < b.name) return -1
+      if (a.name > b.name) return 1
+      return 0
+    })
+  }
 
   onClickRemovePrize(index: number) {
     if (this.prizePool.length <= index) {
@@ -182,10 +220,25 @@ export default class RegisterTournament extends Vue {
   }
 
   onClickAddPrize() {
-    this.prizePool.push(this.prize)
-    this.prize = ''
+    if (this.prize > 0) {
+      this.prizePool.push(this.prize)
+      this.prize = 0
+    }
   }
 
-  onRegister() {}
+  @Emit('register')
+  onRegister(): RegisterTournamentDto | null {
+    if (!this.selectBlindTemplate) {
+      return null
+    }
+    return {
+      title: this.tournamentName,
+      startDateTime: new Date(`${this.startDate} ${this.startTime}`),
+      buyIn: this.buyIn,
+      blindStructureId: this.selectBlindTemplate.id,
+      breakTime: this.breakTime,
+      breakTimeTerm: this.breakTimeTerm,
+    }
+  }
 }
 </script>
