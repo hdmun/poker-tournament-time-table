@@ -2,8 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { BlindStructureMetaRepository } from './blind-structure-meta.repository';
 import { BlindStructureRepository } from './blind-structure.repository';
 import { BlindStructureDto } from './dto/blind-structure';
+import { RegisterTournamentDto } from './dto/tournament';
 import { BlindStructureMeta } from './entities/blind-structure-meta.entity';
 import { BlindStructure } from './entities/blind-structure.entity';
+import { Tournament } from './entities/tournament.entity';
+import { TournamentRepository } from './tournament.repository';
 
 @Injectable()
 export class TournamentService {
@@ -12,6 +15,7 @@ export class TournamentService {
   constructor(
     private readonly blindStructureMetaRepo: BlindStructureMetaRepository,
     private readonly blindStructureRepo: BlindStructureRepository,
+    private readonly tournamentRepository: TournamentRepository,
   ) {}
 
   async blindStructureTemplateAll() {
@@ -68,5 +72,26 @@ export class TournamentService {
 
     const retStructures = await this.blindStructureRepo.save(structures);
     this.logger.log(structures, retStructures);
+  }
+
+  async tournamentAll() {
+    return await this.tournamentRepository.find();
+  }
+
+  async registerTournament(dto: RegisterTournamentDto) {
+    const newTornament = Tournament.Create(
+      dto.title,
+      dto.startDateTime,
+      dto.buyIn,
+      dto.blindStructureId,
+      dto.breakTime,
+      dto.breakTimeTerm,
+    );
+    this.tournamentRepository.save(newTornament);
+  }
+
+  async deleteTournament(id: number) {
+    const result = this.tournamentRepository.delete({ id });
+    this.logger.log(result);
   }
 }
