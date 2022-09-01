@@ -8,6 +8,11 @@
       class="elevation-1"
       @page-count="pageCount = $event"
     >
+      <template #[`item.name`]="{ item }">
+        <router-link :to="{ path: 'tournament-clock', query: { id: item.id } }">
+          {{ item.name }}
+        </router-link>
+      </template>
     </v-data-table>
     <div class="text-center pt-2">
       <v-pagination v-model="page" :length="pageCount"></v-pagination>
@@ -25,6 +30,7 @@ interface TableHeader {
 }
 
 interface TournamentDto {
+  id: number
   start: string
   name: string
   buyIn: string
@@ -56,6 +62,7 @@ export default class TournamentTable extends Vue {
     this.tournaments = res.data
       .map<TournamentDto>((value) => {
         return {
+          id: value.id,
           start: new Date(value.startDateTime)
             .toISOString()
             .replace('T', ' ')

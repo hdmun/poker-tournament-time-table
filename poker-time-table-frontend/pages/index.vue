@@ -1,17 +1,24 @@
 <template>
-  <v-flex class="ma-0">
-    <v-row class="ma-0">
-      <v-col lg="3" class="pa-0"> </v-col>
+  <v-flex>
+    <v-row class="pa-6">
+      <v-col lg="6">
+        <TournamentTable ref="tournamentTable" />
+      </v-col>
       <v-col lg="9" class="pa-0"> </v-col>
     </v-row>
   </v-flex>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Ref, Vue } from 'nuxt-property-decorator'
+import TournamentTable from '~/components/tournamentTable.vue'
 
 @Component({
-  components: {},
+  components: {
+    TournamentTable,
+  },
 })
-export default class IndexPage extends Vue {}
+export default class IndexPage extends Vue {
+  @Ref() tournamentTable!: TournamentTable
+}
 </script>

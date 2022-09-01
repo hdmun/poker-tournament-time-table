@@ -10,21 +10,23 @@
 
     <v-row justify="center">
       <v-col lg="3">
-        <v-card-title class="justify-center">
-          PLAY TIME
-        </v-card-title>
+        <v-card-title class="justify-center"> PLAY TIME </v-card-title>
 
-        <v-card-title class="justify-center pt-0" style="font-size: 3em; line-height: 3rem;">
+        <v-card-title
+          class="justify-center pt-0"
+          style="font-size: 3em; line-height: 3rem"
+        >
           {{ data.playTime }}
         </v-card-title>
       </v-col>
 
       <v-col lg="3">
-        <v-card-title class="justify-center">
-          NEXT BREAK
-        </v-card-title>
+        <v-card-title class="justify-center"> NEXT BREAK </v-card-title>
 
-        <v-card-title class="justify-center pt-0" style="font-size: 3em; line-height: 3rem;">
+        <v-card-title
+          class="justify-center pt-0"
+          style="font-size: 3em; line-height: 3rem"
+        >
           {{ data.nextBreakTime }}
         </v-card-title>
       </v-col>
@@ -32,7 +34,10 @@
 
     <v-row class="mt-0">
       <v-col>
-        <v-card-title class="justify-center" style="font-size: 12em; line-height: 12rem;">
+        <v-card-title
+          class="justify-center"
+          style="font-size: 12em; line-height: 12rem"
+        >
           {{ data.remainTime }}
         </v-card-title>
       </v-col>
@@ -40,22 +45,14 @@
 
     <v-row justify="center" class="mb-6">
       <v-btn tile outlined class="ma-2">
-        <v-icon>
-          mdi-chevron-left
-        </v-icon>
+        <v-icon> mdi-chevron-left </v-icon>
       </v-btn>
       <v-btn tile outlined class="ma-2">
-        <v-icon v-if="playing">
-          mdi-pause
-        </v-icon>
-        <v-icon v-else>
-          mdi-play
-        </v-icon>
+        <v-icon v-if="playing"> mdi-pause </v-icon>
+        <v-icon v-else> mdi-play </v-icon>
       </v-btn>
       <v-btn tile outlined class="ma-2">
-        <v-icon>
-          mdi-chevron-right
-        </v-icon>
+        <v-icon> mdi-chevron-right </v-icon>
       </v-btn>
     </v-row>
 
@@ -66,15 +63,19 @@
             <v-card outlined tile>
               <v-row class="align-center">
                 <v-col>
-                  <v-card-title class="justify-center" style="font-size: 2em; line-height: 2rem;">
+                  <v-card-title
+                    class="justify-center"
+                    style="font-size: 2em; line-height: 2rem"
+                  >
                     Level {{ data.level }}
                   </v-card-title>
                 </v-col>
                 <v-col>
-                  <v-card-text class="text-center pb-0">
-                    BLINDS
-                  </v-card-text>
-                  <v-card-title class="justify-center" style="font-size: 2em; line-height: 2rem;">
+                  <v-card-text class="text-center pb-0"> BLINDS </v-card-text>
+                  <v-card-title
+                    class="justify-center"
+                    style="font-size: 2em; line-height: 2rem"
+                  >
                     {{ data.smallBlind }} / {{ data.bigBlind }}
                   </v-card-title>
                 </v-col>
@@ -87,7 +88,10 @@
           <v-col cols="3" class="pa-0">
             <v-card outlined tile>
               <v-card-title class="justify-center">CHIPS IN PLAY</v-card-title>
-              <v-card-title class="justify-center pt-0" style="font-size: 2em; line-height: 2rem;">
+              <v-card-title
+                class="justify-center pt-0"
+                style="font-size: 2em; line-height: 2rem"
+              >
                 {{ data.chipsInPlay }}
               </v-card-title>
             </v-card>
@@ -96,7 +100,10 @@
           <v-col cols="3" class="pa-0">
             <v-card outlined tile>
               <v-card-title class="justify-center">PLAYER</v-card-title>
-              <v-card-title class="justify-center pt-0" style="font-size: 2em; line-height: 2rem;">
+              <v-card-title
+                class="justify-center pt-0"
+                style="font-size: 2em; line-height: 2rem"
+              >
                 {{ data.player }} / {{ data.totalPlayer }}
               </v-card-title>
             </v-card>
@@ -105,7 +112,10 @@
           <v-col cols="3" class="pa-0">
             <v-card outlined tile>
               <v-card-title class="justify-center">AVERAGE STACK</v-card-title>
-              <v-card-title class="justify-center pt-0" style="font-size: 2em; line-height: 2rem;">
+              <v-card-title
+                class="justify-center pt-0"
+                style="font-size: 2em; line-height: 2rem"
+              >
                 {{ data.averageStack }}
               </v-card-title>
             </v-card>
@@ -113,7 +123,6 @@
         </v-row>
       </v-col>
     </v-row>
-
   </v-card>
 </template>
 
@@ -128,10 +137,10 @@ export default class TournamentClock extends Vue {
 
   playing: boolean = false
 
-  created() { }
+  created() {}
 
-  mounted() { }
+  mounted() {}
 
-  beforeDestroy() { }
+  beforeDestroy() {}
 }
 </script>
