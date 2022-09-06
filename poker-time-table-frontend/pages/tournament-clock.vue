@@ -1,14 +1,14 @@
 <template>
-  <v-flex class="ma-0">
-    <v-row class="ma-0">
-      <v-col lg="3" class="pa-0">
+  <v-flex class="ma-0 fill-height">
+    <v-row class="ma-0 fill-height">
+      <v-col v-if="showBlindTable" lg="3" class="pa-0">
         <TournamentBlinds
           :structure="blindStructure"
           :current-step="currentIdx"
         />
       </v-col>
-      <v-col lg="9" class="pa-0">
-        <TournamentClock :data="clock" />
+      <v-col :lg="showBlindTable ? 9 : 12" class="pa-0" height="100%">
+        <TournamentClock :data="clock" :show-variant.sync="showBlindTable" />
       </v-col>
     </v-row>
   </v-flex>
@@ -72,6 +72,7 @@ export default class TournamentClockPage extends Vue {
     averageStack: 0,
   }
 
+  showBlindTable: boolean = false
   blindStructure: BlindStructureModel[] = []
 
   currentIdx = 0

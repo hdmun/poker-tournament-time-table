@@ -1,11 +1,23 @@
 <template>
-  <v-card height="100%" outlined tile>
-    <v-row justify="center">
-      <v-col>
-        <v-card-title class="justify-center">
+  <v-card class="fill-height" outlined tile>
+    <v-row>
+      <v-col cols="1">
+        <v-btn class="ma-3" fab @click="showMiniVariant = !showMiniVariant">
+          <v-icon>
+            mdi-{{ `chevron-${showMiniVariant ? 'left' : 'right'}` }}
+          </v-icon>
+        </v-btn>
+      </v-col>
+      <v-col justify="center">
+        <v-card-title
+          class="justify-center text-h3"
+          style="font-size: 5em"
+          wrap
+        >
           {{ data.title }}
         </v-card-title>
       </v-col>
+      <v-col cols="1"></v-col>
     </v-row>
 
     <v-row justify="center">
@@ -127,11 +139,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, PropSync, Vue } from 'nuxt-property-decorator'
 import { TournamentClockDto } from '~/dto/tournamentClockDto'
 
 @Component
 export default class TournamentClock extends Vue {
+  @PropSync('showVariant', { type: Boolean, required: true })
+  showMiniVariant!: Boolean
+
   @Prop({ type: Object as () => TournamentClockDto, required: true })
   data!: TournamentClockDto
 
