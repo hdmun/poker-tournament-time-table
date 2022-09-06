@@ -39,6 +39,16 @@ export class TournamentController {
     }
   }
 
+  @Get('/:id')
+  async tournamentsBy(@Param('id') id: number) {
+    try {
+      return await this.tournamentService.tournamentBy(id);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
   @Post('/blind-structures-meta')
   async registerBlindStructures(@Body() dto: RegisterBlindStructureDto) {
     try {

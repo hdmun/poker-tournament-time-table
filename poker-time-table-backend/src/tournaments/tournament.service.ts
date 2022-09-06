@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { BlindStructureMetaRepository } from './blind-structure-meta.repository';
 import { BlindStructureRepository } from './blind-structure.repository';
 import { BlindStructureDto } from './dto/blind-structure';
-import { RegisterTournamentDto } from './dto/tournament';
+import { RegisterTournamentDto, TournamentDetailDto } from './dto/tournament';
 import { BlindStructureMeta } from './entities/blind-structure-meta.entity';
 import { BlindStructure } from './entities/blind-structure.entity';
 import { Tournament } from './entities/tournament.entity';
@@ -76,6 +76,22 @@ export class TournamentService {
 
   async tournamentAll() {
     return await this.tournamentRepository.find();
+  }
+
+  async tournamentBy(id: number): Promise<TournamentDetailDto> {
+    const tournament = await this.tournamentRepository.findOneBy({ id });
+    const structures = await this.blindStructureRepo.findBy({
+      metaId: tournament.blindStructureId,
+    });
+    return {
+      id: tournament.id,
+      title: tournament.title,
+      startDateTime: tournament.startDateTime,
+      buyIn: tournament.buyIn,
+      breakTime: tournament.breakTime,
+      breakTimeTerm: tournament.breakTimeTerm,
+      structures,
+    };
   }
 
   async registerTournament(dto: RegisterTournamentDto) {
