@@ -9,7 +9,9 @@
       @page-count="pageCount = $event"
     >
       <template #[`item.name`]="{ item }">
-        <router-link :to="{ path: 'tournament-clock', query: { id: item.id } }">
+        <router-link
+          :to="{ path: '/tournament-clock', query: { id: item.id } }"
+        >
           {{ item.name }}
         </router-link>
       </template>
