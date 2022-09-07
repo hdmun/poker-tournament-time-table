@@ -131,11 +131,11 @@
               <v-btn
                 rounded
                 :disabled="disabledEditButton"
-                color="success"
+                color="primary"
                 class="mr-4"
                 @click="onClickEdit"
               >
-                <v-icon> mdi-pencil </v-icon>
+                {{ selectTemplate ? `갱신` : `등록` }}
               </v-btn>
             </v-col>
           </v-row>
@@ -152,8 +152,13 @@ import { PropType } from 'vue'
 import {
   BlindStructureDto,
   BlindStructureTemplateDto,
-  RegisterBlindStructureDto,
 } from '~/dto/blindStructureDto'
+
+export interface EditBlindStructureDto {
+  id?: number
+  name: string
+  structures: BlindStructureDto[]
+}
 
 @Component
 export default class AdminRegisterBlindStructure extends Vue {
@@ -234,9 +239,10 @@ export default class AdminRegisterBlindStructure extends Vue {
   @Emit('register')
   onClickEdit() {
     return {
+      id: this.selectTemplate?.id,
       name: this.templateName,
       structures: this.editStructures,
-    } as RegisterBlindStructureDto
+    } as EditBlindStructureDto
   }
 }
 </script>

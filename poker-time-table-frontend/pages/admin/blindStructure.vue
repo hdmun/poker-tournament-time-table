@@ -10,7 +10,10 @@
         />
       </v-col>
       <v-col>
-        <AdminBlindStructureTemplate :blindstructure.sync="structure" />
+        <AdminBlindStructureTemplate
+          :blindstructure.sync="structure"
+          @delete="onDelete"
+        />
       </v-col>
     </v-row>
   </v-flex>
@@ -19,11 +22,14 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import AdminBlindStructureTemplate from '~/components/admin/blindStructureTemplate.vue'
-import AdminRegisterBlindStructure from '~/components/admin/registerBlindStructure.vue'
+import AdminRegisterBlindStructure, {
+  EditBlindStructureDto,
+} from '~/components/admin/registerBlindStructure.vue'
 import {
   BlindStructureDto,
   BlindStructureTemplateDto,
   RegisterBlindStructureDto,
+  UpdateBlindStructureDto,
 } from '~/dto/blindStructureDto'
 
 @Component({
@@ -33,6 +39,7 @@ import {
   },
 })
 export default class AdminBlindStructure extends Vue {
+  metaId: number | null = null
   metaName: string = ''
   blindTemplates: BlindStructureTemplateDto[] = []
   structure: BlindStructureDto[] = []
@@ -52,9 +59,34 @@ export default class AdminBlindStructure extends Vue {
     })
   }
 
-  async onRegister(dto: RegisterBlindStructureDto) {
-    await this.$axios.post(`/api/blind-structures/meta`, dto)
+  async onRegister(dto: EditBlindStructureDto) {
+    if (dto.id) {
+      await this.$axios.put(`/api/blind-structures/meta`, {
+        id: dto.id,
+        name: dto.name,
+        structures: dto.structures,
+      } as UpdateBlindStructureDto)
+    } else {
+      await this.$axios.post(`/api/blind-structures/meta`, {
+        name: dto.name,
+        structures: dto.structures,
+      } as RegisterBlindStructureDto)
+    }
+
     this.loadTemplates()
+  }
+
+  onDelete(blind: BlindStructureDto) {
+    const deleteIndex = this.structure.indexOf(blind)
+    this.structure.splice(deleteIndex, 1)
+    this.structure = this.structure.map((value, index) => {
+      return {
+        level: index + 1,
+        smallBlind: value.smallBlind,
+        bigBlind: value.bigBlind,
+        minute: value.minute,
+      }
+    })
   }
 }
 </script>

@@ -14,3 +14,9 @@ export interface RegisterBlindStructureDto {
   name: string
   structures: BlindStructureDto[]
 }
+
+export interface UpdateBlindStructureDto {
+  id: number
+  name: string
+  structures: BlindStructureDto[]
+}
