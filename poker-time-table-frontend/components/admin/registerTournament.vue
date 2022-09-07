@@ -202,7 +202,7 @@ export default class RegisterTournament extends Vue {
 
   async loadTemplates() {
     const res = await this.$axios.get<BlindStructureTemplateDto[]>(
-      `/api/tournaments/blind-structure-templates`
+      `/api/blind-structures/templates`
     )
     this.blindTemplates = res.data.sort((a, b) => {
       if (a.name < b.name) return -1

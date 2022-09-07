@@ -14,6 +14,6 @@ export default class AdminBlindStructureStore
   implements AdminBlindStructureState
 {
   @action async registerBlindStructure(dto: RegisterBlindStructureDto) {
-    await $axios.post('/tournaments/blind-structures-meta', dto)
+    await $axios.post('/api/blind-structures/meta', dto)
   }
 }

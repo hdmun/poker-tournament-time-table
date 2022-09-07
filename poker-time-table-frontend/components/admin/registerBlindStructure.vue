@@ -184,7 +184,7 @@ export default class AdminRegisterBlindStructure extends Vue {
 
     if (this.selectTemplate.id > 0) {
       const res = await this.$axios.get<BlindStructureDto[]>(
-        `/api/tournaments/blind-structure-templates/${this.selectTemplate.id}`
+        `/api/blind-structures/templates/${this.selectTemplate.id}`
       )
 
       this.editStructures = res.data

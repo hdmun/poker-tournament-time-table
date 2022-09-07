@@ -43,7 +43,7 @@ export default class AdminBlindStructure extends Vue {
 
   async loadTemplates() {
     const res = await this.$axios.get<BlindStructureTemplateDto[]>(
-      `/api/tournaments/blind-structure-templates`
+      `/api/blind-structures/templates`
     )
     this.blindTemplates = res.data.sort((a, b) => {
       if (a.name < b.name) return -1
@@ -53,7 +53,7 @@ export default class AdminBlindStructure extends Vue {
   }
 
   async onRegister(dto: RegisterBlindStructureDto) {
-    await this.$axios.post(`/api/tournaments/blind-structures-meta`, dto)
+    await this.$axios.post(`/api/blind-structures/meta`, dto)
     this.loadTemplates()
   }
 }
