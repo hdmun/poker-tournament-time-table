@@ -18,65 +18,6 @@
             />
           </v-col>
         </v-row>
-        <v-row>
-          <v-col lg="6">
-            <v-menu
-              v-model="showDatePicker"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-            >
-              <template #activator="{ on, attrs }">
-                <v-text-field
-                  v-model="startDate"
-                  label="Start Date"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="startDate"
-                @input="showDatePicker = false"
-              ></v-date-picker>
-            </v-menu>
-          </v-col>
-
-          <v-col lg="6">
-            <v-menu
-              ref="menu"
-              v-model="showTimePicker"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              :return-value.sync="startTime"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="290px"
-            >
-              <template #activator="{ on, attrs }">
-                <v-text-field
-                  v-model="startTime"
-                  label="Start Time"
-                  prepend-icon="mdi-clock-time-four-outline"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-time-picker
-                v-if="showTimePicker"
-                v-model="startTime"
-                full-width
-                @click:minute="$refs.menu.save(startTime)"
-              >
-              </v-time-picker>
-            </v-menu>
-          </v-col>
-        </v-row>
 
         <v-row>
           <v-col lg="6">
@@ -180,8 +121,6 @@ import { RegisterTournamentDto } from '~/dto/tournamentDto'
 @Component
 export default class RegisterTournament extends Vue {
   tournamentName: string = ''
-  startDate: string = new Date().toISOString().substring(0, 10)
-  startTime: string = new Date().toTimeString().substring(0, 5)
   buyIn: number = 0
 
   blindTemplates: BlindStructureTemplateDto[] = []
@@ -192,9 +131,6 @@ export default class RegisterTournament extends Vue {
 
   prizePool: number[] = []
   prize: number = 0
-
-  showDatePicker: boolean = false
-  showTimePicker: boolean = false
 
   mounted() {
     this.loadTemplates()
