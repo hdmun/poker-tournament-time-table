@@ -1,8 +1,12 @@
-import { BlindStructureDto } from './blind-structure';
+export interface TournamentBlindDto {
+  level: number;
+  smallBlind: number;
+  bigBlind: number;
+  minute: number;
+}
 
 export interface RegisterTournamentDto {
   title: string;
-  startDateTime: Date;
   buyIn: number;
   blindStructureId: number;
   breakTime: number;
@@ -13,9 +17,8 @@ export interface TournamentDetailDto {
   id: number;
   title: string;
   startDateTime: Date;
+  endDateTime: Date;
   buyIn: number;
-  breakTime: number;
-  breakTimeTerm: number;
 
-  structures: BlindStructureDto[];
+  structures: TournamentBlindDto[];
 }

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlindStructureMetaRepository } from './blind-structure-meta.repository';
-import { BlindStructureRepository } from './blind-structure.repository';
+import { BlindStructureMetaRepository } from '../blind-structures/blind-structures-meta.repository';
+import { BlindStructureRepository } from '../blind-structures/blind-structures.repository';
 import { TournamentService } from './tournament.service';
 
 describe('TournamentService', () => {
