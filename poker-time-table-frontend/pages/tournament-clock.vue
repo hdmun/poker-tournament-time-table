@@ -117,36 +117,19 @@ export default class TournamentClockPage extends Vue {
     this.clock.title = tournamentDetail.title
 
     this.blindStructure = []
-    const blindStructures = res.data.structures.map<BlindStructureModel>(
+    let accumulateTime = 0
+    this.blindStructure = res.data.structures.map<BlindStructureModel>(
       (value) => {
+        accumulateTime += value.minute
         return {
           level: value.level,
           smallBlind: value.smallBlind,
           bigBlind: value.bigBlind,
           minute: value.minute,
-          accumMinutes: 0,
+          accumMinutes: accumulateTime,
         }
       }
     )
-
-    let accumulateTime = 0
-    for (const blind of blindStructures) {
-      accumulateTime += blind.minute
-      blind.accumMinutes = accumulateTime
-      this.blindStructure.push(blind)
-
-      const addBreakTime = blind.level % tournamentDetail.breakTimeTerm
-      if (addBreakTime === 0) {
-        accumulateTime += tournamentDetail.breakTime
-        this.blindStructure.push({
-          level: -1,
-          smallBlind: -1,
-          bigBlind: -1,
-          minute: tournamentDetail.breakTime,
-          accumMinutes: accumulateTime,
-        })
-      }
-    }
   }
 
   updateClock() {

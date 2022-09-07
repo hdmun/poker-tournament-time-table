@@ -231,9 +231,9 @@ export default class RegisterTournament extends Vue {
     if (!this.selectBlindTemplate) {
       return null
     }
+
     return {
       title: this.tournamentName,
-      startDateTime: new Date(`${this.startDate} ${this.startTime}`),
       buyIn: this.buyIn,
       blindStructureId: this.selectBlindTemplate.id,
       breakTime: this.breakTime,

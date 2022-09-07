@@ -1,29 +1,24 @@
-import { BlindStructureDto } from './blindStructureDto'
+export interface TournamentBlindDto {
+  level: number
+  smallBlind: number
+  bigBlind: number
+  minute: number
+}
 
-export interface GetTournamentDto {
-  id: number
+export interface RegisterTournamentDto {
   title: string
-  startDateTime: string
   buyIn: number
+  blindStructureId: number
+  breakTime: number
+  breakTimeTerm: number
 }
 
 export interface TournamentDetailDto {
   id: number
   title: string
   startDateTime: Date
+  endDateTime: Date
   buyIn: number
-  blindStructureId: number
-  breakTime: number
-  breakTimeTerm: number
 
-  structures: BlindStructureDto[]
-}
-
-export interface RegisterTournamentDto {
-  title: string
-  startDateTime: Date
-  buyIn: number
-  blindStructureId: number
-  breakTime: number
-  breakTimeTerm: number
+  structures: TournamentBlindDto[]
 }

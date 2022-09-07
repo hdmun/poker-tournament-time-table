@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import { GetTournamentDto } from '~/dto/tournamentDto'
+import { TournamentDetailDto } from '~/dto/tournamentDto'
 
 interface TableHeader {
   text: string
@@ -60,15 +60,17 @@ export default class TournamentTable extends Vue {
   }
 
   async loadTournaments() {
-    const res = await this.$axios.get<GetTournamentDto[]>(`/api/tournaments`)
+    const res = await this.$axios.get<TournamentDetailDto[]>(`/api/tournaments`)
     this.tournaments = res.data
       .map<TournamentDto>((value) => {
         return {
           id: value.id,
-          start: new Date(value.startDateTime)
-            .toISOString()
-            .replace('T', ' ')
-            .substring(0, 19),
+          start: value.startDateTime
+            ? new Date(value.startDateTime)
+                .toISOString()
+                .replace('T', ' ')
+                .substring(0, 19)
+            : '대기 중',
           name: value.title,
           buyIn: `${value.buyIn}`,
           players: -1,
