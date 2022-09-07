@@ -69,4 +69,48 @@ export class BlindStructureService {
     const retStructures = await this.blindStructureRepo.save(structures);
     this.logger.log(structures, retStructures);
   }
+
+  async updateBlindStructure(
+    id: number,
+    name: string,
+    structureDto: BlindStructureDto[],
+  ) {
+    const meta = await this.blindStructureMetaRepo.findOneBy({ id });
+    if (!meta) {
+      throw new Error(`invalid blind template, id: ${id}, name: ${name}`);
+    }
+
+    if (meta.name !== name) {
+      meta.name = name;
+      await this.blindStructureMetaRepo.update({ id }, meta);
+    }
+
+    const structures = await this.blindStructureRepo.findBy({
+      metaId: meta.id,
+    });
+
+    if (!structures) {
+      throw new Error(
+        `emtpy blind template structure, id: ${id}, name: ${name}`,
+      );
+    }
+
+    const diffCount = structures.length - structureDto.length;
+    if (diffCount > 0) {
+      const delIndex = structures.length - diffCount;
+      const deleteStructure = structures.slice(delIndex);
+      this.blindStructureRepo.remove(deleteStructure);
+    }
+    await this.blindStructureRepo.save(
+      structureDto.map((value) => {
+        return BlindStructure.create(
+          meta.id,
+          value.level,
+          value.smallBlind,
+          value.bigBlind,
+          value.minute,
+        );
+      }),
+    );
+  }
 }
