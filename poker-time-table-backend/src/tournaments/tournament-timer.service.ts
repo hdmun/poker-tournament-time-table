@@ -125,6 +125,13 @@ export class TournamentTimerService {
         tournamentId: tournament.id,
       });
 
+      if (blinds.length <= tournament.level) {
+        this.logger.error(
+          `not enough blind level, ${tournament.level} / ${blinds.length}`,
+        );
+        continue;
+      }
+
       const nowDate = new Date();
       const playTimeMs = nowDate.getTime() - tournament.levelStart.getTime();
       const playTimeMinutes =
