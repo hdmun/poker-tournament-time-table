@@ -24,10 +24,7 @@
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
-<<<<<<< HEAD
-=======
     "@nestjs/schedule": "^2.1.0",
->>>>>>> backend
     "@nestjs/typeorm": "^9.0.0",
     "joi": "^17.6.0",
     "mysql2": "^2.3.3",
@@ -40,10 +37,7 @@
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
-<<<<<<< HEAD
-=======
     "@types/cron": "^2.0.0",
->>>>>>> backend
     "@types/express": "^4.17.13",
     "@types/jest": "^28.1.4",
     "@types/node": "^18.0.3",

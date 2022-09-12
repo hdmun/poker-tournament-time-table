@@ -11,15 +11,11 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
-<<<<<<< HEAD
-    "skipLibCheck": true
-=======
     "skipLibCheck": true,
     "paths": {
       "~/*": [
         "./src/*"
       ]
     },
->>>>>>> backend
   }
 }
