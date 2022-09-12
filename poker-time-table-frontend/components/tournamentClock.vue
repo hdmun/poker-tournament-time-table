@@ -56,14 +56,33 @@
     </v-row>
 
     <v-row justify="center" class="mb-6">
-      <v-btn tile outlined class="ma-2">
+      <v-btn
+        tile
+        outlined
+        class="ma-2"
+        :disabled="currentStep < 1 || !starting"
+        @click="onDownBlind()"
+      >
         <v-icon> mdi-chevron-left </v-icon>
       </v-btn>
-      <v-btn tile outlined class="ma-2">
-        <v-icon v-if="playing"> mdi-pause </v-icon>
-        <v-icon v-else> mdi-play </v-icon>
+
+      <v-btn
+        tile
+        outlined
+        class="ma-2"
+        @click="data.pause ? onPlay() : onPause()"
+      >
+        <v-icon v-if="data.pause"> mdi-play </v-icon>
+        <v-icon v-else> mdi-pause </v-icon>
       </v-btn>
-      <v-btn tile outlined class="ma-2">
+
+      <v-btn
+        tile
+        outlined
+        class="ma-2"
+        :disabled="blindCount <= currentStep || !starting"
+        @click="onUpBlind()"
+      >
         <v-icon> mdi-chevron-right </v-icon>
       </v-btn>
     </v-row>
@@ -79,7 +98,10 @@
                     class="justify-center"
                     style="font-size: 2em; line-height: 2rem"
                   >
-                    Level {{ data.level }}
+                    <template v-if="data.level > 0">
+                      Level {{ data.level }}
+                    </template>
+                    <template v-else>BREAK TIME</template>
                   </v-card-title>
                 </v-col>
                 <v-col>
@@ -104,7 +126,10 @@
                 class="justify-center pt-0"
                 style="font-size: 2em; line-height: 2rem"
               >
-                {{ data.chipsInPlay }}
+                <template v-if="data.chipsInPlay > 0">
+                  {{ data.chipsInPlay }}
+                </template>
+                <template v-else>-</template>
               </v-card-title>
             </v-card>
           </v-col>
@@ -116,7 +141,10 @@
                 class="justify-center pt-0"
                 style="font-size: 2em; line-height: 2rem"
               >
-                {{ data.player }} / {{ data.totalPlayer }}
+                <template v-if="data.totalPlayer > 0">
+                  {{ data.player }} / {{ data.totalPlayer }}
+                </template>
+                <template v-else>-</template>
               </v-card-title>
             </v-card>
           </v-col>
@@ -128,7 +156,10 @@
                 class="justify-center pt-0"
                 style="font-size: 2em; line-height: 2rem"
               >
-                {{ data.averageStack }}
+                <template v-if="data.averageStack > 0">
+                  {{ data.averageStack }}
+                </template>
+                <template v-else>-</template>
               </v-card-title>
             </v-card>
           </v-col>
@@ -139,7 +170,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, PropSync, Vue } from 'nuxt-property-decorator'
+import { Component, Emit, Prop, PropSync, Vue } from 'nuxt-property-decorator'
 import { TournamentClockDto } from '~/dto/tournamentClockDto'
 
 @Component
@@ -150,12 +181,34 @@ export default class TournamentClock extends Vue {
   @Prop({ type: Object as () => TournamentClockDto, required: true })
   data!: TournamentClockDto
 
-  playing: boolean = false
+  @Prop({ type: Number })
+  currentStep!: number
+
+  @Prop({ type: Number })
+  blindCount!: number
+
+  @Prop({ type: Boolean })
+  starting!: boolean
+
+  @Prop({ type: Boolean })
+  pause!: boolean
 
   created() {}
 
   mounted() {}
 
   beforeDestroy() {}
+
+  @Emit('onPlay')
+  onPlay() {}
+
+  @Emit('onPause')
+  onPause() {}
+
+  @Emit('onDownBlind')
+  onDownBlind() {}
+
+  @Emit('onUpBlind')
+  onUpBlind() {}
 }
 </script>

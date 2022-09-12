@@ -8,7 +8,17 @@
         />
       </v-col>
       <v-col :lg="showBlindTable ? 9 : 12" class="pa-0" height="100%">
-        <TournamentClock :data="clock" :show-variant.sync="showBlindTable" />
+        <TournamentClock
+          :data="clock"
+          :show-variant.sync="showBlindTable"
+          :current-step="currentIdx"
+          :starting="startDateTime !== null"
+          :blind-count="blindStructure.length"
+          @onPlay="onPlay"
+          @onPause="onPause"
+          @onDownBlind="onDownBlind"
+          @onUpBlind="onUpBlind"
+        />
       </v-col>
     </v-row>
   </v-flex>
@@ -21,35 +31,10 @@ import TournamentBlinds, {
 } from '~/components/tournamentBlinds.vue'
 import TournamentClock from '~/components/tournamentClock.vue'
 import { TournamentClockDto } from '~/dto/tournamentClockDto'
-import { TournamentDetailDto } from '~/dto/tournamentDto'
-
-function padTo2Digits(num: number) {
-  return num.toString().padStart(2, '0')
-}
-
-function convertMsToTime(milliseconds: number) {
-  // https://bobbyhadz.com/blog/typescript-calculate-time-between-dates
-  let seconds = Math.floor(milliseconds / 1000)
-  let minutes = Math.floor(seconds / 60)
-  const hours = Math.floor(minutes / 60)
-
-  seconds = seconds % 60
-  minutes = minutes % 60
-
-  // 👇️ If you want to roll hours over, e.g. 00 to 24
-  // 👇️ uncomment the line below
-  // uncommenting next line gets you `00:00:00` instead of `24:00:00`
-  // or `12:15:31` instead of `36:15:31`, etc.
-  // 👇️ (roll hours over)
-  // hours = hours % 24;
-  if (hours === 0) {
-    return `${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`
-  }
-
-  return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}:${padTo2Digits(
-    seconds
-  )}`
-}
+import {
+  TournamentClockEventDto,
+  TournamentDetailDto,
+} from '~/dto/tournamentDto'
 
 @Component({
   components: {
@@ -62,6 +47,7 @@ export default class TournamentClockPage extends Vue {
     playTime: '00:00:00',
     nextBreakTime: '00:00',
     remainTime: '00:00',
+    pause: false,
     level: 0,
     title: '토너먼트 타이틀',
     smallBlind: 0,
@@ -75,10 +61,11 @@ export default class TournamentClockPage extends Vue {
   showBlindTable: boolean = false
   blindStructure: BlindStructureModel[] = []
 
-  currentIdx = 0
-  startDateTime: Date = new Date()
+  currentIdx = -1
+  tournamentId = -1
+  startDateTime: Date | null = null
 
-  refreshTimer?: number
+  eventSource: EventSource | null = null
 
   mounted() {
     const tournamentId = this.$route.query?.id as string
@@ -89,14 +76,15 @@ export default class TournamentClockPage extends Vue {
 
     this.loadTournaments(tournamentId)
 
-    this.refreshTimer = window.setInterval(() => {
-      this.updateClock()
-    }, 500)
+    this.eventSource = new EventSource(`/api/tournaments/clock/${tournamentId}`)
+    this.eventSource.onmessage = (ev: MessageEvent) => {
+      this.updateClock(JSON.parse(ev.data) as TournamentClockEventDto)
+    }
   }
 
   beforeDestroy() {
-    if (this.refreshTimer !== undefined) {
-      window.clearInterval(this.refreshTimer)
+    if (this.eventSource !== null) {
+      this.eventSource.close()
     }
   }
 
@@ -107,13 +95,12 @@ export default class TournamentClockPage extends Vue {
 
     const tournamentDetail = res.data
 
-    this.startDateTime = new Date(tournamentDetail.startDateTime)
-    const nowDate = new Date()
-    if (nowDate < this.startDateTime) {
-      // 아직 시작 안함
+    this.tournamentId = tournamentDetail.id
+    if (!tournamentDetail.startDateTime) {
       return
     }
 
+    this.startDateTime = new Date(tournamentDetail.startDateTime)
     this.clock.title = tournamentDetail.title
 
     this.blindStructure = []
@@ -132,64 +119,36 @@ export default class TournamentClockPage extends Vue {
     )
   }
 
-  updateClock() {
-    const nowDate = new Date()
-    const playTimeMs = nowDate.getTime() - this.startDateTime.getTime()
-    const playTimeMinutes = Math.floor(playTimeMs / 1000 / 60)
+  updateClock(dto: TournamentClockEventDto) {
+    this.currentIdx = dto.index
+    this.clock.playTime = dto.playTime
+    this.clock.nextBreakTime = dto.nextBreakRemainTime
+    this.clock.remainTime = dto.remainTime
+    this.clock.pause = dto.pause
+    this.clock.level = dto.level > 0 ? dto.level : 0
+    this.clock.smallBlind = dto.smallBlind
+    this.clock.bigBlind = dto.bigBlind
 
-    this.currentIdx = this.blindStructure.findIndex((value) => {
-      if (playTimeMinutes < value.accumMinutes) {
-        return true
-      }
-      return false
-    })
+    this.clock.chipsInPlay = 0
+    this.clock.player = 0
+    this.clock.totalPlayer = 0
+    this.clock.averageStack = 0
+  }
 
-    if (this.currentIdx < 0) {
-      return
-    }
+  async onPlay() {
+    await this.$axios.put(`/api/tournaments/${this.tournamentId}/play`)
+  }
 
-    this.clock.playTime = convertMsToTime(playTimeMs)
+  async onPause() {
+    await this.$axios.put(`/api/tournaments/${this.tournamentId}/pause`)
+  }
 
-    const nextBreak = this.blindStructure.find((value, index) => {
-      if (index <= this.currentIdx) {
-        return false
-      }
-      return value.level < 0
-    })
-    if (nextBreak) {
-      const nextBreakTime = new Date(
-        this.startDateTime.getTime() + nextBreak.accumMinutes * 60 * 1000
-      )
-      this.clock.nextBreakTime = convertMsToTime(
-        nextBreakTime.getTime() - nowDate.getTime()
-      )
-    } else {
-      this.clock.nextBreakTime = '--:--'
-    }
+  async onDownBlind() {
+    await this.$axios.put(`/api/tournaments/${this.tournamentId}/blind/down`)
+  }
 
-    const currentBlind = this.blindStructure[this.currentIdx]
-    const remainDate = new Date(
-      this.startDateTime.getTime() + currentBlind.accumMinutes * 60 * 1000
-    )
-    this.clock.remainTime = convertMsToTime(
-      remainDate.getTime() - nowDate.getTime()
-    )
-
-    if (currentBlind.level > 0) {
-      this.clock.level = currentBlind.level
-      this.clock.smallBlind = currentBlind.smallBlind
-      this.clock.bigBlind = currentBlind.bigBlind
-    } else {
-      const nextBlind = this.blindStructure[this.currentIdx + 1]
-      this.clock.level = nextBlind.level
-      this.clock.smallBlind = nextBlind.smallBlind
-      this.clock.bigBlind = nextBlind.bigBlind
-    }
-
-    this.clock.chipsInPlay = 1800000
-    this.clock.player = 8
-    this.clock.totalPlayer = 19
-    this.clock.averageStack = 105000
+  async onUpBlind() {
+    await this.$axios.put(`/api/tournaments/${this.tournamentId}/blind/up`)
   }
 }
 </script>
