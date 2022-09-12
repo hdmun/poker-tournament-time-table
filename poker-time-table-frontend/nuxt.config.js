@@ -1,6 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
+  ssr: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - poker-time-table-frontend',
@@ -18,7 +19,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: ['~/plugins/axios-accessor'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -37,12 +38,22 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    '@nuxtjs/proxy',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/',
+    proxy: true,
+  },
+
+  proxy: {
+    '/api/': {
+      target: 'http://localhost:3001',
+      pathRewrite: {
+        '^/api/': '/',
+      },
+    },
   },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
@@ -76,8 +87,6 @@ export default {
 
   // StoryBook Options: https://storybook.nuxtjs.org/api/options
   storybook: {
-    decorators: [
-      '<v-app><story/></v-app>'
-    ]
-  }
+    decorators: ['<v-app><story/></v-app>'],
+  },
 }

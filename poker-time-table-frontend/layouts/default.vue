@@ -1,6 +1,12 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer v-model="drawer" :mini-variant="miniVariant" :clipped="clipped" fixed app>
+    <v-navigation-drawer
+      v-model="drawer"
+      :mini-variant="miniVariant"
+      :clipped="clipped"
+      fixed
+      app
+    >
       <v-list>
         <template v-for="(item, i) in items">
           <template v-if="item.to !== undefined">
@@ -15,14 +21,25 @@
           </template>
 
           <template v-else>
-            <v-list-group :key="item.title" v-model="item.active" :prepend-icon="item.icon" no-action>
-              <template v-slot:activator>
+            <v-list-group
+              :key="item.title"
+              v-model="item.active"
+              :prepend-icon="item.icon"
+              no-action
+            >
+              <template #activator>
                 <v-list-item-content>
                   <v-list-item-title v-text="item.title"></v-list-item-title>
                 </v-list-item-content>
               </template>
 
-              <v-list-item v-for="child in item.subItems" :key="child.title" :to="child.to" router exact>
+              <v-list-item
+                v-for="child in item.subItems"
+                :key="child.title"
+                :to="child.to"
+                router
+                exact
+              >
                 <v-list-item-content>
                   <v-list-item-title v-text="child.title"></v-list-item-title>
                 </v-list-item-content>
@@ -41,18 +58,20 @@
       <v-btn icon @click.stop="clipped = !clipped">
         <v-icon>mdi-application</v-icon>
       </v-btn>
-      <v-btn icon @click.stop="fixed = !fixed">
+      <v-btn v-if="false" icon @click.stop="fixed = !fixed">
         <v-icon>mdi-minus</v-icon>
       </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
-      <v-btn icon @click.stop="rightDrawer = !rightDrawer">
+      <v-btn v-if="false" icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>mdi-menu</v-icon>
       </v-btn>
     </v-app-bar>
+
     <v-main>
       <Nuxt />
     </v-main>
+
     <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
       <v-list>
         <v-list-item @click.native="right = !right">
@@ -63,12 +82,12 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+
     <v-footer :absolute="!fixed" app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
 </template>
-
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
@@ -82,7 +101,7 @@ interface NavigationItem {
 }
 
 @Component({
-  components: {}
+  components: {},
 })
 export default class DefaultLayout extends Vue {
   name: string = 'DefaultLayout'
@@ -92,7 +111,7 @@ export default class DefaultLayout extends Vue {
   miniVariant: boolean = false
   right: boolean = true
   rightDrawer: boolean = false
-  title: string = 'Vuetify.js'
+  title: string = 'KMGM 서현점'
 
   items: NavigationItem[] = [
     {
@@ -114,8 +133,8 @@ export default class DefaultLayout extends Vue {
           title: '블라인드 템플릿',
           to: '/admin/blindStructure',
         },
-      ]
-    }
+      ],
+    },
   ]
 }
 </script>
