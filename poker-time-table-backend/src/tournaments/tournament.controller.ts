@@ -109,7 +109,14 @@ export class TournamentController {
   @Sse('/clock/:id')
   async clockTimer(@Param('id') id: number) {
     return interval(1000).pipe(
-      switchMap(() => this.timerService.calcClock(id)),
+      switchMap(() => {
+        try {
+          return this.timerService.calcClock(id);
+        } catch (error) {
+          this.logger.error(error);
+          throw error;
+        }
+      }),
       map((clock) => ({
         data: clock,
       })),
