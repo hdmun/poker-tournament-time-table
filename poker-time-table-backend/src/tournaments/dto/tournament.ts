@@ -22,3 +22,25 @@ export interface TournamentDetailDto {
 
   structures: TournamentBlindDto[];
 }
+
+export interface TournamentBlindPlayDto {
+  startDateTime: Date;
+}
+
+export interface TournamentBlindUpDownDto {
+  level: number;
+  bigBlind: number;
+  smallBlind: number;
+}
+
+export interface TournamentClockEventDto {
+  index: number;
+  started: boolean;
+  playTime: string;
+  nextBreakRemainTime: string;
+  remainTime: string;
+  pause: boolean;
+  level: number;
+  smallBlind: number;
+  bigBlind: number;
+}

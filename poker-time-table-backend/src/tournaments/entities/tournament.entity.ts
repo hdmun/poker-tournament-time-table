@@ -17,14 +17,25 @@ export class Tournament {
   @Column()
   buyIn: number;
 
-  @Column({ name: 'blind_level' })
-  blindLevel: number;
+  @Column()
+  pause: boolean;
+
+  @Column({ name: 'level' })
+  level: number;
+
+  @Column({ name: 'level_start', nullable: true })
+  levelStart: Date;
+
+  @Column({ name: 'pause_seconds', nullable: true })
+  pauseSeconds: number;
 
   static Create(title: string, buyIn: number) {
     const newTournament = new Tournament();
     newTournament.title = title;
     newTournament.buyIn = buyIn;
-    newTournament.blindLevel = 0;
+    newTournament.level = -1;
+    newTournament.pause = true;
+    newTournament.pauseSeconds = 0;
     return newTournament;
   }
 }

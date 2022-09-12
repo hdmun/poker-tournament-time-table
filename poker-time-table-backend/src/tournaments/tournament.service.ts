@@ -1,10 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BlindStructureRepository } from '~/blind-structures/blind-structures.repository';
-import {
-  RegisterTournamentDto,
-  TournamentBlindDto,
-  TournamentDetailDto,
-} from './dto/tournament';
+import { RegisterTournamentDto, TournamentDetailDto } from './dto/tournament';
 import { TournamentBlind } from './entities/tournament-blind.entity';
 import { Tournament } from './entities/tournament.entity';
 import { TournamentBlindRepository } from './tournament-blind.repository';
@@ -83,5 +79,111 @@ export class TournamentService {
   async deleteTournament(id: number) {
     const result = this.tournamentRepository.delete({ id });
     this.logger.log(result);
+  }
+
+  async play(id: number) {
+    const tournament = await this.tournamentRepository.findOneBy({ id });
+    if (!tournament) {
+      throw new Error(`invalind tournament id, ${id}`);
+    }
+
+    if (!tournament.pause) {
+      throw new Error(`already playing tournment, ${tournament.title}`);
+    }
+
+    if (!tournament.startDateTime) {
+      tournament.startDateTime = new Date();
+      tournament.level = 0;
+      tournament.levelStart = new Date();
+    }
+
+    tournament.pause = false;
+    await this.tournamentRepository.update(
+      { id: tournament.id },
+      {
+        pause: tournament.pause,
+        startDateTime: tournament.startDateTime,
+        level: tournament.level,
+        levelStart: tournament.levelStart,
+      },
+    );
+
+    return tournament;
+  }
+
+  async pause(id: number) {
+    const tournament = await this.tournamentRepository.findOneBy({ id });
+    if (!tournament) {
+      throw new Error(`invalid tournament id, ${id}`);
+    }
+
+    if (tournament.pause) {
+      throw new Error(`already pause tournment, ${tournament.title}`);
+    }
+
+    tournament.pause = true;
+    await this.tournamentRepository.update(
+      { id: tournament.id },
+      {
+        pause: tournament.pause,
+      },
+    );
+
+    return tournament;
+  }
+
+  async downBlindLevel(id: number) {
+    const tournament = await this.tournamentRepository.findOneBy({ id });
+    if (!tournament) {
+      throw new Error(`invalid tournament id, ${id}`);
+    }
+
+    if (tournament.level === 0) {
+      throw new Error(`do not prev tournament level`);
+    }
+
+    tournament.level -= 1;
+
+    await this.tournamentRepository.update(
+      { id: tournament.id },
+      {
+        level: () => 'level - 1',
+        levelStart: new Date(),
+        pauseSeconds: 0,
+      },
+    );
+
+    return tournament;
+  }
+
+  async upBlindLevel(id: number) {
+    const tournament = await this.tournamentRepository.findOneBy({ id });
+    if (!tournament) {
+      throw new Error(`invalid tournament id, ${id}`);
+    }
+
+    const blinds = await this.blindRepository.findBy({
+      tournamentId: id,
+    });
+
+    tournament.level += 1;
+    if (blinds.length <= tournament.level) {
+      throw new Error(
+        `invalid tournament level: ${tournament.level}, blinds: ${blinds.length}`,
+      );
+    }
+
+    tournament.levelStart = new Date();
+    tournament.pauseSeconds = 0;
+    await this.tournamentRepository.update(
+      { id: tournament.id },
+      {
+        level: () => 'level + 1',
+        levelStart: tournament.levelStart,
+        pauseSeconds: 0,
+      },
+    );
+
+    return tournament;
   }
 }
