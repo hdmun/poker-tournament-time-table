@@ -1,19 +1,27 @@
 <template>
   <v-flex class="ma-0 fill-height">
     <v-row class="ma-0 fill-height">
-      <v-col v-if="showBlindTable" lg="3" class="pa-0">
+      <v-col v-if="showBlindTable" :lg="editBlindTable ? 4 : 3" class="pa-0">
         <TournamentBlinds
-          :structure="blindStructure"
+          :structure.sync="blindStructure"
           :current-step="currentIdx"
+          :edit-mode="editBlindTable"
+          @onBlindEdit="onBlindEdit"
+          @onBlindEditClose="onBlindEditClose"
         />
       </v-col>
-      <v-col :lg="showBlindTable ? 9 : 12" class="pa-0" height="100%">
+      <v-col
+        :lg="showBlindTable ? (editBlindTable ? 8 : 9) : 12"
+        class="pa-0"
+        height="100%"
+      >
         <TournamentClock
           :data="clock"
           :show-variant.sync="showBlindTable"
           :current-step="currentIdx"
           :starting="startDateTime !== null"
           :blind-count="blindStructure.length"
+          :edit-mode="editBlindTable"
           @onPlay="onPlay"
           @onPause="onPause"
           @onDownBlind="onDownBlind"
@@ -27,11 +35,13 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import TournamentBlinds, {
+  BlindEditDto,
   BlindStructureModel,
 } from '~/components/tournamentBlinds.vue'
 import TournamentClock from '~/components/tournamentClock.vue'
 import { TournamentClockDto } from '~/dto/tournamentClockDto'
 import {
+  TournamentBlindDto,
   TournamentClockEventDto,
   TournamentDetailDto,
 } from '~/dto/tournamentDto'
@@ -59,6 +69,7 @@ export default class TournamentClockPage extends Vue {
   }
 
   showBlindTable: boolean = false
+  editBlindTable: boolean = false
   blindStructure: BlindStructureModel[] = []
 
   currentIdx = -1
@@ -103,17 +114,13 @@ export default class TournamentClockPage extends Vue {
     this.startDateTime = new Date(tournamentDetail.startDateTime)
     this.clock.title = tournamentDetail.title
 
-    this.blindStructure = []
-    let accumulateTime = 0
     this.blindStructure = res.data.structures.map<BlindStructureModel>(
       (value) => {
-        accumulateTime += value.minute
         return {
           level: value.level,
           smallBlind: value.smallBlind,
           bigBlind: value.bigBlind,
           minute: value.minute,
-          accumMinutes: accumulateTime,
         }
       }
     )
@@ -133,6 +140,32 @@ export default class TournamentClockPage extends Vue {
     this.clock.player = 0
     this.clock.totalPlayer = 0
     this.clock.averageStack = 0
+  }
+
+  async onBlindEdit(dto: BlindEditDto) {
+    this.editBlindTable = dto.edit
+
+    if (dto.request) {
+      const updateBlinds = this.blindStructure.map<TournamentBlindDto>(
+        (value) => value
+      )
+      const res = await this.$axios.put<BlindStructureModel[]>(
+        `/api/tournaments/${this.tournamentId}/blinds`,
+        updateBlinds
+      )
+      this.blindStructure = res.data.map<BlindStructureModel>((value) => {
+        return {
+          level: value.level,
+          smallBlind: value.smallBlind,
+          bigBlind: value.bigBlind,
+          minute: value.minute,
+        }
+      })
+    }
+  }
+
+  onBlindEditClose() {
+    this.editBlindTable = false
   }
 
   async onPlay() {
