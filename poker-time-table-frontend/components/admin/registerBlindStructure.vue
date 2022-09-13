@@ -40,7 +40,6 @@
                 :rules="smallBlindRule"
                 type="number"
                 hide-spin-buttons
-                single-line
                 required
               />
             </v-col>
@@ -51,7 +50,6 @@
                 :rules="bigBlindRule"
                 type="number"
                 hide-spin-buttons
-                single-line
                 required
               />
             </v-col>
