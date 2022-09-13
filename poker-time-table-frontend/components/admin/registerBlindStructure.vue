@@ -34,13 +34,24 @@
 
           <v-row>
             <v-col cols="12" lg="6">
-              <v-text-field v-model="smallBlind" label="Small Blind" required />
+              <v-text-field
+                v-model.number="smallBlind"
+                label="Small Blind"
+                :rules="smallBlindRule"
+                type="number"
+                hide-spin-buttons
+                single-line
+                required
+              />
             </v-col>
             <v-col cols="12" lg="6">
               <v-text-field
-                v-model="bigBlind"
-                :rules="bigBlindRule"
+                v-model.number="bigBlind"
                 label="Big Blind"
+                :rules="bigBlindRule"
+                type="number"
+                hide-spin-buttons
+                single-line
                 required
               />
             </v-col>
@@ -48,7 +59,7 @@
 
           <v-row>
             <v-col cols="12" lg="12">
-              <v-subheader>B.B UP</v-subheader>
+              <v-subheader>블라인드 증가 값</v-subheader>
               <v-slider
                 v-model="bigBlindInc"
                 step="10"
@@ -121,7 +132,7 @@
 
               <v-btn
                 text
-                :disabled="bigBlindInc < 10"
+                :disabled="disabledAddButton"
                 class="mr-4"
                 @click="onClickPlus"
               >
@@ -175,10 +186,10 @@ export default class AdminRegisterBlindStructure extends Vue {
 
   selectTemplate: BlindStructureTemplateDto | null = null
 
-  smallBlind: number = 5
-  bigBlind: number = 10
+  smallBlind: number = 0
+  bigBlind: number = 0
   bigBlindInc: number = 10
-  minute: number = 3
+  minute: number = 0
 
   async onChangeSelectTemplate() {
     if (this.selectTemplate === null) {
@@ -202,8 +213,21 @@ export default class AdminRegisterBlindStructure extends Vue {
     return this.editStructures?.length ?? 0
   }
 
+  get smallBlindRule() {
+    return [this.bigBlind >= this.smallBlind || '스몰 블라인드 값이 더 큽니다.']
+  }
+
   get bigBlindRule() {
-    return [this.bigBlind % 2 === 0 || 'Invalid Big Blind']
+    return [this.bigBlind % 2 === 0 || '빅 블라인드는 짝수여야 합니다.']
+  }
+
+  get disabledAddButton() {
+    return (
+      this.bigBlind <= 0 ||
+      this.smallBlind <= 0 ||
+      this.minute <= 0 ||
+      this.bigBlindInc <= 0
+    )
   }
 
   get disabledEditButton() {
@@ -218,10 +242,7 @@ export default class AdminRegisterBlindStructure extends Vue {
   }
 
   onClickPlus() {
-    if (this.bigBlindInc < 0) {
-      return
-    }
-    if (this.minute < 3) {
+    if (this.disabledAddButton) {
       return
     }
 

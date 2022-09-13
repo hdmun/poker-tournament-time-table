@@ -2,7 +2,12 @@
   <v-card class="fill-height" outlined tile>
     <v-row>
       <v-col cols="1">
-        <v-btn class="ma-3" fab @click="showMiniVariant = !showMiniVariant">
+        <v-btn
+          class="ma-3"
+          fab
+          :disabled="editMode"
+          @click="showMiniVariant = !showMiniVariant"
+        >
           <v-icon>
             mdi-{{ `chevron-${showMiniVariant ? 'left' : 'right'}` }}
           </v-icon>
@@ -192,6 +197,9 @@ export default class TournamentClock extends Vue {
 
   @Prop({ type: Boolean })
   pause!: boolean
+
+  @Prop({ type: Boolean, required: true })
+  editMode!: boolean
 
   created() {}
 

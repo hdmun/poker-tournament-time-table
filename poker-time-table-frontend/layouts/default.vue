@@ -116,7 +116,7 @@ export default class DefaultLayout extends Vue {
   items: NavigationItem[] = [
     {
       icon: 'mdi-apps',
-      title: 'Welcome',
+      title: '토너먼트',
       to: '/',
     },
     {
