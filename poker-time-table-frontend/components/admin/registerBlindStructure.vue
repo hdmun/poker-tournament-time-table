@@ -59,7 +59,7 @@
 
           <v-row>
             <v-col cols="12" lg="12">
-              <v-subheader>B.B UP</v-subheader>
+              <v-subheader>블라인드 증가 값</v-subheader>
               <v-slider
                 v-model="bigBlindInc"
                 step="10"
