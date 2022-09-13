@@ -246,15 +246,16 @@ export default class AdminRegisterBlindStructure extends Vue {
       return
     }
 
-    this.bigBlind += this.bigBlindInc
-    this.smallBlind = this.bigBlind / 2
-
     this.editStructures.push({
       level: this.editStructures.length + 1,
       smallBlind: this.smallBlind,
       bigBlind: this.bigBlind,
       minute: this.minute,
     })
+
+    // 다음 블라인드 자동으로 계산
+    this.bigBlind += this.bigBlindInc
+    this.smallBlind = this.bigBlind / 2
   }
 
   @Emit('register')
