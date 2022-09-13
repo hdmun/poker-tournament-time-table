@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BlindStructureRepository } from '~/blind-structures/blind-structures.repository';
-import { RegisterTournamentDto, TournamentDetailDto } from './dto/tournament';
+import {
+  RegisterTournamentDto,
+  TournamentBlindDto,
+  TournamentDetailDto,
+} from './dto/tournament';
 import { TournamentBlind } from './entities/tournament-blind.entity';
 import { Tournament } from './entities/tournament.entity';
 import { TournamentBlindRepository } from './tournament-blind.repository';
@@ -77,8 +81,84 @@ export class TournamentService {
   }
 
   async deleteTournament(id: number) {
-    const result = this.tournamentRepository.delete({ id });
+    const result = await this.tournamentRepository.delete({ id });
     this.logger.log(result);
+  }
+
+  async updateBlind(tournamentId: number, blinds: TournamentBlindDto[]) {
+    // todo transaction
+    const tournament = await this.tournamentRepository.findOneBy({
+      id: tournamentId,
+    });
+    if (!tournament) {
+      throw new Error(`[updateBlind] invalind tournament id, ${tournamentId}`);
+    }
+
+    const tournamentBlinds: TournamentBlind[] =
+      await this.blindRepository.findBy({
+        tournamentId: tournamentId,
+      });
+
+    // update, remove
+    const removeBlinds: TournamentBlind[] = [];
+    tournamentBlinds.forEach((blind, index) => {
+      if (index >= blinds.length) {
+        removeBlinds.push(blind);
+        return;
+      }
+
+      const updateBlind = blinds[index];
+      blind.level = updateBlind.level;
+      blind.smallBlind = updateBlind.smallBlind;
+      blind.bigBlind = updateBlind.bigBlind;
+      blind.minute = updateBlind.minute;
+    });
+
+    const deleteCount = tournamentBlinds.length - blinds.length;
+    if (removeBlinds.length > 0 && deleteCount > 0) {
+      tournamentBlinds.splice(blinds.length, deleteCount);
+    }
+
+    for (const updateBlind of tournamentBlinds) {
+      await this.blindRepository.update(
+        {
+          id: updateBlind.id,
+          tournamentId: tournament.id,
+        },
+        updateBlind,
+      );
+    }
+
+    for (const deleteBlind of removeBlinds) {
+      await this.blindRepository.delete({
+        id: deleteBlind.id,
+        tournamentId: tournament.id,
+      });
+    }
+
+    // add
+    let blindId = tournamentBlinds.length - 1;
+    const addBlinds = blinds
+      .slice(tournamentBlinds.length)
+      .map<TournamentBlind>((value) => {
+        blindId += 1;
+        return {
+          id: blindId,
+          tournamentId: tournament.id,
+          level: value.level,
+          smallBlind: value.smallBlind,
+          bigBlind: value.bigBlind,
+          minute: value.minute,
+        };
+      });
+
+    for (const insertBlind of addBlinds) {
+      await this.blindRepository.insert(insertBlind);
+    }
+
+    return await this.blindRepository.findBy({
+      tournamentId: tournament.id,
+    });
   }
 
   async play(id: number) {

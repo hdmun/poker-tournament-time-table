@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { interval } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { RegisterTournamentDto } from './dto/tournament';
+import { RegisterTournamentDto, TournamentBlindDto } from './dto/tournament';
 import { TournamentTimerService } from './tournament-timer.service';
 import { TournamentService } from './tournament.service';
 
@@ -53,16 +53,6 @@ export class TournamentController {
     }
   }
 
-  @Put('/:id')
-  async updateTournment() {
-    try {
-      // await this.tournamentService.registerTournament(dto);
-    } catch (error) {
-      this.logger.error(error);
-      throw error;
-    }
-  }
-
   @Put('/:id/play')
   async play(@Param('id') id: number) {
     try {
@@ -80,6 +70,19 @@ export class TournamentController {
   async pause(@Param('id') id: number) {
     try {
       await this.tournamentService.pause(id);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
+  @Put('/:id/blinds')
+  async updateTournmentBlind(
+    @Param('id') tournamentId: number,
+    @Body() dto: TournamentBlindDto[],
+  ) {
+    try {
+      return await this.tournamentService.updateBlind(tournamentId, dto);
     } catch (error) {
       this.logger.error(error);
       throw error;
