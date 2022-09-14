@@ -29,10 +29,15 @@ export class TournamentTimerService {
     let nextBreakRemainTime = '--:--';
 
     if (tournament.levelStart) {
+      let pauseTime = 0;
+      if (tournament.pauseTime) {
+        pauseTime = nowDate.getTime() - tournament.pauseTime.getTime();
+      }
+
       const remainDate = new Date(
         tournament.levelStart.getTime() +
           currentBlind.minute * 60 * 1000 +
-          tournament.pauseSeconds * 1000,
+          pauseTime,
       );
       remainTime = convertMsToTime(remainDate.getTime() - nowDate.getTime());
 
@@ -58,7 +63,7 @@ export class TournamentTimerService {
         const nextBreakReamin = new Date(
           tournament.levelStart.getTime() +
             nextBreakMinute * 60 * 1000 +
-            tournament.pauseSeconds * 1000,
+            pauseTime,
         );
         nextBreakRemainTime = convertMsToTime(
           nextBreakReamin.getTime() - nowDate.getTime(),
@@ -89,8 +94,8 @@ export class TournamentTimerService {
       started: tournament.startDateTime !== null,
       playTime: playTimeText,
       nextBreakRemainTime,
-      pause: tournament.pause,
       remainTime,
+      pause: tournament.startDateTime !== null && tournament.pauseTime !== null,
       level: currentBlind.level,
       smallBlind,
       bigBlind,
@@ -111,13 +116,7 @@ export class TournamentTimerService {
         continue;
       }
 
-      if (tournament.pause) {
-        await this.tournamentRepository.update(
-          { id: tournament.id },
-          {
-            pauseSeconds: () => 'pause_seconds + 1',
-          },
-        );
+      if (tournament.pauseTime) {
         continue;
       }
 
@@ -134,22 +133,26 @@ export class TournamentTimerService {
 
       const nowDate = new Date();
       const playTimeMs = nowDate.getTime() - tournament.levelStart.getTime();
-      const playTimeMinutes =
-        Math.floor(playTimeMs / 1000 / 60) - tournament.pauseSeconds * 60;
+
+      let pauseTime = 0;
+      if (tournament.pauseTime) {
+        pauseTime = tournament.pauseTime.getTime() / 1000 / 60;
+      }
+      const playTimeMinutes = Math.floor(playTimeMs / 1000 / 60) - pauseTime;
 
       // 다음 레벨로 넘겨야 할지 체크
       const currentBlind = blinds[tournament.level];
       if (currentBlind.minute <= playTimeMinutes) {
         tournament.level++;
         tournament.levelStart = nowDate;
-        tournament.pauseSeconds = 0;
+        tournament.pauseTime = null;
 
         await this.tournamentRepository.update(
           { id: tournament.id },
           {
             level: tournament.level,
             levelStart: tournament.levelStart,
-            pauseSeconds: tournament.pauseSeconds,
+            pauseTime: tournament.pauseTime,
           },
         );
       }

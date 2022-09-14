@@ -167,8 +167,10 @@ export class TournamentService {
       throw new Error(`invalind tournament id, ${id}`);
     }
 
-    if (!tournament.pause) {
-      throw new Error(`already playing tournment, ${tournament.title}`);
+    if (tournament.startDateTime && !tournament.pauseTime) {
+      throw new Error(
+        `already playing tournment, ${tournament.title}, ${tournament.pauseTime}`,
+      );
     }
 
     if (!tournament.startDateTime) {
@@ -177,11 +179,11 @@ export class TournamentService {
       tournament.levelStart = new Date();
     }
 
-    tournament.pause = false;
+    tournament.pauseTime = null;
     await this.tournamentRepository.update(
       { id: tournament.id },
       {
-        pause: tournament.pause,
+        pauseTime: tournament.pauseTime,
         startDateTime: tournament.startDateTime,
         level: tournament.level,
         levelStart: tournament.levelStart,
@@ -197,15 +199,17 @@ export class TournamentService {
       throw new Error(`invalid tournament id, ${id}`);
     }
 
-    if (tournament.pause) {
-      throw new Error(`already pause tournment, ${tournament.title}`);
+    if (tournament.startDateTime && tournament.pauseTime) {
+      throw new Error(
+        `already pause tournment, ${tournament.title}, ${tournament.pauseTime}`,
+      );
     }
 
-    tournament.pause = true;
+    tournament.pauseTime = new Date();
     await this.tournamentRepository.update(
       { id: tournament.id },
       {
-        pause: tournament.pause,
+        pauseTime: tournament.pauseTime,
       },
     );
 
@@ -223,13 +227,18 @@ export class TournamentService {
     }
 
     tournament.level -= 1;
+    tournament.levelStart = new Date();
+
+    if (tournament.pauseTime) {
+      tournament.pauseTime = new Date();
+    }
 
     await this.tournamentRepository.update(
       { id: tournament.id },
       {
         level: () => 'level - 1',
-        levelStart: new Date(),
-        pauseSeconds: 0,
+        levelStart: tournament.levelStart,
+        pauseTime: tournament.pauseTime,
       },
     );
 
@@ -254,13 +263,17 @@ export class TournamentService {
     }
 
     tournament.levelStart = new Date();
-    tournament.pauseSeconds = 0;
+
+    if (tournament.pauseTime) {
+      tournament.pauseTime = new Date();
+    }
+
     await this.tournamentRepository.update(
       { id: tournament.id },
       {
         level: () => 'level + 1',
         levelStart: tournament.levelStart,
-        pauseSeconds: 0,
+        pauseTime: tournament.pauseTime,
       },
     );
 
