@@ -94,63 +94,22 @@ export class TournamentService {
       throw new Error(`[updateBlind] invalind tournament id, ${tournamentId}`);
     }
 
-    const tournamentBlinds: TournamentBlind[] =
-      await this.blindRepository.findBy({
-        tournamentId: tournamentId,
-      });
-
-    // update, remove
-    const removeBlinds: TournamentBlind[] = [];
-    tournamentBlinds.forEach((blind, index) => {
-      if (index >= blinds.length) {
-        removeBlinds.push(blind);
-        return;
-      }
-
-      const updateBlind = blinds[index];
-      blind.level = updateBlind.level;
-      blind.smallBlind = updateBlind.smallBlind;
-      blind.bigBlind = updateBlind.bigBlind;
-      blind.minute = updateBlind.minute;
+    await this.blindRepository.delete({
+      tournamentId: tournament.id,
     });
 
-    const deleteCount = tournamentBlinds.length - blinds.length;
-    if (removeBlinds.length > 0 && deleteCount > 0) {
-      tournamentBlinds.splice(blinds.length, deleteCount);
-    }
-
-    for (const updateBlind of tournamentBlinds) {
-      await this.blindRepository.update(
-        {
-          id: updateBlind.id,
-          tournamentId: tournament.id,
-        },
-        updateBlind,
-      );
-    }
-
-    for (const deleteBlind of removeBlinds) {
-      await this.blindRepository.delete({
-        id: deleteBlind.id,
+    let blindId = -1;
+    const addBlinds = blinds.map<TournamentBlind>((value) => {
+      blindId += 1;
+      return {
+        id: blindId,
         tournamentId: tournament.id,
-      });
-    }
-
-    // add
-    let blindId = tournamentBlinds.length - 1;
-    const addBlinds = blinds
-      .slice(tournamentBlinds.length)
-      .map<TournamentBlind>((value) => {
-        blindId += 1;
-        return {
-          id: blindId,
-          tournamentId: tournament.id,
-          level: value.level,
-          smallBlind: value.smallBlind,
-          bigBlind: value.bigBlind,
-          minute: value.minute,
-        };
-      });
+        level: value.level,
+        smallBlind: value.smallBlind,
+        bigBlind: value.bigBlind,
+        minute: value.minute,
+      };
+    });
 
     for (const insertBlind of addBlinds) {
       await this.blindRepository.insert(insertBlind);
