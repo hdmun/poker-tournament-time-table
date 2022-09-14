@@ -62,7 +62,7 @@
                 v-model="bigBlindInc"
                 step="10"
                 min="10"
-                max="1000"
+                max="10000000"
                 class="align-center"
                 track-color="grey"
                 thumb-label
@@ -73,12 +73,12 @@
                     v-model="bigBlindInc"
                     step="10"
                     min="10"
-                    max="1000"
+                    max="10000000"
                     class="mt-0 pt-0"
                     hide-details
                     single-line
                     type="number"
-                    style="width: 60px"
+                    style="width: 150px"
                   ></v-text-field>
                 </template>
               </v-slider>
@@ -91,8 +91,8 @@
               <v-slider
                 v-model="minute"
                 step="1"
-                min="3"
-                max="30"
+                min="10"
+                max="300"
                 class="align-center"
                 track-color="grey"
                 thumb-label
@@ -102,13 +102,13 @@
                   <v-text-field
                     v-model="minute"
                     step="1"
-                    min="3"
-                    max="30"
+                    min="10"
+                    max="300"
                     class="mt-0 pt-0"
                     hide-details
                     single-line
                     type="number"
-                    style="width: 60px"
+                    style="width: 150px"
                   ></v-text-field>
                 </template>
               </v-slider>
@@ -186,8 +186,8 @@ export default class AdminRegisterBlindStructure extends Vue {
 
   smallBlind: number = 0
   bigBlind: number = 0
-  bigBlindInc: number = 10
-  minute: number = 0
+  bigBlindInc: number = 100
+  minute: number = 10
 
   async onChangeSelectTemplate() {
     if (this.selectTemplate === null) {
