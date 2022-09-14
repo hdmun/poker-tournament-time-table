@@ -19,8 +19,8 @@
           :data="clock"
           :show-variant.sync="showBlindTable"
           :current-step="currentIdx"
-          :starting="startDateTime !== null"
           :blind-count="blindStructure.length"
+          :starting="started"
           :edit-mode="editBlindTable"
           @onPlay="onPlay"
           @onPause="onPause"
@@ -57,7 +57,7 @@ export default class TournamentClockPage extends Vue {
     playTime: '00:00:00',
     nextBreakTime: '00:00',
     remainTime: '00:00',
-    pause: false,
+    pause: true,
     level: 0,
     title: '토너먼트 타이틀',
     smallBlind: 0,
@@ -74,7 +74,7 @@ export default class TournamentClockPage extends Vue {
 
   currentIdx = -1
   tournamentId = -1
-  startDateTime: Date | null = null
+  started: boolean = false
 
   eventSource: EventSource | null = null
 
@@ -105,13 +105,8 @@ export default class TournamentClockPage extends Vue {
     )
 
     const tournamentDetail = res.data
-
     this.tournamentId = tournamentDetail.id
-    if (!tournamentDetail.startDateTime) {
-      return
-    }
-
-    this.startDateTime = new Date(tournamentDetail.startDateTime)
+    this.started = tournamentDetail.startDateTime !== null
     this.clock.title = tournamentDetail.title
 
     this.blindStructure = res.data.structures.map<BlindStructureModel>(
@@ -128,6 +123,7 @@ export default class TournamentClockPage extends Vue {
 
   updateClock(dto: TournamentClockEventDto) {
     this.currentIdx = dto.index
+    this.started = dto.started
     this.clock.playTime = dto.playTime
     this.clock.nextBreakTime = dto.nextBreakRemainTime
     this.clock.remainTime = dto.remainTime

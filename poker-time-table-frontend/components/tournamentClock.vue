@@ -195,9 +195,6 @@ export default class TournamentClock extends Vue {
   @Prop({ type: Boolean })
   starting!: boolean
 
-  @Prop({ type: Boolean })
-  pause!: boolean
-
   @Prop({ type: Boolean, required: true })
   editMode!: boolean
 
