@@ -41,6 +41,7 @@
                 type="number"
                 hide-spin-buttons
                 required
+                @focus="$event.target.select()"
               />
             </v-col>
             <v-col cols="12" lg="6">
@@ -51,6 +52,7 @@
                 type="number"
                 hide-spin-buttons
                 required
+                @focus="$event.target.select()"
               />
             </v-col>
           </v-row>
@@ -184,8 +186,8 @@ export default class AdminRegisterBlindStructure extends Vue {
 
   selectTemplate: BlindStructureTemplateDto | null = null
 
-  smallBlind: number = 0
-  bigBlind: number = 0
+  smallBlind: number = 100
+  bigBlind: number = 200
   bigBlindInc: number = 100
   minute: number = 10
 
@@ -260,6 +262,18 @@ export default class AdminRegisterBlindStructure extends Vue {
 
     this.smallBlind = smallBlind
     this.bigBlind = bigBlind
+  }
+
+  updateBlind() {
+    const blindCount = this.editStructures.length
+    if (blindCount > 0) {
+      const lastBlind = this.editStructures[blindCount - 1]
+      this.smallBlind = lastBlind.smallBlind
+      this.bigBlind = lastBlind.bigBlind
+    } else {
+      this.smallBlind = 100
+      this.bigBlind = 200
+    }
   }
 
   @Emit('register')

@@ -3,6 +3,7 @@
     <v-row class="pa-6">
       <v-col>
         <AdminRegisterBlindStructure
+          ref="registerBlindStructure"
           :name.sync="metaName"
           :templates="blindTemplates"
           :editstructure.sync="structure"
@@ -20,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Ref, Vue } from 'nuxt-property-decorator'
 import AdminBlindStructureTemplate from '~/components/admin/blindStructureTemplate.vue'
 import AdminRegisterBlindStructure, {
   EditBlindStructureDto,
@@ -39,6 +40,8 @@ import {
   },
 })
 export default class AdminBlindStructure extends Vue {
+  @Ref() registerBlindStructure!: AdminRegisterBlindStructure
+
   metaId: number | null = null
   metaName: string = ''
   blindTemplates: BlindStructureTemplateDto[] = []
@@ -87,6 +90,8 @@ export default class AdminBlindStructure extends Vue {
         minute: value.minute,
       }
     })
+
+    this.registerBlindStructure.updateBlind()
   }
 }
 </script>
