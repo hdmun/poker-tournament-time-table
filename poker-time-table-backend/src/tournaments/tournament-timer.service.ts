@@ -124,7 +124,11 @@ export class TournamentTimerService {
         tournamentId: tournament.id,
       });
 
-      if (blinds.length <= tournament.level) {
+      if (blinds.length === tournament.level) {
+        continue;
+      }
+
+      if (blinds.length < tournament.level) {
         this.logger.error(
           `not enough blind level, ${tournament.level} / ${blinds.length}`,
         );
