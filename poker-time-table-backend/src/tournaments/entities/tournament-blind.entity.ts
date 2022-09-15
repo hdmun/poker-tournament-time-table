@@ -2,13 +2,13 @@ import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'tournament_blind' })
 export class TournamentBlind {
-  @PrimaryColumn()
-  id: number;
-
   @PrimaryColumn({ name: 'tournament_id' })
   tournamentId: number;
 
   @PrimaryColumn()
+  id: number;
+
+  @Column()
   level: number;
 
   @Column({ name: 'small_blind' })

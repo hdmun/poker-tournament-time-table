@@ -107,16 +107,21 @@ export class TournamentService {
       throw new Error(`[updateBlind] invalind tournament id, ${tournamentId}`);
     }
 
-    await this.blindRepository.delete({
-      tournamentId: tournament.id,
-    });
+    const tournamentBlinds: TournamentBlind[] =
+      await this.blindRepository.findBy({
+        tournamentId: tournamentId,
+      });
+
+    for (const blind of tournamentBlinds) {
+      await this.blindRepository.delete({ id: blind.id, tournamentId });
+    }
 
     let blindId = -1;
     const addBlinds = blinds.map<TournamentBlind>((value) => {
       blindId += 1;
       return {
-        id: blindId,
         tournamentId: tournament.id,
+        id: blindId,
         level: value.level,
         smallBlind: value.smallBlind,
         bigBlind: value.bigBlind,
