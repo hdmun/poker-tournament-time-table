@@ -60,8 +60,8 @@
               <v-subheader>블라인드 증가 값</v-subheader>
               <v-slider
                 v-model="bigBlindInc"
-                step="10"
-                min="10"
+                step="100"
+                min="100"
                 max="10000000"
                 class="align-center"
                 track-color="grey"
@@ -71,8 +71,8 @@
                 <template #append>
                   <v-text-field
                     v-model="bigBlindInc"
-                    step="10"
-                    min="10"
+                    step="100"
+                    min="100"
                     max="10000000"
                     class="mt-0 pt-0"
                     hide-details
