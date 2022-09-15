@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Logger,
   Param,
@@ -47,6 +48,16 @@ export class TournamentController {
   async registerTournament(@Body() dto: RegisterTournamentDto) {
     try {
       await this.tournamentService.registerTournament(dto);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
+  @Delete('/:id')
+  async deleteTournament(@Param('id') id: number) {
+    try {
+      return await this.tournamentService.closeTournament(id);
     } catch (error) {
       this.logger.error(error);
       throw error;

@@ -80,9 +80,22 @@ export class TournamentService {
     await this.blindRepository.save(newTornamentBlinds);
   }
 
-  async deleteTournament(id: number) {
-    const result = await this.tournamentRepository.delete({ id });
-    this.logger.log(result);
+  async closeTournament(tournamentId: number) {
+    const tournament = await this.tournamentRepository.findOneBy({
+      id: tournamentId,
+    });
+    if (!tournament) {
+      throw new Error(
+        `[closeTournament] invalind tournament id, ${tournamentId}`,
+      );
+    }
+
+    await this.tournamentRepository.update(
+      { id: tournament.id },
+      {
+        endDateTime: new Date(),
+      },
+    );
   }
 
   async updateBlind(tournamentId: number, blinds: TournamentBlindDto[]) {
