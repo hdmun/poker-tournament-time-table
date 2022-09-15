@@ -80,9 +80,22 @@ export class TournamentService {
     await this.blindRepository.save(newTornamentBlinds);
   }
 
-  async deleteTournament(id: number) {
-    const result = await this.tournamentRepository.delete({ id });
-    this.logger.log(result);
+  async closeTournament(tournamentId: number) {
+    const tournament = await this.tournamentRepository.findOneBy({
+      id: tournamentId,
+    });
+    if (!tournament) {
+      throw new Error(
+        `[closeTournament] invalind tournament id, ${tournamentId}`,
+      );
+    }
+
+    await this.tournamentRepository.update(
+      { id: tournament.id },
+      {
+        endDateTime: new Date(),
+      },
+    );
   }
 
   async updateBlind(tournamentId: number, blinds: TournamentBlindDto[]) {
@@ -94,16 +107,21 @@ export class TournamentService {
       throw new Error(`[updateBlind] invalind tournament id, ${tournamentId}`);
     }
 
-    await this.blindRepository.delete({
-      tournamentId: tournament.id,
-    });
+    const tournamentBlinds: TournamentBlind[] =
+      await this.blindRepository.findBy({
+        tournamentId: tournamentId,
+      });
+
+    for (const blind of tournamentBlinds) {
+      await this.blindRepository.delete({ id: blind.id, tournamentId });
+    }
 
     let blindId = -1;
     const addBlinds = blinds.map<TournamentBlind>((value) => {
       blindId += 1;
       return {
-        id: blindId,
         tournamentId: tournament.id,
+        id: blindId,
         level: value.level,
         smallBlind: value.smallBlind,
         bigBlind: value.bigBlind,
@@ -132,20 +150,29 @@ export class TournamentService {
       );
     }
 
+    const nowDate = new Date();
     if (!tournament.startDateTime) {
-      tournament.startDateTime = new Date();
+      tournament.startDateTime = nowDate;
       tournament.level = 0;
-      tournament.levelStart = new Date();
+      tournament.levelStart = nowDate;
+    }
+
+    let pauseSeconds = 0;
+    if (tournament.pauseTime) {
+      const pauseTime = nowDate.getTime() - tournament.pauseTime.getTime();
+      pauseSeconds = pauseTime / 1000;
     }
 
     tournament.pauseTime = null;
+
     await this.tournamentRepository.update(
       { id: tournament.id },
       {
-        pauseTime: tournament.pauseTime,
         startDateTime: tournament.startDateTime,
         level: tournament.level,
         levelStart: tournament.levelStart,
+        pauseTime: tournament.pauseTime,
+        pauseSeconds: () => `pause_seconds + ${pauseSeconds}`,
       },
     );
 
