@@ -150,20 +150,29 @@ export class TournamentService {
       );
     }
 
+    const nowDate = new Date();
     if (!tournament.startDateTime) {
-      tournament.startDateTime = new Date();
+      tournament.startDateTime = nowDate;
       tournament.level = 0;
-      tournament.levelStart = new Date();
+      tournament.levelStart = nowDate;
+    }
+
+    let pauseSeconds = 0;
+    if (tournament.pauseTime) {
+      const pauseTime = nowDate.getTime() - tournament.pauseTime.getTime();
+      pauseSeconds = pauseTime / 1000;
     }
 
     tournament.pauseTime = null;
+
     await this.tournamentRepository.update(
       { id: tournament.id },
       {
-        pauseTime: tournament.pauseTime,
         startDateTime: tournament.startDateTime,
         level: tournament.level,
         levelStart: tournament.levelStart,
+        pauseTime: tournament.pauseTime,
+        pauseSeconds: () => `pause_seconds + ${pauseSeconds}`,
       },
     );
 

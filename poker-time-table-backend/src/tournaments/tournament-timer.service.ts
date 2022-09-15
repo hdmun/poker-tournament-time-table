@@ -37,7 +37,8 @@ export class TournamentTimerService {
       const remainDate = new Date(
         tournament.levelStart.getTime() +
           currentBlind.minute * 60 * 1000 +
-          pauseTime,
+          pauseTime +
+          tournament.pauseSeconds * 1000,
       );
       remainTime = convertMsToTime(remainDate.getTime() - nowDate.getTime());
 
@@ -63,7 +64,8 @@ export class TournamentTimerService {
         const nextBreakReamin = new Date(
           tournament.levelStart.getTime() +
             nextBreakMinute * 60 * 1000 +
-            pauseTime,
+            pauseTime +
+            tournament.pauseSeconds * 1000,
         );
         nextBreakRemainTime = convertMsToTime(
           nextBreakReamin.getTime() - nowDate.getTime(),
@@ -142,7 +144,10 @@ export class TournamentTimerService {
       if (tournament.pauseTime) {
         pauseTime = tournament.pauseTime.getTime() / 1000 / 60;
       }
-      const playTimeMinutes = Math.floor(playTimeMs / 1000 / 60) - pauseTime;
+      const playTimeMinutes =
+        Math.floor(playTimeMs / 1000 / 60) -
+        pauseTime -
+        tournament.pauseSeconds * 1000;
 
       // 다음 레벨로 넘겨야 할지 체크
       const currentBlind = blinds[tournament.level];
