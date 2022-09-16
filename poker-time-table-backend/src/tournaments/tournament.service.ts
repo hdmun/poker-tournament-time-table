@@ -225,6 +225,7 @@ export class TournamentService {
         level: () => 'level - 1',
         levelStart: tournament.levelStart,
         pauseTime: tournament.pauseTime,
+        pauseSeconds: 0
       },
     );
 
@@ -260,6 +261,7 @@ export class TournamentService {
         level: () => 'level + 1',
         levelStart: tournament.levelStart,
         pauseTime: tournament.pauseTime,
+        pauseSeconds: 0
       },
     );
 
