@@ -3,6 +3,8 @@ import colors from 'vuetify/es5/util/colors'
 export default {
   dev: process.env.NODE_ENV !== 'production',
   ssr: false,
+  telemetry: false,
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - poker-time-table-frontend',
