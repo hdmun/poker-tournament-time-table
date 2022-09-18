@@ -3,6 +3,7 @@
     <v-data-table
       :headers="headers"
       :items="tournaments"
+      :page.sync="page"
       :items-per-page="10"
       hide-default-footer
       class="elevation-1"
