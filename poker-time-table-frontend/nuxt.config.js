@@ -52,7 +52,7 @@ export default {
 
   proxy: {
     '/api/': {
-      target: 'http://localhost:3001',
+      target: process.env.NODE_ENV === 'production' ? 'http://localhost:3001' : 'http://localhost:4001',
       pathRewrite: {
         '^/api/': '/',
       },
@@ -89,7 +89,7 @@ export default {
   build: {},
 
   server: {
-    port: 3000,
+    port: process.env.NODE_ENV === 'production' ? 3000 : 4000,
     host: '0.0.0.0',
   },
 
