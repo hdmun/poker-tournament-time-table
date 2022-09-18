@@ -12,5 +12,6 @@ xcopy /q /f /y package-lock.json %DST_DIR%\*.*
 robocopy .\.nuxt %DST_DIR%\.nuxt /MIR
 ::robocopy .\dist %DST_DIR%\dist /MIR
 
+c:
 cd %DST_DIR%
 call npm install --production
