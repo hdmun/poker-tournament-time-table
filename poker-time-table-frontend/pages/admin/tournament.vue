@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { Component, Ref, Vue } from 'nuxt-property-decorator'
-import TournamentTable from '~/components/tournamentTable.vue'
+import TournamentTable from '~/components/tournaments/tournamentTable.vue'
 import AdminRegisterTournament from '~/components/admin/registerTournament.vue'
 import { RegisterTournamentDto } from '~/dto/tournamentDto'
 

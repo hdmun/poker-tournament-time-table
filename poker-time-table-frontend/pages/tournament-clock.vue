@@ -37,8 +37,8 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import TournamentBlinds, {
   BlindEditDto,
   BlindStructureModel,
-} from '~/components/tournamentBlinds.vue'
-import TournamentClock from '~/components/tournamentClock.vue'
+} from '~/components/tournaments/tournamentBlinds.vue'
+import TournamentClock from '~/components/tournaments/tournamentClock.vue'
 import { TournamentClockDto } from '~/dto/tournamentClockDto'
 import {
   TournamentBlindDto,

@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import { Component, Ref, Vue } from 'nuxt-property-decorator'
-import TournamentTable from '~/components/tournamentTable.vue'
+import TournamentTable from '~/components/tournaments/tournamentTable.vue'
 
 @Component({
   components: {
