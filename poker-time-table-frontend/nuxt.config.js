@@ -3,6 +3,8 @@ import colors from 'vuetify/es5/util/colors'
 export default {
   dev: process.env.NODE_ENV !== 'production',
   ssr: false,
+  telemetry: false,
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - poker-time-table-frontend',
@@ -50,9 +52,15 @@ export default {
 
   proxy: {
     '/api/': {
-      target: 'http://localhost:3001',
+      target: process.env.NODE_ENV === 'production' ? 'http://localhost:3001' : 'http://localhost:4001',
       pathRewrite: {
         '^/api/': '/',
+      },
+    },
+    '/ws/': {
+      target: process.env.NODE_ENV === 'production' ? 'ws://localhost:3001' : 'ws://localhost:4001',
+      pathRewrite: {
+        '^/ws/': '/',
       },
     },
   },
@@ -87,7 +95,7 @@ export default {
   build: {},
 
   server: {
-    port: 3000,
+    port: process.env.NODE_ENV === 'production' ? 3000 : 4000,
     host: '0.0.0.0',
   },
 
