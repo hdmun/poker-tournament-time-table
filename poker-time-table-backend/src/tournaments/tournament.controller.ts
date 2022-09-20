@@ -9,20 +9,14 @@ import {
   Put,
   Sse,
 } from '@nestjs/common';
-import { interval } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
 import { RegisterTournamentDto, TournamentBlindDto } from './dto/tournament';
-import { TournamentTimerService } from './tournament-timer.service';
 import { TournamentService } from './tournament.service';
 
 @Controller('tournaments')
 export class TournamentController {
   private readonly logger = new Logger(TournamentController.name);
 
-  constructor(
-    private readonly timerService: TournamentTimerService,
-    private readonly tournamentService: TournamentService,
-  ) {}
+  constructor(private readonly tournamentService: TournamentService) {}
 
   @Get()
   async tournaments() {
@@ -118,22 +112,5 @@ export class TournamentController {
       this.logger.error(error);
       throw error;
     }
-  }
-
-  @Sse('/clock/:id')
-  async clockTimer(@Param('id') id: number) {
-    return interval(1000).pipe(
-      switchMap(() => {
-        try {
-          return this.timerService.calcClock(id);
-        } catch (error) {
-          this.logger.error(error);
-          throw error;
-        }
-      }),
-      map((clock) => ({
-        data: clock,
-      })),
-    );
   }
 }

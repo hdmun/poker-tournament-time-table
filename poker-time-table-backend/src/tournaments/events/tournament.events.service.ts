@@ -1,19 +1,54 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { TournamentClockEventDto } from './dto/tournament';
-import { TournamentBlindRepository } from './tournament-blind.repository';
-import { TournamentRepository } from './tournament.repository';
+import { Subject } from 'rxjs';
+import { TournamentClockEventDto } from '../dto/tournament';
+import { TournamentBlindRepository } from '../tournament-blind.repository';
+import { TournamentRepository } from '../tournament.repository';
 
 @Injectable()
-export class TournamentTimerService {
+export class EventService {
   constructor(
     private readonly tournamentRepository: TournamentRepository,
     private readonly blindRepository: TournamentBlindRepository,
   ) {}
 
-  private readonly logger = new Logger(TournamentTimerService.name);
+  private readonly logger = new Logger(EventService.name);
 
-  async calcClock(tournamentId: number): Promise<TournamentClockEventDto> {
+  private subjects = new Map<number, Subject<TournamentClockEventDto>>();
+
+  getClockObservable(tournamentId: number) {
+    // if (!this.subjects.has(tournamentId)) { throw new Exception(''); }
+
+    return this.subjects.get(tournamentId).asObservable();
+  }
+
+  @Cron(CronExpression.EVERY_SECOND)
+  async updateClock() {
+    console.time('updateClock');
+
+    const playingTournaments = await this.tournamentRepository
+      .createQueryBuilder('tournament')
+      .andWhere('tournament.start_datetime IS NOT NULL')
+      .andWhere('tournament.level_start IS NOT NULL')
+      .andWhere('tournament.end_datetime IS NULL')
+      .getMany();
+
+    for (const tournament of playingTournaments) {
+      const tournamentId = tournament.id;
+      if (!this.subjects.has(tournamentId)) {
+        this.subjects.set(tournamentId, new Subject<TournamentClockEventDto>());
+      }
+
+      const clockData = await this.calcClock(tournamentId);
+      this.subjects.get(tournamentId).next(clockData);
+    }
+    console.timeEnd('updateClock');
+  }
+
+  private async calcClock(
+    tournamentId: number,
+  ): Promise<TournamentClockEventDto> {
+    console.time('calcClock');
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
     });
@@ -34,13 +69,30 @@ export class TournamentTimerService {
         pauseTime = nowDate.getTime() - tournament.pauseTime.getTime();
       }
 
+      if (pauseTime < 0) {
+        this.logger.error(
+          `tournament pauseTime minus, tournamentId: ${tournamentId}, pauseTime: ${pauseTime}, nowDate: ${nowDate} tournament.pauseTime: ${tournament.pauseTime}`,
+        );
+      }
+
       const remainDate = new Date(
         tournament.levelStart.getTime() +
           currentBlind.minute * 60 * 1000 +
           pauseTime +
           tournament.pauseSeconds * 1000,
       );
-      remainTime = convertMsToTime(remainDate.getTime() - nowDate.getTime());
+
+      const reaminTimeMs = remainDate.getTime() - nowDate.getTime();
+      if (reaminTimeMs < 0) {
+        this.logger.error(
+          `tournament pauseTime minus
+          , tournamentId: ${tournamentId}
+          , reaminTimeMs: ${reaminTimeMs}
+          , nowDate: ${nowDate}
+          , remainDate: ${remainDate}`,
+        );
+      }
+      remainTime = convertMsToTime(reaminTimeMs);
 
       const nextBreak = blinds.find(
         (value, index) => tournament.level < index && value.level < 0,
@@ -90,6 +142,7 @@ export class TournamentTimerService {
         bigBlind = prevBlind.bigBlind;
       }
     }
+    console.timeEnd('calcClock');
 
     return {
       index: tournament.level,
@@ -105,7 +158,8 @@ export class TournamentTimerService {
   }
 
   @Cron(CronExpression.EVERY_SECOND)
-  async updateClock() {
+  async updateTournamentBlindLevel() {
+    console.time('updateTournamentBlindLevel');
     const playingTournaments = await this.tournamentRepository
       .createQueryBuilder('tournament')
       .andWhere('tournament.start_datetime IS NOT NULL')
@@ -166,6 +220,7 @@ export class TournamentTimerService {
         );
       }
     }
+    console.timeEnd('updateTournamentBlindLevel');
   }
 }
 

@@ -163,6 +163,10 @@ export class TournamentService {
       pauseSeconds = pauseTime / 1000;
     }
 
+    this.logger.log(
+      `play tournament, id: ${id}, pauseSeconds: ${pauseSeconds}`,
+    );
+
     tournament.pauseTime = null;
 
     await this.tournamentRepository.update(
@@ -225,7 +229,7 @@ export class TournamentService {
         level: () => 'level - 1',
         levelStart: tournament.levelStart,
         pauseTime: tournament.pauseTime,
-        pauseSeconds: 0
+        pauseSeconds: 0,
       },
     );
 
@@ -261,7 +265,7 @@ export class TournamentService {
         level: () => 'level + 1',
         levelStart: tournament.levelStart,
         pauseTime: tournament.pauseTime,
-        pauseSeconds: 0
+        pauseSeconds: 0,
       },
     );
 
