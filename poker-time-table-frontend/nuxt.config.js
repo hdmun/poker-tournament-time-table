@@ -57,6 +57,12 @@ export default {
         '^/api/': '/',
       },
     },
+    '/ws/': {
+      target: process.env.NODE_ENV === 'production' ? 'ws://localhost:3001' : 'ws://localhost:4001',
+      pathRewrite: {
+        '^/ws/': '/',
+      },
+    },
   },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa

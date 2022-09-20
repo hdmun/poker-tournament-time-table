@@ -46,6 +46,10 @@ import {
   TournamentDetailDto,
 } from '~/dto/tournamentDto'
 
+interface WsResponse<T> {
+  event: string
+  data: T
+}
 @Component({
   components: {
     TournamentBlinds,
@@ -76,7 +80,7 @@ export default class TournamentClockPage extends Vue {
   tournamentId = -1
   started: boolean = false
 
-  eventSource: EventSource | null = null
+  webSocket: WebSocket | null = null
 
   mounted() {
     const tournamentId = this.$route.query?.id as string
@@ -87,15 +91,25 @@ export default class TournamentClockPage extends Vue {
 
     this.loadTournaments(tournamentId)
 
-    this.eventSource = new EventSource(`/api/tournaments/clock/${tournamentId}`)
-    this.eventSource.onmessage = (ev: MessageEvent) => {
-      this.updateClock(JSON.parse(ev.data) as TournamentClockEventDto)
+    const url = new URL(`/ws/tournaments/events`, location.href);
+    url.protocol = 'ws';
+    this.webSocket = new WebSocket(url);
+    this.webSocket.onmessage = this.onmessage 
+    this.webSocket.onopen = () => {
+      this.webSocket?.send(
+        JSON.stringify({ event: 'clock', data: Number(tournamentId)})
+      );
     }
   }
 
+  onmessage (ev: MessageEvent<string>) {
+    const wsResponse = JSON.parse(ev.data) as WsResponse<TournamentClockEventDto>
+    this.updateClock(wsResponse.data)
+  }
+
   beforeDestroy() {
-    if (this.eventSource !== null) {
-      this.eventSource.close()
+    if (this.webSocket !== null) {
+      this.webSocket.close()
     }
   }
 
