@@ -60,7 +60,11 @@ export class EventService {
     const currentBlind = blinds[tournament.level];
     const nowDate = new Date();
 
-    let remainTime = '00:00';
+    let remainTime: TimeDto = {
+      hours: '00',
+      minutes: '00',
+      seconds: '00',
+    };
     let nextBreakRemainTime = '--:--';
 
     if (tournament.levelStart) {
@@ -119,7 +123,7 @@ export class EventService {
             pauseTime +
             tournament.pauseSeconds * 1000,
         );
-        nextBreakRemainTime = convertMsToTime(
+        nextBreakRemainTime = convertMsToTimeString(
           nextBreakReamin.getTime() - nowDate.getTime(),
         );
       }
@@ -131,7 +135,7 @@ export class EventService {
     if (tournament.startDateTime) {
       const playTimeMs = nowDate.getTime() - tournament.startDateTime.getTime();
       const playTimeMinutes = playTimeMs;
-      playTimeText = convertMsToTime(playTimeMinutes);
+      playTimeText = convertMsToTimeString(playTimeMinutes);
 
       if (currentBlind.level > 0) {
         smallBlind = currentBlind.smallBlind;
@@ -149,7 +153,9 @@ export class EventService {
       started: tournament.startDateTime !== null,
       playTime: playTimeText,
       nextBreakRemainTime,
-      remainTime,
+      reaminHours: remainTime.hours,
+      reaminMinutes: remainTime.minutes,
+      reaminSeconds: remainTime.seconds,
       pause: tournament.startDateTime !== null && tournament.pauseTime !== null,
       level: currentBlind.level,
       smallBlind,
@@ -228,8 +234,13 @@ function padTo2Digits(num: number) {
   return num.toString().padStart(2, '0');
 }
 
-function convertMsToTime(milliseconds: number) {
-  // https://bobbyhadz.com/blog/typescript-calculate-time-between-dates
+interface TimeDto {
+  hours: string;
+  minutes: string;
+  seconds: string;
+}
+
+function convertMsToTime(milliseconds: number): TimeDto {
   let seconds = Math.floor(milliseconds / 1000);
   let minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
@@ -237,17 +248,26 @@ function convertMsToTime(milliseconds: number) {
   seconds = seconds % 60;
   minutes = minutes % 60;
 
+  return {
+    hours: padTo2Digits(hours),
+    minutes: padTo2Digits(minutes),
+    seconds: padTo2Digits(seconds),
+  };
+}
+
+function convertMsToTimeString(milliseconds: number) {
+  // https://bobbyhadz.com/blog/typescript-calculate-time-between-dates
+  const time = convertMsToTime(milliseconds);
+
   // 👇️ If you want to roll hours over, e.g. 00 to 24
   // 👇️ uncomment the line below
   // uncommenting next line gets you `00:00:00` instead of `24:00:00`
   // or `12:15:31` instead of `36:15:31`, etc.
   // 👇️ (roll hours over)
   // hours = hours % 24;
-  if (hours === 0) {
-    return `${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
+  if (time.hours === '00') {
+    return `${time.minutes}:${time.seconds}`;
   }
 
-  return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}:${padTo2Digits(
-    seconds,
-  )}`;
+  return `${time.hours}:${time.minutes}:${time.seconds}`;
 }

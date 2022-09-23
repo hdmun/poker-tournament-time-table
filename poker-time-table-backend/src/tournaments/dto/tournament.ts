@@ -38,7 +38,9 @@ export interface TournamentClockEventDto {
   started: boolean;
   playTime: string;
   nextBreakRemainTime: string;
-  remainTime: string;
+  reaminHours: string;
+  reaminMinutes: string;
+  reaminSeconds: string;
   pause: boolean;
   level: number;
   smallBlind: number;
