@@ -1,55 +1,45 @@
 <template>
   <v-card height="100%" outlined tile>
-    <v-row align="center" justify="center">
-      <v-col> </v-col>
-      <v-col cols="6">
-        <v-card-title class="justify-center"> BLINDS </v-card-title>
-      </v-col>
-      <v-col>
-        <v-btn @click="onBlindEdit(!editMode)">
-          <template v-if="editMode">
-            <v-icon left color="success"> mdi-check </v-icon>
-            DONE
-          </template>
-          <template v-else>
-            <v-icon left> mdi-pencil </v-icon>
-            Edit
-          </template>
+    <v-row justify="center" align="center">
+      <v-col cols="1">
+        <v-btn class="ma-2 pa-1" outlined @click="onBlindEdit(!editMode)">
+          <template v-if="editMode"> DONE </template>
+          <template v-else> Edit </template>
         </v-btn>
       </v-col>
-      <v-col v-if="editMode" cols="2">
+
+      <v-col>
+        <v-card-title class="pa-2 blind-table-title"> BLINDS </v-card-title>
+      </v-col>
+
+      <v-col v-if="editMode" cols="1">
         <v-icon left @click="onBlindEditClose()"> mdi-close </v-icon>
       </v-col>
     </v-row>
 
     <v-row justify="center" class="ma-0">
-      <v-col class="pa-0" :cols="editMode ? 2 : 3">
-        <v-card class="pa-0" color="accent" outlined tile>
-          <v-card-title class="justify-center"> Lv. </v-card-title>
-        </v-card>
-      </v-col>
-
-      <v-col class="pa-0" :cols="editMode ? 2 : 3">
-        <v-card class="pa-0" color="accent" outlined tile>
-          <v-card-title class="justify-center"> S.B </v-card-title>
-        </v-card>
-      </v-col>
-
-      <v-col class="pa-0" :cols="editMode ? 2 : 3">
-        <v-card class="pa-0" color="accent" outlined tile>
-          <v-card-title class="justify-center"> B.B </v-card-title>
-        </v-card>
-      </v-col>
-
-      <v-col class="pa-0" :cols="editMode ? 2 : 3">
-        <v-card class="pa-0" color="accent" outlined tile>
-          <v-card-title class="justify-center"> 시간 </v-card-title>
+      <v-col
+        v-for="header in headers"
+        :key="header"
+        class="pa-0"
+        :cols="editMode ? 2 : 3"
+      >
+        <v-card class="pa-0" color="gray6" outlined tile>
+          <v-card-title
+            class="pa-2 justify-center small-copy-2-exbold secondary4--text"
+          >
+            {{ header }}
+          </v-card-title>
         </v-card>
       </v-col>
 
       <v-col v-if="editMode" class="pa-0" :cols="editMode ? 4 : 0">
-        <v-card class="pa-0" color="accent" outlined tile>
-          <v-card-title class="justify-center"> 편집 </v-card-title>
+        <v-card class="pa-0" color="gray6" outlined tile>
+          <v-card-title
+            class="pa-2 justify-center small-copy-2-exbold secondary4--text"
+          >
+            편집
+          </v-card-title>
         </v-card>
       </v-col>
     </v-row>
@@ -61,32 +51,47 @@
       class="ma-0"
     >
       <template v-if="blind.level > 0">
-        <v-col class="pa-0" :cols="editMode ? 2 : 3">
-          <v-card class="pa-0" :color="currentColorText(index)" outlined tile>
-            <v-card-title class="justify-center">
+        <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
+          <v-card
+            class="pa-0"
+            :color="currentColorBackground(index)"
+            outlined
+            tile
+          >
+            <v-card-title
+              :class="`blind-table-data-text ${currentColorText(index)}--text`"
+            >
               {{ blind.level }}
             </v-card-title>
           </v-card>
         </v-col>
 
-        <v-col class="pa-0" :cols="editMode ? 2 : 3">
-          <v-card class="pa-0" :color="currentColorText(index)" outlined tile>
+        <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
+          <v-card
+            class="pa-0"
+            :color="currentColorBackground(index)"
+            outlined
+            tile
+          >
             <template v-if="editMode">
-              <v-card-title class="pa-0 justify-center">
+              <v-card-title class="pa-0">
                 <v-text-field
                   v-model="blind.smallBlind"
-                  class="ma-0"
-                  :full-width="false"
+                  class="pt-2 pb-1 ma-0 blind-table-data-edit-text"
                   single-line
                   type="number"
                   hide-spin-buttons
+                  hide-details
                   reverse
-                  style="font-size: 1em"
                 />
               </v-card-title>
             </template>
             <template v-else>
-              <v-card-title class="justify-center">
+              <v-card-title
+                :class="`blind-table-data-text ${currentColorText(
+                  index
+                )}--text`"
+              >
                 {{ blind.smallBlind }}
               </v-card-title>
             </template>
@@ -94,22 +99,31 @@
         </v-col>
 
         <v-col class="pa-0" :cols="editMode ? 2 : 3">
-          <v-card class="pa-0" :color="currentColorText(index)" outlined tile>
+          <v-card
+            class="pa-0"
+            :color="currentColorBackground(index)"
+            outlined
+            tile
+          >
             <template v-if="editMode">
-              <v-card-title class="pa-0 justify-center">
+              <v-card-title class="pa-0">
                 <v-text-field
                   v-model="blind.bigBlind"
-                  class="ma-0"
+                  class="pt-2 pb-1 ma-0 blind-table-data-edit-text"
                   single-line
                   type="number"
                   hide-spin-buttons
+                  hide-details
                   reverse
-                  style="font-size: 1em"
                 />
               </v-card-title>
             </template>
             <template v-else>
-              <v-card-title class="justify-center">
+              <v-card-title
+                :class="`blind-table-data-text ${currentColorText(
+                  index
+                )}--text`"
+              >
                 {{ blind.bigBlind }}
               </v-card-title>
             </template>
@@ -119,30 +133,43 @@
 
       <template v-else>
         <v-col class="pa-0" :cols="editMode ? 6 : 9">
-          <v-card class="pa-0" :color="currentColorText(index)" outlined tile>
-            <v-card-title class="justify-center"> BREAK TIME </v-card-title>
+          <v-card
+            class="pa-0"
+            :color="currentColorBackground(index)"
+            outlined
+            tile
+          >
+            <v-card-title class="pa-2 blind-table-break-time">
+              BREAK TIME
+            </v-card-title>
           </v-card>
         </v-col>
       </template>
 
-      <v-col class="pa-0" :cols="editMode ? 2 : 3">
-        <v-card class="pa-0" :color="currentColorText(index)" outlined tile>
+      <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
+        <v-card
+          class="pa-0"
+          :color="currentColorBackground(index)"
+          outlined
+          tile
+        >
           <template v-if="editMode">
-            <v-card-title class="pa-0 justify-center">
+            <v-card-title class="pa-0">
               <v-text-field
                 v-model="blind.minute"
-                class="ma-0"
+                class="pt-2 pb-1 ma-0 blind-table-data-edit-text"
                 single-line
                 type="number"
                 hide-spin-buttons
+                hide-details
                 reverse
-                style="font-size: 1em"
               />
             </v-card-title>
           </template>
-
           <template v-else>
-            <v-card-title class="justify-center">
+            <v-card-title
+              :class="`blind-table-data-text ${currentColorText(index)}--text`"
+            >
               {{ blind.minute }}분
             </v-card-title>
           </template>
@@ -151,17 +178,20 @@
 
       <v-col v-if="editMode" class="pa-0" :cols="editMode ? 4 : 0">
         <v-card class="pa-0 justify-center" outlined tile>
-          <v-card-title class="pa-5 justify-center">
-            <v-icon :disabled="index < 1" @click.stop="onClickUp(blind)">
+          <v-card-title class="pa-0 justify-center">
+            <v-icon small :disabled="index < 1" @click.stop="onClickUp(blind)">
               mdi-arrow-up
             </v-icon>
             <v-icon
+              small
               :disabled="blindStructures.length <= index + 1"
               @click.stop="onClickDown(blind)"
             >
               mdi-arrow-down
             </v-icon>
-            <v-icon @click.stop="onClickDelete(blind)"> mdi-delete </v-icon>
+            <v-icon small @click.stop="onClickDelete(blind)">
+              mdi-delete
+            </v-icon>
           </v-card-title>
         </v-card>
       </v-col>
@@ -169,69 +199,78 @@
 
     <!-- ADD BLIND -->
     <v-row v-if="editMode" align="center" justify="center" class="ma-0">
-      <v-col class="pa-0" :cols="editMode ? 2 : 3">
+      <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
         <v-card class="pa-0" outlined tile>
-          <v-card-title class="justify-center">
+          <v-card-title class="blind-table-data-text">
             {{ isAddBreak ? 'Break' : lastBlind?.level + 1 }}
           </v-card-title>
         </v-card>
       </v-col>
 
-      <v-col class="pa-0" :cols="editMode ? 2 : 3">
+      <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
         <v-card class="pa-0" outlined tile>
-          <v-card-title class="pa-0 justify-center">
+          <v-card-title class="pa-0">
             <v-text-field
               v-model="addBlind.smallBlind"
-              class="ma-0"
-              :full-width="false"
+              class="pt-2 pb-1 ma-0 blind-table-data-edit-text"
               single-line
               type="number"
               hide-spin-buttons
+              hide-details
               reverse
-              style="font-size: 1em"
             />
           </v-card-title>
         </v-card>
       </v-col>
 
-      <v-col class="pa-0" :cols="editMode ? 2 : 3">
+      <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
         <v-card class="pa-0" outlined tile>
           <v-card-title class="pa-0 justify-center">
             <v-text-field
               v-model="addBlind.bigBlind"
-              class="ma-0"
+              class="pt-2 pb-1 ma-0 blind-table-data-edit-text"
               single-line
               type="number"
               hide-spin-buttons
+              hide-details
               reverse
-              style="font-size: 1em"
             />
           </v-card-title>
         </v-card>
       </v-col>
 
-      <v-col class="pa-0" :cols="editMode ? 2 : 3">
+      <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
         <v-card class="pa-0" outlined tile>
           <v-card-title class="pa-0 justify-center">
             <v-text-field
               v-model="addBlind.minute"
-              class="ma-0"
+              class="pt-2 pb-1 ma-0 blind-table-data-edit-text"
               single-line
               type="number"
               hide-spin-buttons
+              hide-details
               reverse
-              style="font-size: 1em"
             />
           </v-card-title>
         </v-card>
       </v-col>
 
-      <v-col v-if="editMode" class="pa-0" :cols="editMode ? 4 : 0">
+      <v-col
+        v-if="editMode"
+        class="pa-0"
+        color="gray4"
+        :cols="editMode ? 4 : 0"
+      >
         <v-card class="pa-0 justify-center" outlined tile>
-          <v-card-title class="pa-5 justify-center">
+          <v-card-title class="pa-0 justify-center">
             <v-tooltip top>
               <template #activator="{ on, attrs }">
-                <v-icon v-bind="attrs" v-on="on" @click.stop="onClickBreak()">
+                <v-icon
+                  small
+                  v-bind="attrs"
+                  v-on="on"
+                  @click.stop="onClickBreak()"
+                >
                   mdi-coffee-outline
                 </v-icon>
               </template>
@@ -239,6 +278,7 @@
             </v-tooltip>
 
             <v-icon
+              small
               :disabled="addBlind.smallBlind === 0 || addBlind.bigBlind === 0"
               @click.stop="onClickAdd()"
             >
@@ -263,6 +303,15 @@ export interface BlindStructureModel {
   minute: number
 }
 
+function isEqual(a: BlindStructureModel, b: BlindStructureModel) {
+  return (
+    a.level === b.level &&
+    a.smallBlind === b.smallBlind &&
+    a.bigBlind === b.bigBlind &&
+    a.minute === b.minute
+  )
+}
+
 export interface BlindEditDto {
   edit: boolean
   request: boolean
@@ -270,9 +319,12 @@ export interface BlindEditDto {
 
 @Component
 export default class TournamentBlinds extends Vue {
-  // headers: string[] = ['Lv.', 'S.B', 'B.B', '시간']
+  headers: string[] = ['LV', 'S.B', 'B.B', 'TIME']
 
-  @PropSync('structure', { type: Array as PropType<Array<BlindStructureDto>> })
+  @PropSync('structure', {
+    type: Array as PropType<Array<BlindStructureDto>>,
+    required: true,
+  })
   blindStructures!: BlindStructureModel[] // fixed length is 11
 
   blindStructuresBackup: BlindStructureModel[] = []
@@ -292,26 +344,30 @@ export default class TournamentBlinds extends Vue {
   }
 
   mounted() {
-    this.updateMaxBlindLevel()
+    if (this.blindStructures.length > 0) {
+      this.updateMaxBlindLevel()
+    }
   }
 
   currentColorText(index: number) {
-    return this.currentStep === index && !this.editMode ? 'primary' : ''
+    return this.currentStep === index && !this.editMode ? 'white' : 'primary'
+  }
+
+  currentColorBackground(index: number) {
+    return this.currentStep === index && !this.editMode ? 'primary' : 'gray5'
   }
 
   @Emit('onBlindEdit')
   onBlindEdit(edit: boolean): BlindEditDto {
     let request = false
     if (edit) {
-      this.blindStructuresBackup = Object.assign([], this.blindStructures)
+      this.blindStructuresBackup = this.copyBlindStructure()
     } else {
-      request = !(
-        this.blindStructures.length === this.blindStructuresBackup.length &&
-        this.blindStructures.every((element, index) => {
-          return element === this.blindStructuresBackup[index]
+      request =
+        this.blindStructures.length !== this.blindStructuresBackup.length ||
+        !this.blindStructures.every((element, index) => {
+          return isEqual(element, this.blindStructuresBackup[index])
         })
-      )
-
       this.blindStructuresBackup = []
     }
 
@@ -320,7 +376,7 @@ export default class TournamentBlinds extends Vue {
 
   @Emit('onBlindEditClose')
   onBlindEditClose() {
-    const swap = Object.assign([], this.blindStructures)
+    const swap = this.blindStructures
     this.blindStructures = this.blindStructuresBackup
     this.blindStructuresBackup = swap
   }
@@ -387,6 +443,15 @@ export default class TournamentBlinds extends Vue {
     this.addBlind.bigBlind = -1
   }
 
+  copyBlindStructure() {
+    return Object.assign(
+      [],
+      this.blindStructures.map((value) => {
+        return Object.assign({}, value)
+      })
+    )
+  }
+
   updateBlindLevel() {
     this.blindStructures.reduce<number>((level, blind, _index, _array) => {
       if (blind.level > 0) {
@@ -417,8 +482,32 @@ export default class TournamentBlinds extends Vue {
 }
 </script>
 
-<style lang="css" scoped>
-.icons {
-  vertical-align: middle;
+<style lang="scss" scoped>
+@import '~/assets/variables.scss';
+
+.blind-table-title {
+  @extend .small-copy-1-exbold;
+
+  justify-content: center !important;
+}
+
+.blind-table-break-time {
+  @extend .small-copy-3;
+  @extend .accent1-color;
+
+  padding: 4px !important;
+  justify-content: center !important;
+}
+
+.blind-table-data-text {
+  @extend .small-copy-3;
+
+  padding: 4px !important;
+  justify-content: center !important;
+}
+.blind-table-data-edit-text {
+  @extend .small-copy-3;
+
+  justify-content: center !important;
 }
 </style>

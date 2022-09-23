@@ -17,6 +17,7 @@
 
     <v-navigation-drawer v-model="showBlindTable" right temporary fixed>
       <TournamentBlinds
+        ref="blindTable"
         :structure.sync="blindStructure"
         :current-step="currentIdx"
         :edit-mode="editBlindTable"
@@ -28,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Ref, Vue, Watch } from 'nuxt-property-decorator'
 import TournamentBlinds, {
   BlindEditDto,
   BlindStructureModel,
@@ -52,6 +53,9 @@ interface WsResponse<T> {
   },
 })
 export default class TournamentClockPage extends Vue {
+  @Ref()
+  blindTable!: TournamentBlinds
+
   clock: TournamentClockDto = {
     playTime: '00:00:00',
     nextBreakTime: '00:00',
@@ -122,16 +126,19 @@ export default class TournamentClockPage extends Vue {
     this.started = tournamentDetail.startDateTime !== null
     this.clock.title = tournamentDetail.title
 
-    this.blindStructure = res.data.structures.map<BlindStructureModel>(
-      (value) => {
+    this.blindStructure.splice(0)
+    this.blindStructure.push(
+      ...res.data.structures.map<BlindStructureModel>((value) => {
         return {
           level: value.level,
           smallBlind: value.smallBlind,
           bigBlind: value.bigBlind,
           minute: value.minute,
         }
-      }
+      })
     )
+
+    this.blindTable.updateMaxBlindLevel()
   }
 
   updateClock(dto: TournamentClockEventDto) {
@@ -172,6 +179,14 @@ export default class TournamentClockPage extends Vue {
           minute: value.minute,
         }
       })
+    }
+  }
+
+  @Watch('showBlindTable')
+  onChangeShowBlindTable(val: boolean) {
+    // 편집 중에 닫히면 close 처리
+    if (this.editBlindTable && !val) {
+      this.blindTable.onBlindEditClose()
     }
   }
 
