@@ -1,4 +1,4 @@
-import colors from 'vuetify/es5/util/colors'
+// import colors from 'vuetify/es5/util/colors'
 
 export default {
   dev: process.env.NODE_ENV !== 'production',
@@ -19,7 +19,7 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [],
+  css: ['~/assets/variables.scss'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: ['~/plugins/axios-accessor'],
@@ -68,25 +68,33 @@ export default {
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
-      lang: 'en',
+      lang: 'ko',
     },
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
-    customVariables: ['~/assets/variables.scss'],
+    // customVariables: ['~/assets/variables.scss'],
     theme: {
       dark: true,
       themes: {
         dark: {
-          primary: colors.blue.darken2,
-          accent: colors.grey.darken3,
-          secondary: colors.amber.darken3,
-          info: colors.teal.lighten1,
-          warning: colors.amber.base,
-          error: colors.deepOrange.accent4,
-          success: colors.green.accent3,
-        },
+          primary: '#D2B895',
+          secondary1: '#D1A576',
+          secondary2: '#DB9F65',
+          secondary3: '#BB9A65',
+          secondary4: '#9E8864',
+          accent: '#566FFF',
+          accent1: '#FF5A5A',
+          gray1: '#E4E4E4',
+          gray2: '#B7BAC3',
+          gray3: '#8A94A0',
+          gray4: '#3E4C59',
+          gray5: '#323E4A',
+          gray6: '#1F2933',
+          gray7: '#141C24',
+          gray8: '#11181F'
+        }
       },
     },
   },
