@@ -6,8 +6,9 @@
       :clipped="clipped"
       fixed
       app
+      color="gray4"
     >
-      <v-list>
+      <v-list color="gray4">
         <template v-for="(item, i) in items">
           <template v-if="item.to !== undefined">
             <v-list-item :key="i" :to="item.to" router exact>
@@ -15,7 +16,11 @@
                 <v-icon>{{ item.icon }}</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title v-text="item.title" />
+                <v-list-item-title
+                  class="small-copy-1-exbold"
+                  color="gray4"
+                  v-text="item.title"
+                />
               </v-list-item-content>
             </v-list-item>
           </template>
@@ -29,7 +34,11 @@
             >
               <template #activator>
                 <v-list-item-content>
-                  <v-list-item-title v-text="item.title"></v-list-item-title>
+                  <v-list-item-title
+                    class="small-copy-1-exbold"
+                    color="gray4"
+                    v-text="item.title"
+                  ></v-list-item-title>
                 </v-list-item-content>
               </template>
 
@@ -41,7 +50,11 @@
                 exact
               >
                 <v-list-item-content>
-                  <v-list-item-title v-text="child.title"></v-list-item-title>
+                  <v-list-item-title
+                    class="small-copy-1-exbold"
+                    color="gray4"
+                    v-text="child.title"
+                  ></v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list-group>
@@ -50,18 +63,22 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar :clipped-left="clipped" fixed app>
+    <v-app-bar :clipped-left="clipped" fixed app color="gray6">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-btn v-if="false" icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
       </v-btn>
-      <v-btn icon @click.stop="clipped = !clipped">
+      <v-btn v-if="false" icon @click.stop="clipped = !clipped">
         <v-icon>mdi-application</v-icon>
       </v-btn>
       <v-btn v-if="false" icon @click.stop="fixed = !fixed">
         <v-icon>mdi-minus</v-icon>
       </v-btn>
-      <v-toolbar-title v-text="title" />
+
+      <v-spacer />
+
+      <v-toolbar-title v-text="title"> </v-toolbar-title>
+
       <v-spacer />
       <v-btn v-if="false" icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>mdi-menu</v-icon>
@@ -83,8 +100,13 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-footer :absolute="!fixed" app>
-      <span>&copy; {{ new Date().getFullYear() }}</span>
+    <v-footer
+      class="justify-center gray4--text"
+      color="gray7"
+      :absolute="!fixed"
+      app
+    >
+      <span> &copy; 2022 KMGM bundangseohyeon. All rights reserved. </span>
     </v-footer>
   </v-app>
 </template>
@@ -115,7 +137,7 @@ export default class DefaultLayout extends Vue {
 
   items: NavigationItem[] = [
     {
-      icon: 'mdi-apps',
+      icon: 'mdi-trophy',
       title: '토너먼트',
       to: '/',
     },
