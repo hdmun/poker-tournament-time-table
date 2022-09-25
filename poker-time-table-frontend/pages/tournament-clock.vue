@@ -15,7 +15,13 @@
       />
     </v-col>
 
-    <v-navigation-drawer v-model="showBlindTable" right temporary fixed>
+    <v-navigation-drawer
+      v-model="showBlindTable"
+      :width="blindTableHeight"
+      right
+      app
+      fixed
+    >
       <TournamentBlinds
         ref="blindTable"
         :structure.sync="blindStructure"
@@ -84,6 +90,10 @@ export default class TournamentClockPage extends Vue {
 
   get tournamentId() {
     return this.clock.tournamentId
+  }
+
+  get blindTableHeight(): number {
+    return 838
   }
 
   mounted() {
