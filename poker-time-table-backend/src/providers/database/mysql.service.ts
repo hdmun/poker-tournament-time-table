@@ -25,7 +25,7 @@ export class MySqlConfigService implements TypeOrmOptionsFactory {
         Tournament,
         TournamentBlind,
       ],
-      logging: process.env.NODE_ENV === 'dev' ? ['query', 'error'] : undefined,
+      logging: process.env.NODE_ENV === 'dev' ? ['error'] : ['error'],
     };
   }
 }
