@@ -89,13 +89,14 @@ $small-copy-3-size: 0.75rem;
   font-weight: 800 !important;
 }
 
+$primary-code: #D2B895;
 .primary-color {
-  color: #D2B895 !important;
-  caret-color: #D2B895;
+  color: $primary-code !important;
+  caret-color: $primary-code;
 }
 .primary-border {
-  border-width: 1px !important;
-  border-color: #D2B895 !important;
+  border-width: thin !important;
+  border-color: $primary-code!important;
 }
 
 .secondary1-color {
@@ -122,17 +123,23 @@ $small-copy-3-size: 0.75rem;
 .gray2-color{
   color: #B7BAC3 !important;
 }
+
+$gray3-code: #8A94A0;
 .gray3-color{
-  color: #8A94A0 !important;
-  caret-color: #8A94A0 !important;
+  color: $gray3-code !important;
+  caret-color: $gray3-code !important;
 }
+.gray3-border {
+  border-width: thin !important;
+  border-color: $gray3-code  !important;
+}
+
 .gray4-color{
   color: #3E4C59 !important;
 }
-
 .gray4-border {
-  border-width: 10px !important;
-  border-color: #D2B895 !important;
+  border-width: thin !important;
+  border-color: #3E4C59 !important;
 }
 
 .gray5-color{
