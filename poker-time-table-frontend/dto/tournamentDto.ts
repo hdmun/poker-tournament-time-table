@@ -24,7 +24,8 @@ export interface TournamentDetailDto {
 }
 
 export interface TournamentClockEventDto {
-  index: number
+  tournamentId: number
+  blindId: number
   started: boolean
   playTime: string
   nextBreakRemainTime: string

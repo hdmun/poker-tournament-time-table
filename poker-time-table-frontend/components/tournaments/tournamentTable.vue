@@ -51,22 +51,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import { TournamentDetailDto } from '~/dto/tournamentDto'
+import { vxm } from '~/store'
+import { TournamentItem } from '~/store/admin/tournament'
 
 interface TableHeader {
   text: string
   value: string
   sortable?: boolean
-}
-
-interface TournamentItem {
-  id: number
-  start: string
-  end: boolean
-  name: string
-  buyIn: string
-  players: number
-  prizePool: number
 }
 
 @Component
@@ -89,30 +80,9 @@ export default class TournamentTable extends Vue {
   deleteTournment: TournamentItem | null = null
 
   mounted() {
-    this.loadTournaments()
-  }
-
-  async loadTournaments() {
-    const res = await this.$axios.get<TournamentDetailDto[]>(`/api/tournaments`)
-    this.tournaments = res.data
-      .map<TournamentItem>((value) => {
-        return {
-          id: value.id,
-          start: value.startDateTime
-            ? new Date(value.startDateTime)
-                .toISOString()
-                .replace('T', ' ')
-                .substring(0, 19)
-            : '대기 중',
-          end: value.endDateTime !== null,
-          name: value.title,
-          buyIn: `${value.buyIn}`,
-          players: -1,
-          prizePool: -1,
-        }
-      })
-      .filter((value) => !value.end)
-      .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+    vxm.tournament.loadTournaments().then(() => {
+      this.tournaments = vxm.tournament.tournaments
+    })
   }
 
   onClickClose(item: TournamentItem) {
@@ -131,16 +101,11 @@ export default class TournamentTable extends Vue {
       return
     }
 
-    const res = await this.$axios.delete(
-      `/api/tournaments/${this.deleteTournment.id}`
-    )
-    if (res.status === 200) {
-      const index = this.tournaments.findIndex(
-        (value) => value.id === this.deleteTournment?.id
-      )
-      if (index > -1) {
-        this.tournaments.splice(index, 1)
-      }
+    try {
+      await vxm.tournament.deleteBy(this.deleteTournment.id)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
     }
 
     this.deleteDialog = false

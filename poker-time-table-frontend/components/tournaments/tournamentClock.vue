@@ -25,7 +25,7 @@
         </v-card-title>
 
         <v-card-title class="pt-0 justify-center title-1 gray2--text">
-          {{ data.nextBreakTime }}
+          {{ data.nextBreakRemainTime }}
         </v-card-title>
       </v-col>
     </v-row>
@@ -117,7 +117,7 @@
           </v-col>
         </v-row>
 
-        <v-row justify="center">
+        <v-row v-if="false" justify="center">
           <v-col cols="3" class="pa-0">
             <v-card class="fill-height" color="gray7" outlined tile>
               <v-card-title class="play-info-title">CHIPS IN PLAY</v-card-title>

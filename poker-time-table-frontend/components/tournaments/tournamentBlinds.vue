@@ -295,13 +295,8 @@
 import { Component, Emit, Prop, PropSync, Vue } from 'nuxt-property-decorator'
 import { PropType } from 'vue'
 import { BlindStructureDto } from '~/dto/blindStructureDto'
-
-export interface BlindStructureModel {
-  level: number
-  smallBlind: number
-  bigBlind: number
-  minute: number
-}
+import { vxm } from '~/store'
+import { BlindStructureModel } from '~/store/admin/tournament'
 
 function isEqual(a: BlindStructureModel, b: BlindStructureModel) {
   return (
@@ -416,18 +411,12 @@ export default class TournamentBlinds extends Vue {
   onClickAdd() {
     if (this.isAddBreak) {
       // break time
-      this.blindStructures.push({
-        level: -1,
-        smallBlind: -1,
-        bigBlind: -1,
-        minute: this.addBlind.minute,
-      })
+      vxm.tournament.addBreakTime(this.addBlind.minute)
     } else {
       if (!this.lastBlind) {
         return
       }
-
-      this.blindStructures.push({
+      vxm.tournament.addBlind({
         level: this.lastBlind.level + 1,
         smallBlind: this.addBlind.smallBlind,
         bigBlind: this.addBlind.bigBlind,
@@ -466,14 +455,16 @@ export default class TournamentBlinds extends Vue {
   }
 
   updateMaxBlindLevel() {
-    this.lastBlind = this.blindStructures.reduce((previous, current) => {
-      return previous.level > current.level ? previous : current
-    })
+    if (this.blindStructures.length > 0) {
+      this.lastBlind = this.blindStructures.reduce((previous, current) => {
+        return previous.level > current.level ? previous : current
+      })
 
-    this.addBlind.level = this.lastBlind.level
-    this.addBlind.smallBlind = this.lastBlind.smallBlind
-    this.addBlind.bigBlind = this.lastBlind.bigBlind
-    this.addBlind.minute = this.lastBlind.minute
+      this.addBlind.level = this.lastBlind.level
+      this.addBlind.smallBlind = this.lastBlind.smallBlind
+      this.addBlind.bigBlind = this.lastBlind.bigBlind
+      this.addBlind.minute = this.lastBlind.minute
+    }
   }
 
   get isAddBreak() {
