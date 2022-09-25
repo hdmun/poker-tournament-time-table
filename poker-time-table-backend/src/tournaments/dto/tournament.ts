@@ -32,6 +32,7 @@ export interface TournamentDetailDto {
   startDateTime: Date;
   endDateTime: Date;
   buyIn: number;
+  blindId: number;
 
   structures: TournamentBlindDto[];
 }

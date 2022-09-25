@@ -40,6 +40,7 @@ export class TournamentService {
       startDateTime: tournament.startDateTime,
       endDateTime: tournament.endDateTime,
       buyIn: tournament.buyIn,
+      blindId: tournament.level,
       structures: blinds.map((value) => {
         return {
           level: value.level,
