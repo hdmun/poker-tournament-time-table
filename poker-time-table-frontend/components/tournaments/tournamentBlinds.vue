@@ -25,9 +25,7 @@
         :cols="editMode ? 2 : 3"
       >
         <v-card class="pa-0" color="gray6" outlined tile>
-          <v-card-title
-            class="pa-2 justify-center small-copy-2-exbold secondary4--text"
-          >
+          <v-card-title class="pa-2 blind-table-header-text">
             {{ header }}
           </v-card-title>
         </v-card>
@@ -35,9 +33,7 @@
 
       <v-col v-if="editMode" class="pa-0" :cols="editMode ? 4 : 0">
         <v-card class="pa-0" color="gray6" outlined tile>
-          <v-card-title
-            class="pa-2 justify-center small-copy-2-exbold secondary4--text"
-          >
+          <v-card-title class="pa-2 blind-table-header-text">
             편집
           </v-card-title>
         </v-card>
@@ -477,27 +473,32 @@ export default class TournamentBlinds extends Vue {
 @import '~/assets/variables.scss';
 
 .blind-table-title {
-  @extend .small-copy-1-exbold;
+  @extend .title-1-bold;
 
   justify-content: center !important;
 }
 
-.blind-table-break-time {
-  @extend .small-copy-3;
-  @extend .accent1-color;
+.blind-table-header-text {
+  @extend .small-copy-2-exbold;
+  @extend .secondary4-color;
 
-  padding: 4px !important;
   justify-content: center !important;
 }
 
 .blind-table-data-text {
-  @extend .small-copy-3;
+  @extend .sub-copy;
 
-  padding: 4px !important;
+  padding: 16px !important;
   justify-content: center !important;
 }
+
+.blind-table-break-time {
+  @extend .blind-table-data-text;
+  @extend .accent1-color;
+}
+
 .blind-table-data-edit-text {
-  @extend .small-copy-3;
+  @extend .sub-copy;
 
   justify-content: center !important;
 }
