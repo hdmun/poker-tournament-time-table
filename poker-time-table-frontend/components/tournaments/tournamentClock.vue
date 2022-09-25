@@ -80,44 +80,17 @@
     </v-row>
 
     <v-row justify="center">
-      <v-col cols="6" sm="10" md="8" lg="6">
-        <v-row justify="center">
-          <v-col cols="3" class="pa-0">
-            <v-card class="fill-height" color="gray7" outlined tile>
-              <v-card-title v-if="data.level > 0" class="blind-level-info">
-                Lv. {{ data.level }}
-              </v-card-title>
-              <v-card-title v-else class="break-time-info">
-                Break Time
-              </v-card-title>
-            </v-card>
-          </v-col>
+      <v-col cols="12" sm="12" md="12" lg="12" xl="12">
+        <TournamentClockBlindCards
+          :show-blind-table="showMiniVariant"
+          :level="data.level"
+          :ante="0"
+          :small-blind="data.smallBlind"
+          :big-blind="data.bigBlind"
+          @onToggleShowBlindTable="onToggleShowBlindTable"
+        />
 
-          <v-col cols="3" class="pa-0">
-            <v-card class="fill-height" color="gray7" outlined tile>
-              <v-card-title class="pt-3 pb-0 ante-title"> Ante </v-card-title>
-              <v-card-title class="info-value">
-                {{ data.smallBlind }}
-              </v-card-title>
-            </v-card>
-          </v-col>
-
-          <v-col cols="3" class="pa-0">
-            <v-card class="fill-height" color="gray7" outlined tile>
-              <v-card-actions class="pb-0 justify-center">
-                <v-btn text class="blind-title" @click="showMiniVariant = true">
-                  <u>BLINDS</u> >
-                </v-btn>
-              </v-card-actions>
-
-              <v-card-title class="info-value">
-                {{ data.smallBlind }} / {{ data.bigBlind }}
-              </v-card-title>
-            </v-card>
-          </v-col>
-        </v-row>
-
-        <v-row justify="center">
+        <v-row v-if="false" justify="center">
           <v-col cols="3" class="pa-0">
             <TournamentClockSubInfoCard
               :title="'CHIPS IN PLAY'"
@@ -146,11 +119,13 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, PropSync, Vue } from 'nuxt-property-decorator'
+import TournamentClockBlindCards from './clock/blindCard.vue'
 import TournamentClockSubInfoCard from './clock/subInfoCard.vue'
 import { TournamentClockDto } from '~/dto/tournamentClockDto'
 
 @Component({
   components: {
+    TournamentClockBlindCards,
     TournamentClockSubInfoCard,
   },
 })
@@ -190,47 +165,13 @@ export default class TournamentClock extends Vue {
 
   @Emit('onUpBlind')
   onUpBlind() {}
+
+  onToggleShowBlindTable(toggle: boolean) {
+    this.showMiniVariant = toggle
+  }
 }
 </script>
 
 <style scoped lang="scss">
 @import '~/assets/variables.scss';
-
-.blind-level-info {
-  @extend .title-2-exbold;
-  @extend .primary-color;
-
-  justify-content: center;
-  height: 100%;
-}
-
-.break-time-info {
-  @extend .sub-copy-exbold;
-  @extend .accent1-color;
-
-  justify-content: center;
-  height: 100%;
-}
-
-.ante-title {
-  @extend .small-copy-1-exbold;
-  @extend .gray3-color;
-
-  justify-content: center;
-}
-
-.blind-title {
-  @extend .small-copy-1-exbold;
-  @extend .primary-color;
-
-  padding-top: 16px;
-  justify-content: center;
-}
-
-.info-value {
-  @extend .sub-copy-exbold;
-  @extend .gray1-color;
-
-  justify-content: center;
-}
 </style>
