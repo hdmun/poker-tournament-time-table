@@ -18,8 +18,6 @@ export class EventService {
 
   @Cron(CronExpression.EVERY_SECOND)
   async updateClock() {
-    console.time('updateClock');
-
     const playingTournaments = await this.tournamentRepository
       .createQueryBuilder('tournament')
       .andWhere('tournament.start_datetime IS NOT NULL')
@@ -34,7 +32,6 @@ export class EventService {
         this.subjects.next(clock);
       }
     }
-    console.timeEnd('updateClock');
   }
 
   async calcClock(
@@ -165,7 +162,6 @@ export class EventService {
 
   @Cron(CronExpression.EVERY_SECOND)
   async updateTournamentBlindLevel() {
-    console.time('updateTournamentBlindLevel');
     const playingTournaments = await this.tournamentRepository
       .createQueryBuilder('tournament')
       .andWhere('tournament.start_datetime IS NOT NULL')
@@ -237,7 +233,6 @@ export class EventService {
         );
       }
     }
-    console.timeEnd('updateTournamentBlindLevel');
   }
 }
 
