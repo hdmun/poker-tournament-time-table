@@ -86,15 +86,10 @@ export class EventService {
           tournament.pauseSeconds * 1000,
       );
 
-      const reaminTimeMs = remainDate.getTime() - nowDate.getTime();
+      let reaminTimeMs = remainDate.getTime() - nowDate.getTime();
       if (reaminTimeMs < 0) {
-        this.logger.error(
-          `tournament pauseTime minus
-          , tournamentId: ${tournamentId}
-          , reaminTimeMs: ${reaminTimeMs}
-          , nowDate: ${nowDate}
-          , remainDate: ${remainDate}`,
-        );
+        // remainDate === nowDate 가 같아지면 밀리초 때문에 미세하게 음수 발생
+        reaminTimeMs = 0;
       }
       remainTime = convertMsToTime(reaminTimeMs);
 
@@ -123,9 +118,12 @@ export class EventService {
             pauseTime +
             tournament.pauseSeconds * 1000,
         );
-        nextBreakRemainTime = convertMsToTimeString(
-          nextBreakReamin.getTime() - nowDate.getTime(),
-        );
+        let nextBreawkRemainTimeMs =
+          nextBreakReamin.getTime() - nowDate.getTime();
+        if (nextBreawkRemainTimeMs < 0) {
+          nextBreawkRemainTimeMs = 0;
+        }
+        nextBreakRemainTime = convertMsToTimeString(nextBreawkRemainTimeMs);
       }
     }
 
@@ -199,6 +197,16 @@ export class EventService {
 
       const nowDate = new Date();
       const playTimeMs = nowDate.getTime() - tournament.levelStart.getTime();
+      if (playTimeMs < 0) {
+        this.logger.error(
+          `tournament playTimeMs minus
+          , tournamentId: ${tournament.id}
+          , playTimeMs: ${playTimeMs}
+          , nowDate: ${nowDate}
+          , tournament.levelStart: ${tournament.levelStart}
+          , tournament.pauseTime: ${tournament.pauseTime}`,
+        );
+      }
 
       let pauseTime = 0;
       if (tournament.pauseTime) {
@@ -222,6 +230,7 @@ export class EventService {
             level: tournament.level,
             levelStart: tournament.levelStart,
             pauseTime: tournament.pauseTime,
+            pauseSeconds: 0,
           },
         );
       }
