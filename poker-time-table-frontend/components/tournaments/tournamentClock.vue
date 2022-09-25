@@ -9,22 +9,22 @@
     </v-row>
 
     <v-row justify="center">
-      <v-col lg="3">
+      <v-col cols="6">
         <v-card-title class="justify-center">
-          <div class="ma-0 sub-copy primary--text">PLAY TIME</div>
+          <div class="ma-0 playtime-text">PLAY TIME</div>
         </v-card-title>
 
-        <v-card-title class="pt-0 justify-center title-1 primary--text">
+        <v-card-title class="pt-0 playtime-value">
           {{ data.playTime }}
         </v-card-title>
       </v-col>
 
-      <v-col lg="3">
+      <v-col cols="6">
         <v-card-title class="justify-center">
-          <div class="sub-copy gray2--text">NEXT BREAK</div>
+          <div class="nextbreak-text">NEXT BREAK</div>
         </v-card-title>
 
-        <v-card-title class="pt-0 justify-center title-1 gray2--text">
+        <v-card-title class="pt-0 nextbreak-value">
           {{ data.nextBreakRemainTime }}
         </v-card-title>
       </v-col>
@@ -33,7 +33,7 @@
     <v-row class="mt-0" justify="center">
       <v-col class="pa-0">
         <v-card-title class="pa-0 justify-center">
-          <div class="head-1">
+          <div class="remaintime-value">
             <template v-if="data.remainHours !== '00'">
               {{ data.remainHours }} :
             </template>
@@ -174,4 +174,40 @@ export default class TournamentClock extends Vue {
 
 <style scoped lang="scss">
 @import '~/assets/variables.scss';
+
+.playtime-text {
+  @extend .sub-copy;
+  @extend .primary-color;
+}
+
+$top-text-size: $title-1-size + 1rem;
+.playtime-value {
+  @extend .title-1;
+  @extend .primary-color;
+
+  font-size: $top-text-size !important;
+  line-height: $top-text-size;
+  justify-content: center;
+}
+
+.nextbreak-text {
+  @extend .sub-copy;
+  @extend .gray2-color;
+}
+
+.nextbreak-value {
+  @extend .title-1;
+  @extend .gray2-color;
+
+  font-size: $top-text-size !important;
+  line-height: $top-text-size;
+  justify-content: center;
+}
+
+$remaintime-size: $head-1-size + 5rem;
+.remaintime-value {
+  @extend .head-1-bold;
+  font-size: $remaintime-size !important;
+  line-height: $remaintime-size;
+}
 </style>
