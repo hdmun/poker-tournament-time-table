@@ -4,9 +4,9 @@
       <TournamentClock
         :data="clock"
         :show-variant.sync="showBlindTable"
-        :current-step="currentIdx"
+        :current-step="clock.blindId"
         :blind-count="blindStructure.length"
-        :starting="started"
+        :starting="clock.started"
         :edit-mode="editBlindTable"
         @onPlay="onPlay"
         @onPause="onPause"
@@ -15,11 +15,17 @@
       />
     </v-col>
 
-    <v-navigation-drawer v-model="showBlindTable" right temporary fixed>
+    <v-navigation-drawer
+      v-model="showBlindTable"
+      :width="blindTableHeight"
+      right
+      app
+      fixed
+    >
       <TournamentBlinds
         ref="blindTable"
         :structure.sync="blindStructure"
-        :current-step="currentIdx"
+        :current-step="clock.blindId"
         :edit-mode="editBlindTable"
         @onBlindEdit="onBlindEdit"
         @onBlindEditClose="onBlindEditClose"
@@ -32,20 +38,21 @@
 import { Component, Ref, Vue, Watch } from 'nuxt-property-decorator'
 import TournamentBlinds, {
   BlindEditDto,
-  BlindStructureModel,
 } from '~/components/tournaments/tournamentBlinds.vue'
 import TournamentClock from '~/components/tournaments/tournamentClock.vue'
 import { TournamentClockDto } from '~/dto/tournamentClockDto'
 import {
   TournamentBlindDto,
   TournamentClockEventDto,
-  TournamentDetailDto,
 } from '~/dto/tournamentDto'
+import { vxm } from '~/store'
+import { BlindStructureModel } from '~/store/admin/tournament'
 
 interface WsResponse<T> {
   event: string
   data: T
 }
+
 @Component({
   components: {
     TournamentBlinds,
@@ -57,31 +64,37 @@ export default class TournamentClockPage extends Vue {
   blindTable!: TournamentBlinds
 
   clock: TournamentClockDto = {
+    tournamentId: -1,
+    blindId: -1,
+    started: false,
     playTime: '00:00:00',
-    nextBreakTime: '00:00',
+    nextBreakRemainTime: '00:00',
     remainHours: '00',
     remainMinutes: '00',
     remainSeconds: '00',
     pause: true,
     level: 0,
-    title: '토너먼트 타이틀',
+    title: '로딩 중...',
     smallBlind: 0,
     bigBlind: 0,
-    chipsInPlay: 0,
-    player: 0,
-    totalPlayer: 0,
-    averageStack: 0,
+    chipsInPlay: '-',
+    player: '-',
+    averageStack: '-',
   }
 
   showBlindTable: boolean = false
   editBlindTable: boolean = false
   blindStructure: BlindStructureModel[] = []
 
-  currentIdx = -1
-  tournamentId = -1
-  started: boolean = false
-
   webSocket: WebSocket | null = null
+
+  get tournamentId() {
+    return this.clock.tournamentId
+  }
+
+  get blindTableHeight(): number {
+    return 838
+  }
 
   mounted() {
     const tournamentId = this.$route.query?.id as string
@@ -90,16 +103,27 @@ export default class TournamentClockPage extends Vue {
       return
     }
 
-    this.loadTournaments(tournamentId)
+    // this.loadTournaments(tournamentId)
+    vxm.tournament
+      .loadClock(Number(tournamentId))
+      .then(() => {
+        this.clock = vxm.tournament.clock
+        this.blindStructure = vxm.tournament.blinds
+        this.blindTable.updateMaxBlindLevel()
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+      })
 
-    const url = new URL(`/ws/tournaments/events`, location.href)
-    url.protocol = 'ws'
-    this.webSocket = new WebSocket(url)
-    this.webSocket.onmessage = this.onmessage
-    this.webSocket.onopen = () => {
-      this.webSocket?.send(
-        JSON.stringify({ event: 'clock', data: Number(tournamentId) })
-      )
+    if (this.webSocket === null) {
+      const url = new URL(`/ws/tournaments/events`, location.href)
+      url.protocol = 'ws'
+      this.webSocket = new WebSocket(url)
+      this.webSocket.onmessage = this.onmessage
+      this.webSocket.onopen = () => {
+        this.webSocket?.send(JSON.stringify({ event: 'clock' }))
+      }
     }
   }
 
@@ -107,7 +131,10 @@ export default class TournamentClockPage extends Vue {
     const wsResponse = JSON.parse(
       ev.data
     ) as WsResponse<TournamentClockEventDto>
-    this.updateClock(wsResponse.data)
+
+    if (wsResponse.event === `clock-${this.tournamentId}`) {
+      vxm.tournament.updateClock(wsResponse.data)
+    }
   }
 
   beforeDestroy() {
@@ -116,69 +143,22 @@ export default class TournamentClockPage extends Vue {
     }
   }
 
-  async loadTournaments(tournamentId: string) {
-    const res = await this.$axios.get<TournamentDetailDto>(
-      `/api/tournaments/${tournamentId}`
-    )
-
-    const tournamentDetail = res.data
-    this.tournamentId = tournamentDetail.id
-    this.started = tournamentDetail.startDateTime !== null
-    this.clock.title = tournamentDetail.title
-
-    this.blindStructure.splice(0)
-    this.blindStructure.push(
-      ...res.data.structures.map<BlindStructureModel>((value) => {
-        return {
-          level: value.level,
-          smallBlind: value.smallBlind,
-          bigBlind: value.bigBlind,
-          minute: value.minute,
-        }
-      })
-    )
-
-    this.blindTable.updateMaxBlindLevel()
-  }
-
-  updateClock(dto: TournamentClockEventDto) {
-    this.currentIdx = dto.index
-    this.started = dto.started
-    this.clock.playTime = dto.playTime
-    this.clock.nextBreakTime = dto.nextBreakRemainTime
-    this.clock.remainHours = dto.reaminHours
-    this.clock.remainMinutes = dto.reaminMinutes
-    this.clock.remainSeconds = dto.reaminSeconds
-    this.clock.pause = dto.pause
-    this.clock.level = dto.level > 0 ? dto.level : 0
-    this.clock.smallBlind = dto.smallBlind
-    this.clock.bigBlind = dto.bigBlind
-
-    this.clock.chipsInPlay = 0
-    this.clock.player = 0
-    this.clock.totalPlayer = 0
-    this.clock.averageStack = 0
-  }
-
   async onBlindEdit(dto: BlindEditDto) {
     this.editBlindTable = dto.edit
 
-    if (dto.request) {
-      const updateBlinds = this.blindStructure.map<TournamentBlindDto>(
-        (value) => value
-      )
-      const res = await this.$axios.put<BlindStructureModel[]>(
-        `/api/tournaments/${this.tournamentId}/blinds`,
-        updateBlinds
-      )
-      this.blindStructure = res.data.map<BlindStructureModel>((value) => {
-        return {
-          level: value.level,
-          smallBlind: value.smallBlind,
-          bigBlind: value.bigBlind,
-          minute: value.minute,
-        }
-      })
+    if (dto.request && this.clock.tournamentId > -1) {
+      try {
+        const updateBlinds = this.blindStructure.map<TournamentBlindDto>(
+          (value) => value
+        )
+        await vxm.tournament.updateBlinds({
+          id: this.clock.tournamentId,
+          blinds: updateBlinds,
+        })
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error)
+      }
     }
   }
 
@@ -195,19 +175,39 @@ export default class TournamentClockPage extends Vue {
   }
 
   async onPlay() {
-    await this.$axios.put(`/api/tournaments/${this.tournamentId}/play`)
+    try {
+      await vxm.tournament.play(this.tournamentId)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
   }
 
   async onPause() {
-    await this.$axios.put(`/api/tournaments/${this.tournamentId}/pause`)
+    try {
+      await vxm.tournament.pause(this.tournamentId)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
   }
 
   async onDownBlind() {
-    await this.$axios.put(`/api/tournaments/${this.tournamentId}/blind/down`)
+    try {
+      await vxm.tournament.blindDown(this.tournamentId)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
   }
 
   async onUpBlind() {
-    await this.$axios.put(`/api/tournaments/${this.tournamentId}/blind/up`)
+    try {
+      await vxm.tournament.blindUp(this.tournamentId)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
   }
 }
 </script>

@@ -1,6 +1,9 @@
 export interface TournamentClockDto {
+  tournamentId: number
+  blindId: number
+  started: boolean
   playTime: string
-  nextBreakTime: string
+  nextBreakRemainTime: string
   remainHours: string
   remainMinutes: string
   remainSeconds: string
@@ -9,8 +12,8 @@ export interface TournamentClockDto {
   title: string
   smallBlind: number
   bigBlind: number
-  chipsInPlay: number
-  player: number
-  totalPlayer: number
-  averageStack: number
+
+  chipsInPlay: string
+  player: string
+  averageStack: string
 }

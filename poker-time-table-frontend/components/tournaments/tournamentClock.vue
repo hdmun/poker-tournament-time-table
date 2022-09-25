@@ -9,23 +9,23 @@
     </v-row>
 
     <v-row justify="center">
-      <v-col lg="3">
+      <v-col cols="6">
         <v-card-title class="justify-center">
-          <div class="ma-0 sub-copy primary--text">PLAY TIME</div>
+          <div class="ma-0 playtime-text">PLAY TIME</div>
         </v-card-title>
 
-        <v-card-title class="pt-0 justify-center title-1 primary--text">
+        <v-card-title class="pt-0 playtime-value">
           {{ data.playTime }}
         </v-card-title>
       </v-col>
 
-      <v-col lg="3">
+      <v-col cols="6">
         <v-card-title class="justify-center">
-          <div class="sub-copy gray2--text">NEXT BREAK</div>
+          <div class="nextbreak-text">NEXT BREAK</div>
         </v-card-title>
 
-        <v-card-title class="pt-0 justify-center title-1 gray2--text">
-          {{ data.nextBreakTime }}
+        <v-card-title class="pt-0 nextbreak-value">
+          {{ data.nextBreakRemainTime }}
         </v-card-title>
       </v-col>
     </v-row>
@@ -33,7 +33,7 @@
     <v-row class="mt-0" justify="center">
       <v-col class="pa-0">
         <v-card-title class="pa-0 justify-center">
-          <div class="head-1">
+          <div class="remaintime-value">
             <template v-if="data.remainHours !== '00'">
               {{ data.remainHours }} :
             </template>
@@ -80,78 +80,36 @@
     </v-row>
 
     <v-row justify="center">
-      <v-col cols="6" sm="10" md="8" lg="6">
-        <v-row justify="center">
+      <v-col cols="12" sm="12" md="12" lg="12" xl="12">
+        <TournamentClockBlindCards
+          :show-blind-table="showMiniVariant"
+          :level="data.level"
+          :ante="0"
+          :small-blind="data.smallBlind"
+          :big-blind="data.bigBlind"
+          @onToggleShowBlindTable="onToggleShowBlindTable"
+        />
+
+        <v-row v-if="false" justify="center">
           <v-col cols="3" class="pa-0">
-            <v-card class="fill-height" color="gray7" outlined tile>
-              <v-card-title v-if="data.level > 0" class="blind-level-info">
-                Lv. {{ data.level }}
-              </v-card-title>
-              <v-card-title v-else class="break-time-info">
-                Break Time
-              </v-card-title>
-            </v-card>
+            <TournamentClockSubInfoCard
+              :title="'CHIPS IN PLAY'"
+              :value="data.chipsInPlay"
+            />
           </v-col>
 
           <v-col cols="3" class="pa-0">
-            <v-card class="fill-height" color="gray7" outlined tile>
-              <v-card-title class="pt-3 pb-0 ante-title"> Ante </v-card-title>
-              <v-card-title class="play-info-value">
-                {{ data.smallBlind }}
-              </v-card-title>
-            </v-card>
+            <TournamentClockSubInfoCard
+              :title="'PLAYER'"
+              :value="data.player"
+            />
           </v-col>
 
           <v-col cols="3" class="pa-0">
-            <v-card class="fill-height" color="gray7" outlined tile>
-              <v-card-actions class="pb-0 justify-center">
-                <v-btn text class="blind-title" @click="showMiniVariant = true">
-                  <u>BLINDS</u> >
-                </v-btn>
-              </v-card-actions>
-
-              <v-card-title class="play-info-value">
-                {{ data.smallBlind }} / {{ data.bigBlind }}
-              </v-card-title>
-            </v-card>
-          </v-col>
-        </v-row>
-
-        <v-row justify="center">
-          <v-col cols="3" class="pa-0">
-            <v-card class="fill-height" color="gray7" outlined tile>
-              <v-card-title class="play-info-title">CHIPS IN PLAY</v-card-title>
-              <v-card-title class="pt-0 play-info-value">
-                <template v-if="data.chipsInPlay > 0">
-                  {{ data.chipsInPlay }}
-                </template>
-                <template v-else>-</template>
-              </v-card-title>
-            </v-card>
-          </v-col>
-
-          <v-col cols="3" class="pa-0">
-            <v-card class="fill-height" color="gray7" outlined tile>
-              <v-card-title class="play-info-title">PLAYER</v-card-title>
-              <v-card-title class="pt-0 play-info-value">
-                <template v-if="data.totalPlayer > 0">
-                  {{ data.player }} / {{ data.totalPlayer }}
-                </template>
-                <template v-else>-</template>
-              </v-card-title>
-            </v-card>
-          </v-col>
-
-          <v-col cols="3" class="pa-0">
-            <v-card class="fill-height" color="gray7" outlined tile>
-              <v-card-title class="play-info-title">AVERAGE STACK</v-card-title>
-              <v-card-title class="pt-0 play-info-value">
-                <template v-if="data.averageStack > 0">
-                  {{ data.averageStack }}
-                </template>
-                <template v-else>-</template>
-              </v-card-title>
-            </v-card>
+            <TournamentClockSubInfoCard
+              :title="'AVERAGE STACK'"
+              :value="data.averageStack"
+            />
           </v-col>
         </v-row>
       </v-col>
@@ -161,9 +119,16 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, PropSync, Vue } from 'nuxt-property-decorator'
+import TournamentClockBlindCards from './clock/blindCard.vue'
+import TournamentClockSubInfoCard from './clock/subInfoCard.vue'
 import { TournamentClockDto } from '~/dto/tournamentClockDto'
 
-@Component
+@Component({
+  components: {
+    TournamentClockBlindCards,
+    TournamentClockSubInfoCard,
+  },
+})
 export default class TournamentClock extends Vue {
   @PropSync('showVariant', { type: Boolean, required: true })
   showMiniVariant!: Boolean
@@ -200,54 +165,49 @@ export default class TournamentClock extends Vue {
 
   @Emit('onUpBlind')
   onUpBlind() {}
+
+  onToggleShowBlindTable(toggle: boolean) {
+    this.showMiniVariant = toggle
+  }
 }
 </script>
 
 <style scoped lang="scss">
 @import '~/assets/variables.scss';
 
-.blind-level-info {
-  @extend .title-2-exbold;
+.playtime-text {
+  @extend .sub-copy;
+  @extend .primary-color;
+}
+
+$top-text-size: $title-1-size + 1rem;
+.playtime-value {
+  @extend .title-1;
   @extend .primary-color;
 
-  justify-content: center;
-  height: 100%;
-}
-
-.break-time-info {
-  @extend .sub-copy-exbold;
-  @extend .accent1-color;
-
-  justify-content: center;
-  height: 100%;
-}
-
-.ante-title {
-  @extend .small-copy-1-exbold;
-  @extend .gray3-color;
-
+  font-size: $top-text-size !important;
+  line-height: $top-text-size;
   justify-content: center;
 }
 
-.blind-title {
-  @extend .small-copy-1-exbold;
-  @extend .primary-color;
+.nextbreak-text {
+  @extend .sub-copy;
+  @extend .gray2-color;
+}
 
-  padding-top: 16px;
+.nextbreak-value {
+  @extend .title-1;
+  @extend .gray2-color;
+
+  font-size: $top-text-size !important;
+  line-height: $top-text-size;
   justify-content: center;
 }
 
-.play-info-title {
-  @extend .small-copy-2;
-  @extend .gray3-color;
-
-  justify-content: center;
-}
-
-.play-info-value {
-  @extend .sub-copy-exbold;
-  @extend .gray1-color;
-
-  justify-content: center;
+$remaintime-size: $head-1-size + 5rem;
+.remaintime-value {
+  @extend .head-1-bold;
+  font-size: $remaintime-size !important;
+  line-height: $remaintime-size;
 }
 </style>

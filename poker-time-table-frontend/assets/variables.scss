@@ -3,62 +3,100 @@
 // The variables you want to modify
 // $font-size-root: 20px !important;
 
+$head-1-size: 11.25rem;
 .head-1 {
-  font-size: 11.25rem !important;
-  line-height: 11.25rem;
+  font-size: $head-1-size !important;
+  line-height: $head-1-size;
 }
+.head-1-bold {
+  @extend .head-1;
+  font-weight: 800 !important;
+}
+
+$head-2-size: 8rem;
 .head-2 {
-  font-size: 8rem !important;
+  font-size: $head-2-size !important;
+  line-height: $head-2-size;
 }
+.head-2-bold {
+  @extend .head-2;
+  font-weight: 800 !important;
+}
+
+$title-1-size: 2.75rem;
 .title-1 {
-  font-size: 2.75rem !important;
+  font-size: $title-1-size !important;
+  line-height: $title-1-size;
 }
+.title-1-bold {
+  @extend .title-1;
+  font-weight: 800 !important;
+}
+
+$title-2-size: 2rem;
 .title-2 {
-  font-size: 2rem !important;
+  font-size: $title-2-size !important;
+  font-weight: 300;
+  line-height: $title-2-size;
 }
 .title-2-exbold {
-  font-size: 2rem !important;
+  @extend .title-2;
   font-weight: 800 !important;
 }
+
+$sub-copy-size: 1.25rem;
 .sub-copy {
-  font-size: 1.25rem !important;
+  font-size: $sub-copy-size !important;
+  line-height: $sub-copy-size;
 }
 .sub-copy-exbold {
-  font-size: 1.25rem !important;
+  @extend .sub-copy;
   font-weight: 800 !important;
 }
+
+$small-copy-1-size: 1rem;
 .small-copy-1 {
-  font-size: 1rem !important;
+  font-size: $small-copy-1-size !important;
   font-weight: 400 !important;
+  line-height: $small-copy-1-size;
 }
 .small-copy-1-exbold {
-  font-size: 1rem !important;
+  @extend .small-copy-1;
   font-weight: 800 !important;
 }
+
+$small-copy-2-size: 0.875rem;
 .small-copy-2 {
-  font-size: 0.875rem !important;
+  font-size: $small-copy-2-size !important;
   font-weight: 400 !important;
+  line-height: $small-copy-2-size;
 }
 .small-copy-2-exbold {
-  font-size: 0.875rem !important;
+  @extend .small-copy-2;
   font-weight: 800 !important;
 }
+
+$small-copy-3-size: 0.75rem;
 .small-copy-3 {
-  font-size: 0.75rem !important;
+  font-size: $small-copy-3-size !important;
   font-weight: 400 !important;
+  line-height: $small-copy-3-size;
 }
 .small-copy-3-exbold {
+  @extend .small-copy-3;
+
   font-size: 0.75rem !important;
   font-weight: 800 !important;
 }
 
+$primary-code: #D2B895;
 .primary-color {
-  color: #D2B895 !important;
-  caret-color: #D2B895;
+  color: $primary-code !important;
+  caret-color: $primary-code;
 }
 .primary-border {
-  border-width: 1px !important;
-  border-color: #D2B895 !important;
+  border-width: thin !important;
+  border-color: $primary-code!important;
 }
 
 .secondary1-color {
@@ -85,17 +123,23 @@
 .gray2-color{
   color: #B7BAC3 !important;
 }
+
+$gray3-code: #8A94A0;
 .gray3-color{
-  color: #8A94A0 !important;
-  caret-color: #8A94A0 !important;
+  color: $gray3-code !important;
+  caret-color: $gray3-code !important;
 }
+.gray3-border {
+  border-width: thin !important;
+  border-color: $gray3-code  !important;
+}
+
 .gray4-color{
   color: #3E4C59 !important;
 }
-
 .gray4-border {
-  border-width: 10px !important;
-  border-color: #D2B895 !important;
+  border-width: thin !important;
+  border-color: #3E4C59 !important;
 }
 
 .gray5-color{
