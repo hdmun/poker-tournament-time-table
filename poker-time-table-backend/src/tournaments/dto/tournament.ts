@@ -1,3 +1,6 @@
+import { TournamentBlind } from '../entities/tournament-blind.entity';
+import { Tournament } from '../entities/tournament.entity';
+
 export interface TournamentBlindDto {
   level: number;
   smallBlind: number;
@@ -11,6 +14,16 @@ export interface RegisterTournamentDto {
   blindStructureId: number;
   breakTime: number;
   breakTimeTerm: number;
+}
+
+export interface RegisterTournamentResponseDto {
+  tournament: Tournament;
+  blinds: TournamentBlind[];
+}
+
+export interface CloseTournamentResponseDto {
+  tournamentId: number;
+  endDateTime: Date;
 }
 
 export interface TournamentDetailDto {
@@ -34,7 +47,8 @@ export interface TournamentBlindUpDownDto {
 }
 
 export interface TournamentClockEventDto {
-  index: number;
+  tournamentId: number;
+  blindId: number;
   started: boolean;
   playTime: string;
   nextBreakRemainTime: string;

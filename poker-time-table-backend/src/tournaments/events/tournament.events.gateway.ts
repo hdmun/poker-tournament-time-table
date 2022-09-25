@@ -6,7 +6,7 @@ import {
   WebSocketServer,
   WsResponse,
 } from '@nestjs/websockets';
-import { from, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Server } from 'ws';
 import { TournamentClockEventDto } from '../dto/tournament';
@@ -21,11 +21,9 @@ export class EventGateway {
   server: Server;
 
   @SubscribeMessage('clock')
-  onClock(
-    @MessageBody() tournamentId: number,
-  ): Observable<WsResponse<TournamentClockEventDto>> {
-    return this.eventService
-      .getClockObservable(tournamentId)
-      .pipe(map((clock) => ({ event: 'clock', data: clock })));
+  onClock(): Observable<WsResponse<TournamentClockEventDto>> {
+    return this.eventService.subjects.pipe(
+      map((clock) => ({ event: `clock-${clock.tournamentId}`, data: clock })),
+    );
   }
 }

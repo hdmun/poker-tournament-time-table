@@ -14,18 +14,10 @@ export class EventService {
 
   private readonly logger = new Logger(EventService.name);
 
-  private subjects = new Map<number, Subject<TournamentClockEventDto>>();
-
-  getClockObservable(tournamentId: number) {
-    // if (!this.subjects.has(tournamentId)) { throw new Exception(''); }
-
-    return this.subjects.get(tournamentId).asObservable();
-  }
+  public readonly subjects = new Subject<TournamentClockEventDto>();
 
   @Cron(CronExpression.EVERY_SECOND)
   async updateClock() {
-    console.time('updateClock');
-
     const playingTournaments = await this.tournamentRepository
       .createQueryBuilder('tournament')
       .andWhere('tournament.start_datetime IS NOT NULL')
@@ -35,27 +27,35 @@ export class EventService {
 
     for (const tournament of playingTournaments) {
       const tournamentId = tournament.id;
-      if (!this.subjects.has(tournamentId)) {
-        this.subjects.set(tournamentId, new Subject<TournamentClockEventDto>());
+      const clock = await this.calcClock(tournamentId);
+      if (clock !== null) {
+        this.subjects.next(clock);
       }
-
-      const clockData = await this.calcClock(tournamentId);
-      this.subjects.get(tournamentId).next(clockData);
     }
-    console.timeEnd('updateClock');
   }
 
-  private async calcClock(
+  async calcClock(
     tournamentId: number,
-  ): Promise<TournamentClockEventDto> {
-    console.time('calcClock');
+  ): Promise<TournamentClockEventDto | null> {
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
     });
+    if (!tournament) {
+      return null;
+    }
 
     const blinds = await this.blindRepository.findBy({
       tournamentId: tournament.id,
     });
+    if (blinds.length <= 0) {
+      this.logger.error(`not exists blinds tournament ${tournamentId}`);
+      return null;
+    }
+
+    if (blinds.length <= tournament.level) {
+      // max blind level
+      return null;
+    }
 
     const currentBlind = blinds[tournament.level];
     const nowDate = new Date();
@@ -86,15 +86,10 @@ export class EventService {
           tournament.pauseSeconds * 1000,
       );
 
-      const reaminTimeMs = remainDate.getTime() - nowDate.getTime();
+      let reaminTimeMs = remainDate.getTime() - nowDate.getTime();
       if (reaminTimeMs < 0) {
-        this.logger.error(
-          `tournament pauseTime minus
-          , tournamentId: ${tournamentId}
-          , reaminTimeMs: ${reaminTimeMs}
-          , nowDate: ${nowDate}
-          , remainDate: ${remainDate}`,
-        );
+        // remainDate === nowDate 가 같아지면 밀리초 때문에 미세하게 음수 발생
+        reaminTimeMs = 0;
       }
       remainTime = convertMsToTime(reaminTimeMs);
 
@@ -123,9 +118,12 @@ export class EventService {
             pauseTime +
             tournament.pauseSeconds * 1000,
         );
-        nextBreakRemainTime = convertMsToTimeString(
-          nextBreakReamin.getTime() - nowDate.getTime(),
-        );
+        let nextBreawkRemainTimeMs =
+          nextBreakReamin.getTime() - nowDate.getTime();
+        if (nextBreawkRemainTimeMs < 0) {
+          nextBreawkRemainTimeMs = 0;
+        }
+        nextBreakRemainTime = convertMsToTimeString(nextBreawkRemainTimeMs);
       }
     }
 
@@ -146,10 +144,10 @@ export class EventService {
         bigBlind = prevBlind.bigBlind;
       }
     }
-    console.timeEnd('calcClock');
 
     return {
-      index: tournament.level,
+      tournamentId: tournament.id,
+      blindId: currentBlind.id,
       started: tournament.startDateTime !== null,
       playTime: playTimeText,
       nextBreakRemainTime,
@@ -165,7 +163,6 @@ export class EventService {
 
   @Cron(CronExpression.EVERY_SECOND)
   async updateTournamentBlindLevel() {
-    console.time('updateTournamentBlindLevel');
     const playingTournaments = await this.tournamentRepository
       .createQueryBuilder('tournament')
       .andWhere('tournament.start_datetime IS NOT NULL')
@@ -199,6 +196,16 @@ export class EventService {
 
       const nowDate = new Date();
       const playTimeMs = nowDate.getTime() - tournament.levelStart.getTime();
+      if (playTimeMs < 0) {
+        this.logger.error(
+          `tournament playTimeMs minus
+          , tournamentId: ${tournament.id}
+          , playTimeMs: ${playTimeMs}
+          , nowDate: ${nowDate}
+          , tournament.levelStart: ${tournament.levelStart}
+          , tournament.pauseTime: ${tournament.pauseTime}`,
+        );
+      }
 
       let pauseTime = 0;
       if (tournament.pauseTime) {
@@ -212,6 +219,8 @@ export class EventService {
       // 다음 레벨로 넘겨야 할지 체크
       const currentBlind = blinds[tournament.level];
       if (currentBlind.minute <= playTimeMinutes) {
+        nowDate.setSeconds(nowDate.getSeconds() + 1);
+
         tournament.level++;
         tournament.levelStart = nowDate;
         tournament.pauseTime = null;
@@ -222,11 +231,11 @@ export class EventService {
             level: tournament.level,
             levelStart: tournament.levelStart,
             pauseTime: tournament.pauseTime,
+            pauseSeconds: 0,
           },
         );
       }
     }
-    console.timeEnd('updateTournamentBlindLevel');
   }
 }
 
