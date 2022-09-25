@@ -17,279 +17,46 @@
       </v-col>
     </v-row>
 
-    <v-row justify="center" class="ma-0">
-      <v-col
-        v-for="header in headers"
-        :key="header"
-        class="pa-0"
-        :cols="editMode ? 2 : 3"
-      >
-        <v-card class="pa-0" color="gray6" outlined tile>
-          <v-card-title class="pa-2 blind-table-header-text">
-            {{ header }}
-          </v-card-title>
-        </v-card>
-      </v-col>
-
-      <v-col v-if="editMode" class="pa-0" :cols="editMode ? 4 : 0">
-        <v-card class="pa-0" color="gray6" outlined tile>
-          <v-card-title class="pa-2 blind-table-header-text">
-            편집
-          </v-card-title>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-row
-      v-for="(blind, index) in blindStructures"
-      :key="index"
-      justify="center"
-      class="ma-0"
-    >
-      <template v-if="blind.level > 0">
-        <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
-          <v-card
-            class="pa-0"
-            :color="currentColorBackground(index)"
-            outlined
-            tile
-          >
-            <v-card-title
-              :class="`blind-table-data-text ${currentColorText(index)}--text`"
-            >
-              {{ blind.level }}
-            </v-card-title>
-          </v-card>
-        </v-col>
-
-        <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
-          <v-card
-            class="pa-0"
-            :color="currentColorBackground(index)"
-            outlined
-            tile
-          >
-            <template v-if="editMode">
-              <v-card-title class="pa-0">
-                <v-text-field
-                  v-model="blind.smallBlind"
-                  class="pt-2 pb-1 ma-0 blind-table-data-edit-text"
-                  single-line
-                  type="number"
-                  hide-spin-buttons
-                  hide-details
-                  reverse
-                />
-              </v-card-title>
-            </template>
-            <template v-else>
-              <v-card-title
-                :class="`blind-table-data-text ${currentColorText(
-                  index
-                )}--text`"
-              >
-                {{ blind.smallBlind }}
-              </v-card-title>
-            </template>
-          </v-card>
-        </v-col>
-
-        <v-col class="pa-0" :cols="editMode ? 2 : 3">
-          <v-card
-            class="pa-0"
-            :color="currentColorBackground(index)"
-            outlined
-            tile
-          >
-            <template v-if="editMode">
-              <v-card-title class="pa-0">
-                <v-text-field
-                  v-model="blind.bigBlind"
-                  class="pt-2 pb-1 ma-0 blind-table-data-edit-text"
-                  single-line
-                  type="number"
-                  hide-spin-buttons
-                  hide-details
-                  reverse
-                />
-              </v-card-title>
-            </template>
-            <template v-else>
-              <v-card-title
-                :class="`blind-table-data-text ${currentColorText(
-                  index
-                )}--text`"
-              >
-                {{ blind.bigBlind }}
-              </v-card-title>
-            </template>
-          </v-card>
-        </v-col>
-      </template>
-
-      <template v-else>
-        <v-col class="pa-0" :cols="editMode ? 6 : 9">
-          <v-card
-            class="pa-0"
-            :color="currentColorBackground(index)"
-            outlined
-            tile
-          >
-            <v-card-title class="pa-2 blind-table-break-time">
-              BREAK TIME
-            </v-card-title>
-          </v-card>
-        </v-col>
-      </template>
-
-      <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
-        <v-card
-          class="pa-0"
-          :color="currentColorBackground(index)"
-          outlined
-          tile
-        >
-          <template v-if="editMode">
-            <v-card-title class="pa-0">
-              <v-text-field
-                v-model="blind.minute"
-                class="pt-2 pb-1 ma-0 blind-table-data-edit-text"
-                single-line
-                type="number"
-                hide-spin-buttons
-                hide-details
-                reverse
-              />
-            </v-card-title>
-          </template>
-          <template v-else>
-            <v-card-title
-              :class="`blind-table-data-text ${currentColorText(index)}--text`"
-            >
-              {{ blind.minute }}분
-            </v-card-title>
-          </template>
-        </v-card>
-      </v-col>
-
-      <v-col v-if="editMode" class="pa-0" :cols="editMode ? 4 : 0">
-        <v-card class="pa-0 justify-center" outlined tile>
-          <v-card-title class="pa-0 justify-center">
-            <v-icon small :disabled="index < 1" @click.stop="onClickUp(blind)">
-              mdi-arrow-up
-            </v-icon>
-            <v-icon
-              small
-              :disabled="blindStructures.length <= index + 1"
-              @click.stop="onClickDown(blind)"
-            >
-              mdi-arrow-down
-            </v-icon>
-            <v-icon small @click.stop="onClickDelete(blind)">
-              mdi-delete
-            </v-icon>
-          </v-card-title>
-        </v-card>
-      </v-col>
-    </v-row>
+    <template v-if="editMode">
+      <EditBlindsStructureTable
+        :blind-structures="blindStructures"
+        :blind-id="currentStep"
+        @onBlindUp="onBlindUp"
+        @onBlindDown="onBlindDown"
+        @onBlindDelete="onBlindDelete"
+      />
+    </template>
+    <template v-else>
+      <BlindsStructureTable
+        :blind-structures="blindStructures"
+        :blind-id="currentStep"
+      />
+    </template>
 
     <!-- ADD BLIND -->
-    <v-row v-if="editMode" align="center" justify="center" class="ma-0">
-      <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
-        <v-card class="pa-0" outlined tile>
-          <v-card-title class="blind-table-data-text">
-            {{ isAddBreak ? 'Break' : lastBlind?.level + 1 }}
-          </v-card-title>
-        </v-card>
-      </v-col>
-
-      <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
-        <v-card class="pa-0" outlined tile>
-          <v-card-title class="pa-0">
-            <v-text-field
-              v-model="addBlind.smallBlind"
-              class="pt-2 pb-1 ma-0 blind-table-data-edit-text"
-              single-line
-              type="number"
-              hide-spin-buttons
-              hide-details
-              reverse
-            />
-          </v-card-title>
-        </v-card>
-      </v-col>
-
-      <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
-        <v-card class="pa-0" outlined tile>
-          <v-card-title class="pa-0 justify-center">
-            <v-text-field
-              v-model="addBlind.bigBlind"
-              class="pt-2 pb-1 ma-0 blind-table-data-edit-text"
-              single-line
-              type="number"
-              hide-spin-buttons
-              hide-details
-              reverse
-            />
-          </v-card-title>
-        </v-card>
-      </v-col>
-
-      <v-col class="pa-0 gray4-border" :cols="editMode ? 2 : 3">
-        <v-card class="pa-0" outlined tile>
-          <v-card-title class="pa-0 justify-center">
-            <v-text-field
-              v-model="addBlind.minute"
-              class="pt-2 pb-1 ma-0 blind-table-data-edit-text"
-              single-line
-              type="number"
-              hide-spin-buttons
-              hide-details
-              reverse
-            />
-          </v-card-title>
-        </v-card>
-      </v-col>
-
-      <v-col
-        v-if="editMode"
-        class="pa-0"
-        color="gray4"
-        :cols="editMode ? 4 : 0"
-      >
-        <v-card class="pa-0 justify-center" outlined tile>
-          <v-card-title class="pa-0 justify-center">
-            <v-tooltip top>
-              <template #activator="{ on, attrs }">
-                <v-icon
-                  small
-                  v-bind="attrs"
-                  v-on="on"
-                  @click.stop="onClickBreak()"
-                >
-                  mdi-coffee-outline
-                </v-icon>
-              </template>
-              <span>Break Time으로 세팅합니다.</span>
-            </v-tooltip>
-
-            <v-icon
-              small
-              :disabled="addBlind.smallBlind === 0 || addBlind.bigBlind === 0"
-              @click.stop="onClickAdd()"
-            >
-              mdi-plus
-            </v-icon>
-          </v-card-title>
-        </v-card>
-      </v-col>
-    </v-row>
+    <AddBlindsStructureTableRow
+      v-if="editMode"
+      ref="addBlindRow"
+      :blind-level="lastBlind.level + 1"
+      @onBlindAdd="onBlindAdd"
+    />
   </v-card>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, PropSync, Vue } from 'nuxt-property-decorator'
+import {
+  Component,
+  Emit,
+  Prop,
+  PropSync,
+  Ref,
+  Vue,
+  Watch,
+} from 'nuxt-property-decorator'
 import { PropType } from 'vue'
+import BlindsStructureTable from './blinds/structureTable.vue'
+import EditBlindsStructureTable from './blinds/editStructureTable.vue'
+import AddBlindsStructureTableRow from './blinds/addStructureTableRow.vue'
 import { BlindStructureDto } from '~/dto/blindStructureDto'
 import { vxm } from '~/store'
 import { BlindStructureModel } from '~/store/admin/tournament'
@@ -308,7 +75,13 @@ export interface BlindEditDto {
   request: boolean
 }
 
-@Component
+@Component({
+  components: {
+    AddBlindsStructureTableRow,
+    BlindsStructureTable,
+    EditBlindsStructureTable,
+  },
+})
 export default class TournamentBlinds extends Vue {
   headers: string[] = ['LV', 'S.B', 'B.B', 'TIME']
 
@@ -327,18 +100,9 @@ export default class TournamentBlinds extends Vue {
   @Prop({ type: Boolean, required: true })
   editMode!: boolean
 
-  addBlind: BlindStructureModel = {
-    level: -1,
-    smallBlind: 0,
-    bigBlind: 0,
-    minute: 0,
-  }
+  @Ref() addBlindRow!: AddBlindsStructureTableRow
 
-  mounted() {
-    if (this.blindStructures.length > 0) {
-      this.updateMaxBlindLevel()
-    }
-  }
+  mounted() {}
 
   currentColorText(index: number) {
     return this.currentStep === index && !this.editMode ? 'white' : 'primary'
@@ -372,7 +136,7 @@ export default class TournamentBlinds extends Vue {
     this.blindStructuresBackup = swap
   }
 
-  onClickUp(blind: BlindStructureModel) {
+  onBlindUp(blind: BlindStructureModel) {
     const index = this.blindStructures.indexOf(blind, 0)
     const upIndex = index - 1
     if (upIndex > -1) {
@@ -384,7 +148,7 @@ export default class TournamentBlinds extends Vue {
     }
   }
 
-  onClickDown(blind: BlindStructureModel) {
+  onBlindDown(blind: BlindStructureModel) {
     const index = this.blindStructures.indexOf(blind, 0)
     const downIndex = index + 1
     if (downIndex < this.blindStructures.length) {
@@ -396,7 +160,7 @@ export default class TournamentBlinds extends Vue {
     }
   }
 
-  onClickDelete(blind: BlindStructureModel) {
+  onBlindDelete(blind: BlindStructureModel) {
     const index = this.blindStructures.indexOf(blind, 0)
     if (index > -1) {
       this.blindStructures.splice(index, 1)
@@ -404,28 +168,22 @@ export default class TournamentBlinds extends Vue {
     }
   }
 
-  onClickAdd() {
-    if (this.isAddBreak) {
+  onBlindAdd(addBlind: BlindStructureModel) {
+    if (this.addBlindRow.isAddBreakTime) {
       // break time
-      vxm.tournament.addBreakTime(this.addBlind.minute)
+      vxm.tournament.addBreakTime(addBlind.minute)
     } else {
       if (!this.lastBlind) {
         return
       }
       vxm.tournament.addBlind({
         level: this.lastBlind.level + 1,
-        smallBlind: this.addBlind.smallBlind,
-        bigBlind: this.addBlind.bigBlind,
-        minute: this.addBlind.minute,
+        smallBlind: addBlind.smallBlind,
+        bigBlind: addBlind.bigBlind,
+        minute: addBlind.minute,
       })
     }
-
-    this.updateMaxBlindLevel()
-  }
-
-  onClickBreak() {
-    this.addBlind.smallBlind = -1
-    this.addBlind.bigBlind = -1
+    // this.updateMaxBlindLevel()
   }
 
   copyBlindStructure() {
@@ -447,24 +205,18 @@ export default class TournamentBlinds extends Vue {
     }, 1)
 
     this.blindStructures = [...this.blindStructures]
-    this.updateMaxBlindLevel()
+    // this.updateMaxBlindLevel()
   }
 
+  @Watch('blindStructures')
   updateMaxBlindLevel() {
     if (this.blindStructures.length > 0) {
       this.lastBlind = this.blindStructures.reduce((previous, current) => {
         return previous.level > current.level ? previous : current
       })
 
-      this.addBlind.level = this.lastBlind.level
-      this.addBlind.smallBlind = this.lastBlind.smallBlind
-      this.addBlind.bigBlind = this.lastBlind.bigBlind
-      this.addBlind.minute = this.lastBlind.minute
+      this.addBlindRow?.update(this.lastBlind)
     }
-  }
-
-  get isAddBreak() {
-    return this.addBlind.smallBlind < 0 || this.addBlind.bigBlind < 0
   }
 }
 </script>
@@ -474,31 +226,6 @@ export default class TournamentBlinds extends Vue {
 
 .blind-table-title {
   @extend .title-1-bold;
-
-  justify-content: center !important;
-}
-
-.blind-table-header-text {
-  @extend .small-copy-2-exbold;
-  @extend .secondary4-color;
-
-  justify-content: center !important;
-}
-
-.blind-table-data-text {
-  @extend .sub-copy;
-
-  padding: 16px !important;
-  justify-content: center !important;
-}
-
-.blind-table-break-time {
-  @extend .blind-table-data-text;
-  @extend .accent1-color;
-}
-
-.blind-table-data-edit-text {
-  @extend .sub-copy;
 
   justify-content: center !important;
 }
