@@ -13,8 +13,7 @@ export interface TournamentClockDto {
   smallBlind: number
   bigBlind: number
 
-  chipsInPlay: number
-  player: number
-  totalPlayer: number
-  averageStack: number
+  chipsInPlay: string
+  player: string
+  averageStack: string
 }

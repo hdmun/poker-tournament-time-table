@@ -61,10 +61,9 @@ export default class AdminTournamentStore
     title: '로딩 중...',
     smallBlind: 0,
     bigBlind: 0,
-    chipsInPlay: 0,
-    player: 0,
-    totalPlayer: 0,
-    averageStack: 0,
+    chipsInPlay: '-',
+    player: '-',
+    averageStack: '-',
   }
 
   @mutation update(tournaments: TournamentItem[]) {
@@ -94,10 +93,9 @@ export default class AdminTournamentStore
     this.clock.smallBlind = dto.smallBlind
     this.clock.bigBlind = dto.bigBlind
 
-    this.clock.chipsInPlay = 0
-    this.clock.player = 0
-    this.clock.totalPlayer = 0
-    this.clock.averageStack = 0
+    this.clock.chipsInPlay = '-'
+    this.clock.player = '-'
+    this.clock.averageStack = '-'
   }
 
   @mutation addBlind(blind: BlindStructureModel) {

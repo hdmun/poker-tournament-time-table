@@ -71,10 +71,9 @@ export default class TournamentClockPage extends Vue {
     title: '로딩 중...',
     smallBlind: 0,
     bigBlind: 0,
-    chipsInPlay: 0,
-    player: 0,
-    totalPlayer: 0,
-    averageStack: 0,
+    chipsInPlay: '-',
+    player: '-',
+    averageStack: '-',
   }
 
   showBlindTable: boolean = false

@@ -96,7 +96,7 @@
           <v-col cols="3" class="pa-0">
             <v-card class="fill-height" color="gray7" outlined tile>
               <v-card-title class="pt-3 pb-0 ante-title"> Ante </v-card-title>
-              <v-card-title class="play-info-value">
+              <v-card-title class="info-value">
                 {{ data.smallBlind }}
               </v-card-title>
             </v-card>
@@ -110,48 +110,33 @@
                 </v-btn>
               </v-card-actions>
 
-              <v-card-title class="play-info-value">
+              <v-card-title class="info-value">
                 {{ data.smallBlind }} / {{ data.bigBlind }}
               </v-card-title>
             </v-card>
           </v-col>
         </v-row>
 
-        <v-row v-if="false" justify="center">
+        <v-row justify="center">
           <v-col cols="3" class="pa-0">
-            <v-card class="fill-height" color="gray7" outlined tile>
-              <v-card-title class="play-info-title">CHIPS IN PLAY</v-card-title>
-              <v-card-title class="pt-0 play-info-value">
-                <template v-if="data.chipsInPlay > 0">
-                  {{ data.chipsInPlay }}
-                </template>
-                <template v-else>-</template>
-              </v-card-title>
-            </v-card>
+            <TournamentClockSubInfoCard
+              :title="'CHIPS IN PLAY'"
+              :value="data.chipsInPlay"
+            />
           </v-col>
 
           <v-col cols="3" class="pa-0">
-            <v-card class="fill-height" color="gray7" outlined tile>
-              <v-card-title class="play-info-title">PLAYER</v-card-title>
-              <v-card-title class="pt-0 play-info-value">
-                <template v-if="data.totalPlayer > 0">
-                  {{ data.player }} / {{ data.totalPlayer }}
-                </template>
-                <template v-else>-</template>
-              </v-card-title>
-            </v-card>
+            <TournamentClockSubInfoCard
+              :title="'PLAYER'"
+              :value="data.player"
+            />
           </v-col>
 
           <v-col cols="3" class="pa-0">
-            <v-card class="fill-height" color="gray7" outlined tile>
-              <v-card-title class="play-info-title">AVERAGE STACK</v-card-title>
-              <v-card-title class="pt-0 play-info-value">
-                <template v-if="data.averageStack > 0">
-                  {{ data.averageStack }}
-                </template>
-                <template v-else>-</template>
-              </v-card-title>
-            </v-card>
+            <TournamentClockSubInfoCard
+              :title="'AVERAGE STACK'"
+              :value="data.averageStack"
+            />
           </v-col>
         </v-row>
       </v-col>
@@ -161,9 +146,14 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, PropSync, Vue } from 'nuxt-property-decorator'
+import TournamentClockSubInfoCard from './clock/subInfoCard.vue'
 import { TournamentClockDto } from '~/dto/tournamentClockDto'
 
-@Component
+@Component({
+  components: {
+    TournamentClockSubInfoCard,
+  },
+})
 export default class TournamentClock extends Vue {
   @PropSync('showVariant', { type: Boolean, required: true })
   showMiniVariant!: Boolean
@@ -237,14 +227,7 @@ export default class TournamentClock extends Vue {
   justify-content: center;
 }
 
-.play-info-title {
-  @extend .small-copy-2;
-  @extend .gray3-color;
-
-  justify-content: center;
-}
-
-.play-info-value {
+.info-value {
   @extend .sub-copy-exbold;
   @extend .gray1-color;
 
