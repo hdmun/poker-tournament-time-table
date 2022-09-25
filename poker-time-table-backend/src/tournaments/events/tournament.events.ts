@@ -11,5 +11,6 @@ import { EventService } from './tournament.events.service';
     TypeOrmExModule.forCustomRepository([TournamentRepository]),
   ],
   providers: [EventGateway, EventService],
+  exports: [EventService],
 })
 export class EventsModule {}

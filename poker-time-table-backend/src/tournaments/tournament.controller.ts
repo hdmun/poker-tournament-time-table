@@ -9,7 +9,14 @@ import {
   Put,
   Sse,
 } from '@nestjs/common';
-import { RegisterTournamentDto, TournamentBlindDto } from './dto/tournament';
+import {
+  CloseTournamentResponseDto,
+  RegisterTournamentDto,
+  RegisterTournamentResponseDto,
+  TournamentBlindDto,
+  TournamentClockEventDto,
+} from './dto/tournament';
+import { TournamentBlind } from './entities/tournament-blind.entity';
 import { TournamentService } from './tournament.service';
 
 @Controller('tournaments')
@@ -39,9 +46,11 @@ export class TournamentController {
   }
 
   @Post()
-  async registerTournament(@Body() dto: RegisterTournamentDto) {
+  async registerTournament(
+    @Body() dto: RegisterTournamentDto,
+  ): Promise<RegisterTournamentResponseDto> {
     try {
-      await this.tournamentService.registerTournament(dto);
+      return await this.tournamentService.registerTournament(dto);
     } catch (error) {
       this.logger.error(error);
       throw error;
@@ -49,7 +58,9 @@ export class TournamentController {
   }
 
   @Delete('/:id')
-  async deleteTournament(@Param('id') id: number) {
+  async deleteTournament(
+    @Param('id') id: number,
+  ): Promise<CloseTournamentResponseDto> {
     try {
       return await this.tournamentService.closeTournament(id);
     } catch (error) {
@@ -59,12 +70,13 @@ export class TournamentController {
   }
 
   @Put('/:id/play')
-  async play(@Param('id') id: number) {
+  async play(@Param('id') id: number): Promise<TournamentClockEventDto | null> {
     try {
-      const result = await this.tournamentService.play(id);
-      return {
-        startDateTime: result.startDateTime,
-      };
+      const clock = await this.tournamentService.play(id);
+      if (clock === null) {
+        return null;
+      }
+      return clock;
     } catch (error) {
       this.logger.error(error);
       throw error;
@@ -72,9 +84,15 @@ export class TournamentController {
   }
 
   @Put('/:id/pause')
-  async pause(@Param('id') id: number) {
+  async pause(
+    @Param('id') id: number,
+  ): Promise<TournamentClockEventDto | null> {
     try {
-      await this.tournamentService.pause(id);
+      const clock = await this.tournamentService.pause(id);
+      if (clock === null) {
+        return null;
+      }
+      return clock;
     } catch (error) {
       this.logger.error(error);
       throw error;
@@ -85,7 +103,7 @@ export class TournamentController {
   async updateTournmentBlind(
     @Param('id') tournamentId: number,
     @Body() dto: TournamentBlindDto[],
-  ) {
+  ): Promise<TournamentBlind[]> {
     try {
       return await this.tournamentService.updateBlind(tournamentId, dto);
     } catch (error) {
@@ -95,9 +113,15 @@ export class TournamentController {
   }
 
   @Put('/:id/blind/down')
-  async blindDown(@Param('id') id: number) {
+  async blindDown(
+    @Param('id') id: number,
+  ): Promise<TournamentClockEventDto | null> {
     try {
-      await this.tournamentService.downBlindLevel(id);
+      const clock = await this.tournamentService.downBlindLevel(id);
+      if (clock === null) {
+        return null;
+      }
+      return clock;
     } catch (error) {
       this.logger.error(error);
       throw error;
@@ -105,9 +129,16 @@ export class TournamentController {
   }
 
   @Put('/:id/blind/up')
-  async blindUp(@Param('id') id: number) {
+  async blindUp(
+    @Param('id') id: number,
+  ): Promise<TournamentClockEventDto | null> {
     try {
-      await this.tournamentService.upBlindLevel(id);
+      const clock = await this.tournamentService.upBlindLevel(id);
+      console.log('blindUp', clock);
+      if (clock === null) {
+        return null;
+      }
+      return clock;
     } catch (error) {
       this.logger.error(error);
       throw error;

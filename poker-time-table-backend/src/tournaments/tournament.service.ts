@@ -1,12 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BlindStructureRepository } from '~/blind-structures/blind-structures.repository';
 import {
+  CloseTournamentResponseDto,
   RegisterTournamentDto,
+  RegisterTournamentResponseDto,
   TournamentBlindDto,
+  TournamentClockEventDto,
   TournamentDetailDto,
 } from './dto/tournament';
 import { TournamentBlind } from './entities/tournament-blind.entity';
 import { Tournament } from './entities/tournament.entity';
+import { EventService } from './events/tournament.events.service';
 import { TournamentBlindRepository } from './tournament-blind.repository';
 import { TournamentRepository } from './tournament.repository';
 
@@ -16,6 +20,7 @@ export class TournamentService {
 
   constructor(
     private readonly blindStructureRepository: BlindStructureRepository,
+    private readonly eventService: EventService,
     private readonly blindRepository: TournamentBlindRepository,
     private readonly tournamentRepository: TournamentRepository,
   ) {}
@@ -46,7 +51,9 @@ export class TournamentService {
     };
   }
 
-  async registerTournament(dto: RegisterTournamentDto) {
+  async registerTournament(
+    dto: RegisterTournamentDto,
+  ): Promise<RegisterTournamentResponseDto> {
     const newTornament = Tournament.Create(dto.title, dto.buyIn);
     await this.tournamentRepository.save(newTornament);
 
@@ -78,9 +85,16 @@ export class TournamentService {
       }
     });
     await this.blindRepository.save(newTornamentBlinds);
+
+    return {
+      tournament: newTornament,
+      blinds: newTornamentBlinds,
+    };
   }
 
-  async closeTournament(tournamentId: number) {
+  async closeTournament(
+    tournamentId: number,
+  ): Promise<CloseTournamentResponseDto> {
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
     });
@@ -90,15 +104,24 @@ export class TournamentService {
       );
     }
 
+    const endDateTime = new Date();
     await this.tournamentRepository.update(
       { id: tournament.id },
       {
-        endDateTime: new Date(),
+        endDateTime,
       },
     );
+
+    return {
+      tournamentId,
+      endDateTime,
+    };
   }
 
-  async updateBlind(tournamentId: number, blinds: TournamentBlindDto[]) {
+  async updateBlind(
+    tournamentId: number,
+    blinds: TournamentBlindDto[],
+  ): Promise<TournamentBlind[]> {
     // todo transaction
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
@@ -138,7 +161,7 @@ export class TournamentService {
     });
   }
 
-  async play(id: number) {
+  async play(id: number): Promise<TournamentClockEventDto | null> {
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
       throw new Error(`invalind tournament id, ${id}`);
@@ -151,6 +174,7 @@ export class TournamentService {
     }
 
     const nowDate = new Date();
+    nowDate.setSeconds(nowDate.getSeconds() + 1);
     if (!tournament.startDateTime) {
       tournament.startDateTime = nowDate;
       tournament.level = 0;
@@ -180,10 +204,10 @@ export class TournamentService {
       },
     );
 
-    return tournament;
+    return await this.eventService.calcClock(tournament.id);
   }
 
-  async pause(id: number) {
+  async pause(id: number): Promise<TournamentClockEventDto | null> {
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
       throw new Error(`invalid tournament id, ${id}`);
@@ -195,18 +219,17 @@ export class TournamentService {
       );
     }
 
-    tournament.pauseTime = new Date();
     await this.tournamentRepository.update(
       { id: tournament.id },
       {
-        pauseTime: tournament.pauseTime,
+        pauseTime: new Date(),
       },
     );
 
-    return tournament;
+    return await this.eventService.calcClock(tournament.id);
   }
 
-  async downBlindLevel(id: number) {
+  async downBlindLevel(id: number): Promise<TournamentClockEventDto | null> {
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
       throw new Error(`invalid tournament id, ${id}`);
@@ -217,10 +240,13 @@ export class TournamentService {
     }
 
     tournament.level -= 1;
-    tournament.levelStart = new Date();
+
+    const levelStartDate = new Date();
+    levelStartDate.setSeconds(levelStartDate.getSeconds() + 1);
+    tournament.levelStart = levelStartDate;
 
     if (tournament.pauseTime) {
-      tournament.pauseTime = new Date();
+      tournament.pauseTime = levelStartDate;
     }
 
     await this.tournamentRepository.update(
@@ -233,10 +259,10 @@ export class TournamentService {
       },
     );
 
-    return tournament;
+    return await this.eventService.calcClock(tournament.id);
   }
 
-  async upBlindLevel(id: number) {
+  async upBlindLevel(id: number): Promise<TournamentClockEventDto | null> {
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
       throw new Error(`invalid tournament id, ${id}`);
@@ -253,10 +279,12 @@ export class TournamentService {
       );
     }
 
-    tournament.levelStart = new Date();
+    const levelStartDate = new Date();
+    levelStartDate.setSeconds(levelStartDate.getSeconds() + 1);
+    tournament.levelStart = levelStartDate;
 
     if (tournament.pauseTime) {
-      tournament.pauseTime = new Date();
+      tournament.pauseTime = levelStartDate;
     }
 
     await this.tournamentRepository.update(
@@ -269,6 +297,6 @@ export class TournamentService {
       },
     );
 
-    return tournament;
+    return await this.eventService.calcClock(tournament.id);
   }
 }

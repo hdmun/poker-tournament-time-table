@@ -146,7 +146,8 @@ export class EventService {
     }
 
     return {
-      index: tournament.level,
+      tournamentId: tournament.id,
+      blindId: currentBlind.id,
       started: tournament.startDateTime !== null,
       playTime: playTimeText,
       nextBreakRemainTime,
@@ -218,6 +219,8 @@ export class EventService {
       // 다음 레벨로 넘겨야 할지 체크
       const currentBlind = blinds[tournament.level];
       if (currentBlind.minute <= playTimeMinutes) {
+        nowDate.setSeconds(nowDate.getSeconds() + 1);
+
         tournament.level++;
         tournament.levelStart = nowDate;
         tournament.pauseTime = null;
