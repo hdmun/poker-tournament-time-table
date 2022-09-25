@@ -14,13 +14,7 @@ export class EventService {
 
   private readonly logger = new Logger(EventService.name);
 
-  private subjects = new Map<number, Subject<TournamentClockEventDto>>();
-
-  getClockObservable(tournamentId: number) {
-    // if (!this.subjects.has(tournamentId)) { throw new Exception(''); }
-
-    return this.subjects.get(tournamentId).asObservable();
-  }
+  public readonly subjects = new Subject<TournamentClockEventDto>();
 
   @Cron(CronExpression.EVERY_SECOND)
   async updateClock() {
@@ -35,27 +29,36 @@ export class EventService {
 
     for (const tournament of playingTournaments) {
       const tournamentId = tournament.id;
-      if (!this.subjects.has(tournamentId)) {
-        this.subjects.set(tournamentId, new Subject<TournamentClockEventDto>());
+      const clock = await this.calcClock(tournamentId);
+      if (clock !== null) {
+        this.subjects.next(clock);
       }
-
-      const clockData = await this.calcClock(tournamentId);
-      this.subjects.get(tournamentId).next(clockData);
     }
     console.timeEnd('updateClock');
   }
 
-  private async calcClock(
+  async calcClock(
     tournamentId: number,
-  ): Promise<TournamentClockEventDto> {
-    console.time('calcClock');
+  ): Promise<TournamentClockEventDto | null> {
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
     });
+    if (!tournament) {
+      return null;
+    }
 
     const blinds = await this.blindRepository.findBy({
       tournamentId: tournament.id,
     });
+    if (blinds.length <= 0) {
+      this.logger.error(`not exists blinds tournament ${tournamentId}`);
+      return null;
+    }
+
+    if (blinds.length <= tournament.level) {
+      // max blind level
+      return null;
+    }
 
     const currentBlind = blinds[tournament.level];
     const nowDate = new Date();
@@ -144,7 +147,6 @@ export class EventService {
         bigBlind = prevBlind.bigBlind;
       }
     }
-    console.timeEnd('calcClock');
 
     return {
       index: tournament.level,
