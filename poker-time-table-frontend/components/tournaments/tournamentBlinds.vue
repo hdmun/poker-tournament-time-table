@@ -1,6 +1,6 @@
 <template>
   <v-card height="100%" outlined tile>
-    <v-row justify="center" align="center">
+    <v-row justify="center" align="center" class="secondary4">
       <v-col cols="1">
         <v-btn class="ma-2 pa-1" outlined @click="onBlindEdit(!editMode)">
           <template v-if="editMode"> DONE </template>
@@ -8,12 +8,12 @@
         </v-btn>
       </v-col>
 
-      <v-col>
+      <v-col class="secondary4">
         <v-card-title class="pa-2 blind-table-title"> BLINDS </v-card-title>
       </v-col>
 
-      <v-col v-if="editMode" cols="1">
-        <v-icon left @click="onBlindEditClose()"> mdi-close </v-icon>
+      <v-col v-if="editMode" cols="1" class="secondary4">
+        <v-icon large left @click="onBlindEditClose()"> mdi-close </v-icon>
       </v-col>
     </v-row>
 
