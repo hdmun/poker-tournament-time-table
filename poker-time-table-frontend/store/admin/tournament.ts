@@ -154,6 +154,7 @@ export default class AdminTournamentStore
     this.clock.tournamentId = tournamentDetail.id
     this.clock.started = tournamentDetail.startDateTime !== null
     this.clock.title = tournamentDetail.title
+    this.clock.blindId = tournamentDetail.blindId
 
     const blinds = response.data.structures.map<BlindStructureModel>(
       (value) => {
