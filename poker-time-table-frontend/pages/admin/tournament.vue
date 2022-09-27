@@ -1,11 +1,12 @@
 <template>
   <v-flex>
     <v-row class="pa-6">
-      <v-col lg="8">
-        <TournamentTable ref="tournamentTable" />
-      </v-col>
       <v-col lg="4">
         <AdminRegisterTournament @register="onRegister" />
+      </v-col>
+
+      <v-col lg="8">
+        <TournamentTable ref="tournamentTable" />
       </v-col>
     </v-row>
   </v-flex>
