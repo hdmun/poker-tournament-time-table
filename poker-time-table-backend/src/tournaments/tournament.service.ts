@@ -44,6 +44,7 @@ export class TournamentService {
       structures: blinds.map((value) => {
         return {
           level: value.level,
+          ante: value.ante,
           smallBlind: value.smallBlind,
           bigBlind: value.bigBlind,
           minute: value.minute,
@@ -68,6 +69,7 @@ export class TournamentService {
         id: newTornamentBlinds.length,
         tournamentId: newTornament.id,
         level: value.level,
+        ante: value.ante,
         smallBlind: value.smallBlind,
         bigBlind: value.bigBlind,
         minute: value.minute,
@@ -79,6 +81,7 @@ export class TournamentService {
           id: newTornamentBlinds.length,
           tournamentId: newTornament.id,
           level: -1,
+          ante: 0,
           smallBlind: -1,
           bigBlind: -1,
           minute: dto.breakTime,
@@ -147,6 +150,7 @@ export class TournamentService {
         tournamentId: tournament.id,
         id: blindId,
         level: value.level,
+        ante: value.ante,
         smallBlind: value.smallBlind,
         bigBlind: value.bigBlind,
         minute: value.minute,

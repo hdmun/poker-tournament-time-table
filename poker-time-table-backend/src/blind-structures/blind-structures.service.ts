@@ -106,6 +106,7 @@ export class BlindStructureService {
         return BlindStructure.create(
           meta.id,
           value.level,
+          value.ante,
           value.smallBlind,
           value.bigBlind,
           value.minute,

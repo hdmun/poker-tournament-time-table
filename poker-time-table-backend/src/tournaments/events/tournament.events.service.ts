@@ -156,6 +156,7 @@ export class EventService {
       reaminSeconds: remainTime.seconds,
       pause: tournament.startDateTime !== null && tournament.pauseTime !== null,
       level: currentBlind.level,
+      ante: currentBlind.ante,
       smallBlind,
       bigBlind,
     };

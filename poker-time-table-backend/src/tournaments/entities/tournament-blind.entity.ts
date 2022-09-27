@@ -11,6 +11,9 @@ export class TournamentBlind {
   @Column()
   level: number;
 
+  @Column({ name: 'ante' })
+  ante: number;
+
   @Column({ name: 'small_blind' })
   smallBlind: number;
 
