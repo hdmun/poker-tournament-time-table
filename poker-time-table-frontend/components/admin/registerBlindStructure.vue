@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="gray7">
     <v-card-title>블라인드 템플릿 만들기</v-card-title>
 
     <v-card-text>

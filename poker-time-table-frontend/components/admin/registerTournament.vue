@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="gray7">
     <v-list-item two-line>
       <v-list-item-content>
         <v-list-item-title class="text-h5"> 신규 토너먼트 </v-list-item-title>

@@ -85,7 +85,7 @@
       </v-btn>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="fill-height gray8">
       <Nuxt />
     </v-main>
 

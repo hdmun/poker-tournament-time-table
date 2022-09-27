@@ -1,7 +1,7 @@
 <template>
-  <v-flex>
+  <v-flex class="fill-height gray8">
     <v-row class="pa-6">
-      <v-col>
+      <v-col class="gray7">
         <AdminRegisterBlindStructure
           ref="registerBlindStructure"
           :name.sync="metaName"

@@ -6,7 +6,7 @@
       :page.sync="page"
       :items-per-page="10"
       hide-default-footer
-      class="elevation-1"
+      class="elevation-1 gray7"
       @page-count="pageCount = $event"
     >
       <template #[`item.name`]="{ item }">
@@ -26,7 +26,7 @@
         </v-icon>
       </template>
     </v-data-table>
-    <div class="text-center pt-2">
+    <div class="text-center pt-2 gray7">
       <v-pagination v-model="page" :length="pageCount"></v-pagination>
     </div>
 

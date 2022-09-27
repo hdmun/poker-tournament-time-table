@@ -1,13 +1,14 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
   <v-data-table
+    class="gray7"
     :headers="headers"
     :items="blindStructures"
     :items-per-page="-1"
     hide-default-footer
   >
     <template #top>
-      <v-toolbar flat>
+      <v-toolbar class="gray7" flat>
         <v-toolbar-title>BLINDS STRUCTURE</v-toolbar-title>
       </v-toolbar>
     </template>
