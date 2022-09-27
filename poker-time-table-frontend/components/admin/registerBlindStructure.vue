@@ -34,96 +34,32 @@
 
           <v-row>
             <v-col cols="12" lg="4">
-              <v-text-field
-                v-model.number="smallBlind"
-                label="Small Blind"
+              <EditNumberField
+                :value="smallBlind"
+                label="S.B"
                 :rules="smallBlindRule"
-                type="number"
-                hide-spin-buttons
-                required
-                @focus="$event.target.select()"
               />
             </v-col>
 
             <v-col cols="12" lg="4">
-              <v-text-field
-                v-model.number="bigBlind"
-                label="Big Blind"
+              <EditNumberField
+                :value="bigBlind"
+                label="B.B"
                 :rules="bigBlindRule"
-                type="number"
-                hide-spin-buttons
-                required
-                @focus="$event.target.select()"
               />
             </v-col>
 
             <v-col cols="12" lg="4">
-              <v-text-field
-                v-model.number="ante"
-                label="Ante"
-                type="number"
-                hide-spin-buttons
-                required
-                @focus="$event.target.select()"
-              />
+              <EditNumberField :value="ante" label="ANTE" />
             </v-col>
           </v-row>
 
           <v-row>
-            <v-col cols="12" lg="12">
-              <v-subheader>블라인드 증가 값</v-subheader>
-              <v-slider
-                v-model="bigBlindInc"
-                max="10000000"
-                class="align-center"
-                track-color="grey"
-                thumb-label
-                hide-details
-              >
-                <template #append>
-                  <v-text-field
-                    v-model="bigBlindInc"
-                    max="10000000"
-                    class="mt-0 pt-0"
-                    hide-details
-                    single-line
-                    type="number"
-                    style="width: 150px"
-                    @focus="$event.target.select()"
-                  ></v-text-field>
-                </template>
-              </v-slider>
+            <v-col cols="12" lg="6">
+              <EditNumberField :value="bigBlindInc" label="블라인드 증가 값" />
             </v-col>
-          </v-row>
-
-          <v-row>
-            <v-col cols="12" lg="12">
-              <v-subheader>Minute</v-subheader>
-              <v-slider
-                v-model="minute"
-                step="1"
-                min="10"
-                max="300"
-                class="align-center"
-                track-color="grey"
-                thumb-label
-                hide-details
-              >
-                <template #append>
-                  <v-text-field
-                    v-model="minute"
-                    step="1"
-                    min="10"
-                    max="300"
-                    class="mt-0 pt-0"
-                    hide-details
-                    single-line
-                    type="number"
-                    style="width: 150px"
-                    @focus="$event.target.select()"
-                  ></v-text-field>
-                </template>
-              </v-slider>
+            <v-col cols="12" lg="6">
+              <EditNumberField :value="minute" label="Minute" />
             </v-col>
           </v-row>
 
@@ -170,6 +106,7 @@
 import { Component, Emit, Prop, PropSync, Vue } from 'nuxt-property-decorator'
 import { PropType } from 'vue'
 
+import EditNumberField from './editNumberField.vue'
 import {
   BlindStructureDto,
   BlindStructureTemplateDto,
@@ -181,7 +118,11 @@ export interface EditBlindStructureDto {
   structures: BlindStructureDto[]
 }
 
-@Component
+@Component({
+  components: {
+    EditNumberField,
+  },
+})
 export default class AdminRegisterBlindStructure extends Vue {
   @PropSync('name', { type: String })
   templateName!: string
