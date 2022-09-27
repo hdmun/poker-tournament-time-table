@@ -33,7 +33,7 @@
           </v-row>
 
           <v-row>
-            <v-col cols="12" lg="6">
+            <v-col cols="12" lg="4">
               <v-text-field
                 v-model.number="smallBlind"
                 label="Small Blind"
@@ -44,11 +44,23 @@
                 @focus="$event.target.select()"
               />
             </v-col>
-            <v-col cols="12" lg="6">
+
+            <v-col cols="12" lg="4">
               <v-text-field
                 v-model.number="bigBlind"
                 label="Big Blind"
                 :rules="bigBlindRule"
+                type="number"
+                hide-spin-buttons
+                required
+                @focus="$event.target.select()"
+              />
+            </v-col>
+
+            <v-col cols="12" lg="4">
+              <v-text-field
+                v-model.number="ante"
+                label="Ante"
                 type="number"
                 hide-spin-buttons
                 required
@@ -184,6 +196,7 @@ export default class AdminRegisterBlindStructure extends Vue {
 
   selectTemplate: BlindStructureTemplateDto | null = null
 
+  ante: number = 0
   smallBlind: number = 100
   bigBlind: number = 200
   bigBlindInc: number = 100
@@ -253,6 +266,7 @@ export default class AdminRegisterBlindStructure extends Vue {
 
     this.editStructures.push({
       level: this.editStructures.length + 1,
+      ante: this.ante,
       smallBlind,
       bigBlind,
       minute: this.minute,
@@ -266,9 +280,11 @@ export default class AdminRegisterBlindStructure extends Vue {
     const blindCount = this.editStructures.length
     if (blindCount > 0) {
       const lastBlind = this.editStructures[blindCount - 1]
+      this.ante = lastBlind.ante
       this.smallBlind = lastBlind.smallBlind
       this.bigBlind = lastBlind.bigBlind
     } else {
+      this.ante = 0
       this.smallBlind = 100
       this.bigBlind = 200
     }

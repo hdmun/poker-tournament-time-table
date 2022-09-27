@@ -2,10 +2,10 @@
   <v-flex class="ma-0 pa-0">
     <v-row justify="center" class="ma-0">
       <v-col
-        v-for="header in headers"
-        :key="header"
+        v-for="(header, index) in headers"
+        :key="index"
         class="pa-0"
-        :cols="colsGrid"
+        :cols="headerCols(header)"
       >
         <v-card class="pa-0" color="gray6" outlined tile>
           <v-card-title class="pa-2 header-text">
@@ -22,7 +22,7 @@
       class="ma-0"
     >
       <template v-if="blind.level > 0">
-        <v-col class="pa-0" :cols="colsGrid">
+        <v-col class="pa-0" :cols="1">
           <BlindsStructureTableCell
             :value="blind.level"
             :text-color="cellTextColor(index)"
@@ -41,6 +41,14 @@
         <v-col class="pa-0" :cols="colsGrid">
           <BlindsStructureTableCell
             :value="blind.bigBlind"
+            :text-color="cellTextColor(index)"
+            :back-color="cellBackgroundColor(index)"
+          />
+        </v-col>
+
+        <v-col class="pa-0" :cols="2">
+          <BlindsStructureTableCell
+            :value="blind.ante"
             :text-color="cellTextColor(index)"
             :back-color="cellBackgroundColor(index)"
           />
@@ -87,7 +95,7 @@ import { BlindStructureModel } from '~/store/admin/tournament'
   },
 })
 export default class BlindsStructureTable extends Vue {
-  headers: string[] = ['LV', 'S.B', 'B.B', 'TIME']
+  headers: string[] = ['LV', 'S.B', 'B.B', 'ANTE', 'TIME']
   colsGrid = 3
 
   @Prop({
@@ -98,6 +106,17 @@ export default class BlindsStructureTable extends Vue {
 
   @Prop({ type: Number, required: true })
   blindId!: number
+
+  headerCols(headerText: string) {
+    switch (headerText) {
+      case 'LV':
+        return 1
+      case 'ANTE':
+        return 2
+      default:
+        return this.colsGrid
+    }
+  }
 
   cellTextColor(index: number) {
     return this.blindId === index ? 'white' : 'primary'

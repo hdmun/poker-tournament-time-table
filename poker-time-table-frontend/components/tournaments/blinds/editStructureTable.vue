@@ -5,7 +5,7 @@
         v-for="(header, index) in headers"
         :key="index"
         class="pa-0"
-        :cols="headerCols(index)"
+        :cols="headerCols(header)"
       >
         <v-card class="pa-0 fill-height" color="gray6" outlined tile>
           <v-card-title class="pa-2 header-text">
@@ -42,7 +42,7 @@
       </v-col>
 
       <template v-if="blind.level > 0">
-        <v-col class="pa-0" :cols="colsGrid">
+        <v-col class="pa-0" :cols="1">
           <BlindsStructureTableCell
             :value.sync="blind.level"
             :text-color="cellTextColor(index)"
@@ -63,10 +63,17 @@
             :back-color="cellBackgroundColor(index)"
           />
         </v-col>
+
+        <v-col class="pa-0" :cols="colsGrid">
+          <EditBlindsStructureTableCell
+            :edit-value.sync="blind.ante"
+            :back-color="cellBackgroundColor(index)"
+          />
+        </v-col>
       </template>
 
       <template v-else>
-        <v-col class="pa-0" :cols="colsGrid * 3">
+        <v-col class="pa-0" :cols="colsGrid * 3 + 1">
           <v-card class="pa-0 fill-height" color="gray5" outlined tile>
             <v-card-title class="pa-2 breaktime-text">
               BREAK TIME
@@ -102,7 +109,7 @@
         </v-card>
       </v-col>
 
-      <v-col class="pa-0" :cols="colsGrid">
+      <v-col class="pa-0" :cols="1">
         <v-card
           class="pa-0 justify-center fill-height"
           color="gray5"
@@ -135,7 +142,7 @@ import { BlindStructureModel } from '~/store/admin/tournament'
   },
 })
 export default class EditBlindsStructureTable extends Vue {
-  headers: string[] = [' ', 'LV', 'S.B', 'B.B', 'TIME', ' ', '편집']
+  headers: string[] = [' ', 'LV', 'S.B', 'B.B', 'ANTE', 'TIME', ' ', '편집']
   colsGrid = 2
 
   @Prop({
@@ -147,10 +154,13 @@ export default class EditBlindsStructureTable extends Vue {
   @Prop({ type: Number, required: true })
   blindId!: number
 
-  headerCols(index: number) {
-    switch (index) {
-      case 0:
-      case 5:
+  headerCols(headerText: string) {
+    switch (headerText) {
+      case ' ':
+        return 1
+      case 'LV':
+        return 1
+      case 'TIME':
         return 1
       default:
         return this.colsGrid

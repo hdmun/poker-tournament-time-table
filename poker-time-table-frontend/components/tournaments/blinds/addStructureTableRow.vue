@@ -4,7 +4,7 @@
       <v-card class="pa-0 fill-height" color="gray5" outlined tile> </v-card>
     </v-col>
 
-    <v-col class="pa-0" :cols="colsGrid">
+    <v-col class="pa-0" :cols="1">
       <BlindsStructureTableCell
         :value="isAddBreakTime ? null : blindLevel"
         :value-prefix="isAddBreakTime ? 'BreakTime' : ''"
@@ -23,6 +23,13 @@
     <v-col class="pa-0" :cols="colsGrid">
       <EditBlindsStructureTableCell
         :edit-value.sync="addBlind.bigBlind"
+        back-color="gray5"
+      />
+    </v-col>
+
+    <v-col class="pa-0" :cols="colsGrid">
+      <EditBlindsStructureTableCell
+        :edit-value.sync="addBlind.ante"
         back-color="gray5"
       />
     </v-col>
@@ -49,7 +56,7 @@
       </v-card>
     </v-col>
 
-    <v-col class="pa-0" :cols="colsGrid">
+    <v-col class="pa-0" :cols="1">
       <v-card
         class="pa-0 justify-center fill-height"
         color="gray5"
@@ -90,6 +97,7 @@ export default class AddBlindsStructureTableRow extends Vue {
 
   addBlind: BlindStructureModel = {
     level: -1,
+    ante: 0,
     smallBlind: 0,
     bigBlind: 0,
     minute: 0,

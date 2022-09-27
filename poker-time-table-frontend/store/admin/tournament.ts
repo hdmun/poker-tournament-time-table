@@ -20,6 +20,7 @@ export interface TournamentItem {
 
 export interface BlindStructureModel {
   level: number
+  ante: number
   smallBlind: number
   bigBlind: number
   minute: number
@@ -59,6 +60,7 @@ export default class AdminTournamentStore
     pause: true,
     level: 0,
     title: '로딩 중...',
+    ante: 0,
     smallBlind: 0,
     bigBlind: 0,
     chipsInPlay: '-',
@@ -90,6 +92,7 @@ export default class AdminTournamentStore
     this.clock.remainSeconds = dto.reaminSeconds
     this.clock.pause = dto.pause
     this.clock.level = dto.level > 0 ? dto.level : 0
+    this.clock.ante = dto.ante
     this.clock.smallBlind = dto.smallBlind
     this.clock.bigBlind = dto.bigBlind
 
@@ -105,6 +108,7 @@ export default class AdminTournamentStore
   @mutation addBreakTime(minute: number) {
     this.blinds.push({
       level: -1,
+      ante: 0,
       smallBlind: -1,
       bigBlind: -1,
       minute,
@@ -160,6 +164,7 @@ export default class AdminTournamentStore
       (value) => {
         return {
           level: value.level,
+          ante: value.ante,
           smallBlind: value.smallBlind,
           bigBlind: value.bigBlind,
           minute: value.minute,
@@ -191,6 +196,7 @@ export default class AdminTournamentStore
     response.data.map<BlindStructureModel>((value) => {
       return {
         level: value.level,
+        ante: value.ante,
         smallBlind: value.smallBlind,
         bigBlind: value.bigBlind,
         minute: value.minute,

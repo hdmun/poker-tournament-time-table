@@ -84,7 +84,7 @@
         <TournamentClockBlindCards
           :show-blind-table="showMiniVariant"
           :level="data.level"
-          :ante="0"
+          :ante="data.ante"
           :small-blind="data.smallBlind"
           :big-blind="data.bigBlind"
           @onToggleShowBlindTable="onToggleShowBlindTable"

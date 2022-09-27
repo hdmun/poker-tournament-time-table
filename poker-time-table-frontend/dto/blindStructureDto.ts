@@ -5,6 +5,7 @@ export interface BlindStructureTemplateDto {
 
 export interface BlindStructureDto {
   level: number
+  ante: number
   smallBlind: number
   bigBlind: number
   minute: number

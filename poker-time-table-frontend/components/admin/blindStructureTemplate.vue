@@ -18,9 +18,11 @@
         <template #input>
           <v-text-field
             v-model="props.item.smallBlind"
-            label="Edit"
-            single-line
-            counter
+            label="S.B"
+            type="number"
+            hide-spin-buttons
+            required
+            @focus="$event.target.select()"
           ></v-text-field>
         </template>
       </v-edit-dialog>
@@ -32,9 +34,27 @@
         <template #input>
           <v-text-field
             v-model="props.item.bigBlind"
-            label="Edit"
-            single-line
-            counter
+            label="B.B"
+            type="number"
+            hide-spin-buttons
+            required
+            @focus="$event.target.select()"
+          ></v-text-field>
+        </template>
+      </v-edit-dialog>
+    </template>
+
+    <template #item.ante="props">
+      <v-edit-dialog :return-value.sync="props.item.ante">
+        {{ props.item.ante }}
+        <template #input>
+          <v-text-field
+            v-model="props.item.ante"
+            label="ANTE"
+            type="number"
+            hide-spin-buttons
+            required
+            @focus="$event.target.select()"
           ></v-text-field>
         </template>
       </v-edit-dialog>
@@ -46,9 +66,11 @@
         <template #input>
           <v-text-field
             v-model="props.item.minute"
-            label="Edit"
-            single-line
-            counter
+            label="minute"
+            type="number"
+            hide-spin-buttons
+            required
+            @focus="$event.target.select()"
           ></v-text-field>
         </template>
       </v-edit-dialog>
@@ -72,6 +94,7 @@ export default class AdminBlindStructureTemplate extends Vue {
     { text: 'Level', value: 'level' },
     { text: 'SB', value: 'smallBlind' },
     { text: 'BB', value: 'bigBlind' },
+    { text: 'ANTE', value: 'ante' },
     { text: 'Minute', value: 'minute' },
     { text: 'Actions', value: 'actions' },
   ]

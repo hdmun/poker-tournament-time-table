@@ -64,6 +64,7 @@ import { BlindStructureModel } from '~/store/admin/tournament'
 function isEqual(a: BlindStructureModel, b: BlindStructureModel) {
   return (
     a.level === b.level &&
+    a.ante === b.ante &&
     a.smallBlind === b.smallBlind &&
     a.bigBlind === b.bigBlind &&
     a.minute === b.minute
@@ -178,6 +179,7 @@ export default class TournamentBlinds extends Vue {
       }
       vxm.tournament.addBlind({
         level: this.lastBlind.level + 1,
+        ante: addBlind.ante,
         smallBlind: addBlind.smallBlind,
         bigBlind: addBlind.bigBlind,
         minute: addBlind.minute,

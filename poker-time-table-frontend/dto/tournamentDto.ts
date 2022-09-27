@@ -1,5 +1,6 @@
 export interface TournamentBlindDto {
   level: number
+  ante: number
   smallBlind: number
   bigBlind: number
   minute: number
@@ -35,6 +36,7 @@ export interface TournamentClockEventDto {
   reaminSeconds: string
   pause: boolean
   level: number
+  ante: number
   smallBlind: number
   bigBlind: number
 }

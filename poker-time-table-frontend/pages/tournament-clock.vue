@@ -75,6 +75,7 @@ export default class TournamentClockPage extends Vue {
     pause: true,
     level: 0,
     title: '로딩 중...',
+    ante: 0,
     smallBlind: 0,
     bigBlind: 0,
     chipsInPlay: '-',

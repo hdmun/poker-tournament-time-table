@@ -10,6 +10,7 @@ export interface TournamentClockDto {
   pause: boolean
   level: number
   title: string
+  ante: number
   smallBlind: number
   bigBlind: number
 

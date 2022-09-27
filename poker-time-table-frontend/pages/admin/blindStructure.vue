@@ -85,6 +85,7 @@ export default class AdminBlindStructure extends Vue {
     this.structure = this.structure.map((value, index) => {
       return {
         level: index + 1,
+        ante: value.ante,
         smallBlind: value.smallBlind,
         bigBlind: value.bigBlind,
         minute: value.minute,
