@@ -49,7 +49,7 @@
         fab
         outlined
         color="gray6"
-        :disabled="currentStep < 1 || !starting"
+        :disabled="disabledBlindDown"
         @click="onDownBlind()"
       >
         <v-icon x-large color="white"> mdi-chevron-left </v-icon>
@@ -61,6 +61,7 @@
         outlined
         class="ma-6"
         color="gray6"
+        :disabled="closedTournament"
         @click="data.pause ? onPlay() : onPause()"
       >
         <v-icon v-if="data.pause" x-large color="primary"> mdi-play </v-icon>
@@ -72,7 +73,7 @@
         fab
         outlined
         color="gray6"
-        :disabled="blindCount <= currentStep || !starting"
+        :disabled="disabledBlindUp"
         @click="onUpBlind()"
       >
         <v-icon x-large color="white"> mdi-chevron-right </v-icon>
@@ -114,6 +115,16 @@
         </v-row>
       </v-col>
     </v-row>
+
+    <v-snackbar
+      :value="disabledBlindUp"
+      :timeout="-1"
+      centered
+      tile
+      color="red accent-2"
+    >
+      {{ snackbarMessage }}
+    </v-snackbar>
   </v-card>
 </template>
 
@@ -136,23 +147,49 @@ export default class TournamentClock extends Vue {
   @Prop({ type: Object as () => TournamentClockDto, required: true })
   data!: TournamentClockDto
 
-  @Prop({ type: Number })
+  @Prop({ type: Number, default: 0 })
   currentStep!: number
 
-  @Prop({ type: Number })
+  @Prop({ type: Number, default: 0 })
   blindCount!: number
 
-  @Prop({ type: Boolean })
+  @Prop({ type: Boolean, default: true })
   starting!: boolean
 
   @Prop({ type: Boolean, required: true })
   editMode!: boolean
 
-  created() {}
+  waitRender: boolean = true
 
-  mounted() {}
+  get snackbarMessage(): string {
+    if (this.closedTournament) {
+      return '종료된 토너먼트 입니다.'
+    }
+    if (!this.starting) {
+      return '시작하지 않은 토너먼트 입니다.'
+    }
 
-  beforeDestroy() {}
+    return '로딩 중'
+  }
+
+  get closedTournament(): boolean {
+    return this.blindCount <= this.currentStep
+  }
+
+  get disabledBlindUp(): boolean {
+    if (this.waitRender) {
+      return false
+    }
+    return this.blindCount <= this.currentStep || !this.starting
+  }
+
+  get disabledBlindDown(): boolean {
+    return this.currentStep < 1 || !this.starting
+  }
+
+  updated() {
+    this.waitRender = false
+  }
 
   @Emit('onPlay')
   onPlay() {}
