@@ -123,7 +123,7 @@
       tile
       color="red accent-2"
     >
-      {{ snackbarMessage }}
+      <div class="snackbar-text">{{ snackbarMessage }}</div>
     </v-snackbar>
   </v-card>
 </template>
@@ -246,5 +246,10 @@ $remaintime-size: $head-1-size + 5rem;
   @extend .head-1-bold;
   font-size: $remaintime-size !important;
   line-height: $remaintime-size;
+}
+
+.snackbar-text {
+  @extend .title-1-bold;
+  margin: 1rem !important;
 }
 </style>
