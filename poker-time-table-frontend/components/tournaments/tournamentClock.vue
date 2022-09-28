@@ -35,9 +35,13 @@
         <v-card-title class="pa-0 justify-center">
           <div class="remaintime-value">
             <template v-if="data.remainHours !== '00'">
-              {{ data.remainHours }} :
+              {{ data.remainHours }}:{{ data.remainMinutes }}:{{
+                data.remainSeconds
+              }}
             </template>
-            {{ data.remainMinutes }} : {{ data.remainSeconds }}
+            <template v-else>
+              {{ data.remainMinutes }} : {{ data.remainSeconds }}
+            </template>
           </div>
         </v-card-title>
       </v-col>
