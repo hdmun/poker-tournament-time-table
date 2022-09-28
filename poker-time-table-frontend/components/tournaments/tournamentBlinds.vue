@@ -201,7 +201,13 @@ export default class TournamentBlinds extends Vue {
 @import '~/assets/variables.scss';
 
 .blind-table-title {
-  @extend .title-1-bold;
+  @include media('lg-and-up') {
+    @include title1-bold;
+  }
+
+  @include media('md-and-down') {
+    @include sub-copy-bold;
+  }
 
   justify-content: center !important;
 }

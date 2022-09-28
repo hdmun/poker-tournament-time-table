@@ -17,7 +17,7 @@
       "~/*": ["./*"],
       "@/*": ["./*"]
     },
-    "types": ["@nuxt/types", "@nuxtjs/axios", "@types/node"]
+    "types": ["@nuxt/types", "@nuxtjs/axios", "@types/node", "@nuxtjs/vuetify"]
   },
   "exclude": ["node_modules", ".nuxt", "dist", "**/*.stories.ts"],
   "vueCompilerOptions": {

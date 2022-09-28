@@ -1,6 +1,6 @@
 <template>
   <v-card class="fill-height" color="gray8" outlined tile>
-    <v-row class="mt-8">
+    <v-row class="mt-xl-8">
       <v-col justify="center">
         <v-card-title class="justify-center title-2-exbold" wrap>
           {{ data.title }}
@@ -8,8 +8,8 @@
       </v-col>
     </v-row>
 
-    <v-row justify="center">
-      <v-col cols="6">
+    <v-row class="mt-md-0" justify="center">
+      <v-col class="pa-md-0" cols="6">
         <v-card-title class="justify-center">
           <div class="ma-0 playtime-text">PLAY TIME</div>
         </v-card-title>
@@ -19,7 +19,7 @@
         </v-card-title>
       </v-col>
 
-      <v-col cols="6">
+      <v-col class="pa-md-0" cols="6">
         <v-card-title class="justify-center">
           <div class="nextbreak-text">NEXT BREAK</div>
         </v-card-title>
@@ -47,7 +47,7 @@
       </v-col>
     </v-row>
 
-    <v-row justify="center" align="center" class="mb-6">
+    <v-row class="mb-xl-6" justify="center" align="center">
       <v-btn
         small
         fab
@@ -221,35 +221,50 @@ export default class TournamentClock extends Vue {
   @extend .primary-color;
 }
 
-$top-text-size: $title-1-size + 1rem;
-.playtime-value {
-  @extend .title-1;
-  @extend .primary-color;
-
-  font-size: $top-text-size !important;
-  line-height: $top-text-size;
-  justify-content: center;
-}
-
 .nextbreak-text {
   @extend .sub-copy;
   @extend .gray2-color;
 }
 
-.nextbreak-value {
-  @extend .title-1;
-  @extend .gray2-color;
+$top-text-size: $title-1-size + 1rem;
+.playtime-value {
+  @include media('lg-and-up') {
+    font-size: $top-text-size !important;
+    line-height: $top-text-size;
+  }
 
-  font-size: $top-text-size !important;
-  line-height: $top-text-size;
+  @include media('md-and-down') {
+    @include title1-bold;
+  }
+
+  @extend .primary-color;
   justify-content: center;
 }
 
-$remaintime-size: $head-1-size + 5rem;
+.nextbreak-value {
+  @include media('lg-and-up') {
+    font-size: $top-text-size !important;
+    line-height: $top-text-size;
+  }
+
+  @include media('md-and-down') {
+    @include title1-bold;
+  }
+
+  @extend .gray2-color;
+  justify-content: center;
+}
+
+$remaintime-xl-size: $head-1-size + 5rem;
 .remaintime-value {
-  @extend .head-1-bold;
-  font-size: $remaintime-size !important;
-  line-height: $remaintime-size;
+  @include media('lg-and-up') {
+    font-size: $remaintime-xl-size !important;
+    line-height: $remaintime-xl-size;
+  }
+
+  @include media('md-and-down') {
+    @include head1-bold;
+  }
 }
 
 .snackbar-text {

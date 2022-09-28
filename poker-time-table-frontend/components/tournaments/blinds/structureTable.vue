@@ -134,17 +134,29 @@ export default class BlindsStructureTable extends Vue {
 @import '~/assets/variables.scss';
 
 .header-text {
-  @extend .sub-copy-exbold;
-  @extend .secondary4-color;
+  @include media('lg-and-up') {
+    @include sub-copy-bold;
+  }
 
+  @include media('md-and-down') {
+    @include small-copy1-bold;
+  }
+
+  @extend .secondary4-color;
   justify-content: center !important;
 }
 .breaktime-text {
-  @extend .title-2-exbold;
-  @extend .accent1-color;
+  @include media('lg-and-up') {
+    @include title2-bold;
+    padding: 16px !important;
+  }
 
+  @include media('md-and-down') {
+    @include sub-copy-bold;
+  }
+
+  @extend .accent1-color;
   height: 100%;
-  padding: 16px !important;
   justify-content: center !important;
 }
 </style>

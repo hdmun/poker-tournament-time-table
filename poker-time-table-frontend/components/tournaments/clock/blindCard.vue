@@ -99,11 +99,17 @@ export default class BlindCards extends Vue {
 
 $value-text-size: $title-1-size + 1rem;
 .info-value {
-  @extend .title-1-bold;
-  @extend .gray1-color;
+  @include media('lg-and-up') {
+    @include title1-bold;
+    font-size: $value-text-size !important;
+    line-height: $value-text-size;
+  }
 
-  font-size: $value-text-size !important;
-  line-height: $value-text-size;
+  @include media('md-and-down') {
+    @include title2-bold;
+  }
+
+  @extend .gray1-color;
   justify-content: center;
 }
 </style>

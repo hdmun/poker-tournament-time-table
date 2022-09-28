@@ -94,11 +94,22 @@ export default class TournamentClockPage extends Vue {
   }
 
   get blindTableWidth(): number {
-    const width = 750
-    if (this.editBlindTable) {
-      return width + 120
+    switch (this.$vuetify.breakpoint.name) {
+      case 'xs':
+        return 220
+      case 'sm':
+        return 400
+      case 'md':
+        return 500
+      case 'xl':
+      case 'lg': {
+        const width = 750
+        if (this.editBlindTable) {
+          return width + 120
+        }
+        return width
+      }
     }
-    return width
   }
 
   mounted() {
