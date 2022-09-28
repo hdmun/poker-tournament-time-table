@@ -1,16 +1,22 @@
 <template>
   <v-row class="ma-0 pa-0">
     <v-col class="pa-0" :cols="1">
-      <v-card class="pa-0 fill-height" color="gray5" outlined tile> </v-card>
-    </v-col>
-
-    <v-col class="pa-0" :cols="1">
-      <BlindsStructureTableCell
-        :value="isAddBreakTime ? null : blindLevel"
-        :value-prefix="isAddBreakTime ? 'BreakTime' : ''"
-        text-color="white"
-        back-color="gray5"
-      />
+      <v-card
+        class="pa-0 justify-center fill-height"
+        color="gray5"
+        outlined
+        tile
+      >
+        <v-card-title class="pa-0 justify-center fill-height">
+          <v-icon
+            large
+            :disabled="addBlind.smallBlind === 0 || addBlind.bigBlind === 0"
+            @click.stop="onClickAdd()"
+          >
+            mdi-plus
+          </v-icon>
+        </v-card-title>
+      </v-card>
     </v-col>
 
     <v-col class="pa-0" :cols="colsGrid">
@@ -27,14 +33,14 @@
       />
     </v-col>
 
-    <v-col class="pa-0" :cols="colsGrid">
+    <v-col class="pa-0" :cols="2">
       <EditBlindsStructureTableCell
         :edit-value.sync="addBlind.ante"
         back-color="gray5"
       />
     </v-col>
 
-    <v-col class="pa-0" :cols="colsGrid">
+    <v-col class="pa-0" :cols="2">
       <EditBlindsStructureTableCell
         :edit-value.sync="addBlind.minute"
         back-color="gray5"
@@ -46,31 +52,17 @@
         <v-card-title class="pa-0 justify-center fill-height">
           <v-tooltip top>
             <template #activator="{ on, attrs }">
-              <v-icon v-bind="attrs" v-on="on" @click.stop="onClickSetBreak()">
+              <v-icon
+                large
+                v-bind="attrs"
+                v-on="on"
+                @click.stop="onClickSetBreak()"
+              >
                 mdi-coffee-outline
               </v-icon>
             </template>
             <span>Break Time으로 세팅합니다.</span>
           </v-tooltip>
-        </v-card-title>
-      </v-card>
-    </v-col>
-
-    <v-col class="pa-0" :cols="1">
-      <v-card
-        class="pa-0 justify-center fill-height"
-        color="gray5"
-        outlined
-        tile
-      >
-        <v-card-title class="pa-0 justify-center fill-height">
-          <v-icon
-            large
-            :disabled="addBlind.smallBlind === 0 || addBlind.bigBlind === 0"
-            @click.stop="onClickAdd()"
-          >
-            mdi-plus
-          </v-icon>
         </v-card-title>
       </v-card>
     </v-col>
@@ -90,7 +82,7 @@ import { BlindStructureModel } from '~/store/admin/tournament'
   },
 })
 export default class AddBlindsStructureTableRow extends Vue {
-  colsGrid = 2
+  colsGrid = 3
 
   @Prop({ type: Number, required: true })
   blindLevel!: number

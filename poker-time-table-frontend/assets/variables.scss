@@ -2,6 +2,13 @@
 //
 // The variables you want to modify
 // $font-size-root: 20px !important;
+@import '~vuetify/src/styles/styles.sass';
+
+@mixin media($breakpoint) {
+  @media #{map-get($display-breakpoints, $breakpoint)} {
+    @content;
+  }
+}
 
 $head-1-size: 11.25rem;
 .head-1 {
@@ -11,6 +18,12 @@ $head-1-size: 11.25rem;
 .head-1-bold {
   @extend .head-1;
   font-weight: 800 !important;
+}
+
+@mixin head1-bold {
+  font-weight: 800;
+  font-size: $head-1-size !important;
+  line-height: $head-1-size;
 }
 
 $head-2-size: 8rem;
@@ -23,6 +36,12 @@ $head-2-size: 8rem;
   font-weight: 800 !important;
 }
 
+@mixin head2-bold {
+  font-weight: 800;
+  font-size: $head-2-size !important;
+  line-height: $head-2-size;
+}
+
 $title-1-size: 2.75rem;
 .title-1 {
   font-size: $title-1-size !important;
@@ -31,6 +50,17 @@ $title-1-size: 2.75rem;
 .title-1-bold {
   @extend .title-1;
   font-weight: 800 !important;
+}
+
+@mixin title1 {
+  font-weight: 300;
+  font-size: $title-1-size !important;
+  line-height: $title-1-size;
+}
+
+@mixin title1-bold {
+  font-weight: 800 !important;
+  @include title1
 }
 
 $title-2-size: 2rem;
@@ -44,6 +74,17 @@ $title-2-size: 2rem;
   font-weight: 800 !important;
 }
 
+@mixin title2 {
+  font-weight: 300;
+  font-size: $title-2-size !important;
+  line-height: $title-2-size;
+}
+
+@mixin title2-bold {
+  font-weight: 800 !important;
+  @include title2
+}
+
 $sub-copy-size: 1.25rem;
 .sub-copy {
   font-size: $sub-copy-size !important;
@@ -51,6 +92,17 @@ $sub-copy-size: 1.25rem;
 }
 .sub-copy-exbold {
   @extend .sub-copy;
+  font-weight: 800 !important;
+}
+
+@mixin sub-copy {
+  font-weight: 300;
+  font-size: $sub-copy-size !important;
+  line-height: $sub-copy-size;
+}
+
+@mixin sub-copy-bold {
+  @include sub-copy;
   font-weight: 800 !important;
 }
 
@@ -64,6 +116,18 @@ $small-copy-1-size: 1rem;
   @extend .small-copy-1;
   font-weight: 800 !important;
 }
+
+@mixin small-copy1 {
+  font-weight: 300;
+  font-size: $small-copy-1-size !important;
+  line-height: $small-copy-1-size;
+}
+
+@mixin small-copy1-bold {
+  @include small-copy1;
+  font-weight: 800 !important;
+}
+
 
 $small-copy-2-size: 0.875rem;
 .small-copy-2 {

@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="gray7">
     <v-list-item two-line>
       <v-list-item-content>
         <v-list-item-title class="text-h5"> 신규 토너먼트 </v-list-item-title>
@@ -64,49 +64,6 @@
           </v-col>
         </v-row>
 
-        <v-card-title>Prize Pool</v-card-title>
-
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-for="(prize, index) in prizePool"
-              :key="index"
-              :value="prize"
-              disabled
-              prepend-icon="mdi-seal"
-            >
-              <v-icon
-                slot="append"
-                color="red"
-                @click="onClickRemovePrize(index)"
-              >
-                mdi-minus
-              </v-icon>
-            </v-text-field>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="prize"
-              :label="`${prizePool.length + 1} Rank Prize`"
-              prepend-icon="mdi-pencil-outline"
-              type="number"
-            >
-              <v-btn
-                slot="append"
-                text
-                :disabled="prize === ''"
-                color="primary"
-                @click="onClickAddPrize"
-              >
-                <v-icon> mdi-plus </v-icon>
-              </v-btn>
-            </v-text-field>
-          </v-col>
-        </v-row>
-
         <v-btn class="mr-4" color="primary" @click="onRegister"> 등록 </v-btn>
       </v-form>
     </v-card-text>
@@ -129,9 +86,6 @@ export default class RegisterTournament extends Vue {
   breakTime: number = 20
   breakTimeTerm: number = 3
 
-  prizePool: number[] = []
-  prize: number = 0
-
   mounted() {
     this.loadTemplates()
   }
@@ -145,21 +99,6 @@ export default class RegisterTournament extends Vue {
       if (a.name > b.name) return 1
       return 0
     })
-  }
-
-  onClickRemovePrize(index: number) {
-    if (this.prizePool.length <= index) {
-      return
-    }
-
-    this.prizePool.splice(index, 1)
-  }
-
-  onClickAddPrize() {
-    if (this.prize > 0) {
-      this.prizePool.push(this.prize)
-      this.prize = 0
-    }
   }
 
   @Emit('register')

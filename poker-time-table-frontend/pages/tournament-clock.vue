@@ -17,7 +17,7 @@
 
     <v-navigation-drawer
       v-model="showBlindTable"
-      :width="blindTableHeight"
+      :width="blindTableWidth"
       right
       app
       fixed
@@ -93,8 +93,23 @@ export default class TournamentClockPage extends Vue {
     return this.clock.tournamentId
   }
 
-  get blindTableHeight(): number {
-    return 838
+  get blindTableWidth(): number {
+    switch (this.$vuetify.breakpoint.name) {
+      case 'xs':
+        return 220
+      case 'sm':
+        return 400
+      case 'md':
+        return 500
+      case 'xl':
+      case 'lg': {
+        const width = 750
+        if (this.editBlindTable) {
+          return width + 120
+        }
+        return width
+      }
+    }
   }
 
   mounted() {

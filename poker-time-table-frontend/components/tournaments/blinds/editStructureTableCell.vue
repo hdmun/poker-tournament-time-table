@@ -31,7 +31,7 @@ export default class EditBlindsStructureTableCell extends Vue {
 @import '~/assets/variables.scss';
 
 .cell-text {
-  @extend .sub-copy;
+  @extend .title-2-exbold;
 
   padding: 16px !important;
   justify-content: center !important;

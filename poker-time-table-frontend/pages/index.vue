@@ -1,5 +1,5 @@
 <template>
-  <v-flex>
+  <v-flex class="fill-height gray8">
     <v-row class="pa-6">
       <v-col cols="12" sm="12" md="6" lg="6" xl="6">
         <TournamentTable ref="tournamentTable" />

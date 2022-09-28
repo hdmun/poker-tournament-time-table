@@ -11,7 +11,7 @@
 
     <v-col cols="3" class="pa-0">
       <v-card class="fill-height" color="gray7" outlined tile>
-        <v-card-title class="pt-3 pb-0 ante-title"> Ante </v-card-title>
+        <v-card-title class="pt-4 pb-2 ante-title"> Ante </v-card-title>
         <v-card-title class="info-value"> {{ ante }} </v-card-title>
       </v-card>
     </v-col>
@@ -29,7 +29,10 @@
         </v-card-actions>
 
         <v-card-title class="info-value">
-          {{ smallBlind }} / {{ bigBlind }}
+          <template v-if="isAddNewLine">
+            {{ smallBlind }} / <br />{{ bigBlind }}
+          </template>
+          <template v-else> {{ smallBlind }} / {{ bigBlind }} </template>
         </v-card-title>
       </v-card>
     </v-col>
@@ -55,6 +58,19 @@ export default class BlindCards extends Vue {
 
   @Prop({ type: Number, required: true })
   bigBlind!: Number
+
+  get isAddNewLine(): boolean {
+    if (this.showBlindTable) {
+      if (this.smallBlind < 10000) {
+        return true
+      }
+    }
+
+    if (this.smallBlind >= 100000) {
+      return true
+    }
+    return false
+  }
 
   @Emit('onToggleShowBlindTable')
   onToggleShowBlindTable() {
@@ -97,10 +113,19 @@ export default class BlindCards extends Vue {
   justify-content: center;
 }
 
+$value-text-size: $title-1-size + 1rem;
 .info-value {
-  @extend .title-1-bold;
-  @extend .gray1-color;
+  @include media('lg-and-up') {
+    @include title1-bold;
+    font-size: $value-text-size !important;
+    line-height: $value-text-size;
+  }
 
+  @include media('md-and-down') {
+    @include title2-bold;
+  }
+
+  @extend .gray1-color;
   justify-content: center;
 }
 </style>

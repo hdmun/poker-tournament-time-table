@@ -1,13 +1,14 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
   <v-data-table
+    class="gray7"
     :headers="headers"
     :items="blindStructures"
     :items-per-page="-1"
     hide-default-footer
   >
     <template #top>
-      <v-toolbar flat>
+      <v-toolbar class="gray7" flat>
         <v-toolbar-title>BLINDS STRUCTURE</v-toolbar-title>
       </v-toolbar>
     </template>
@@ -16,14 +17,7 @@
       <v-edit-dialog :return-value.sync="props.item.smallBlind">
         {{ props.item.smallBlind }}
         <template #input>
-          <v-text-field
-            v-model="props.item.smallBlind"
-            label="S.B"
-            type="number"
-            hide-spin-buttons
-            required
-            @focus="$event.target.select()"
-          ></v-text-field>
+          <EditNumberField :value="props.item.smallBlind" label="S.B" />
         </template>
       </v-edit-dialog>
     </template>
@@ -32,14 +26,7 @@
       <v-edit-dialog :return-value.sync="props.item.bigBlind">
         {{ props.item.bigBlind }}
         <template #input>
-          <v-text-field
-            v-model="props.item.bigBlind"
-            label="B.B"
-            type="number"
-            hide-spin-buttons
-            required
-            @focus="$event.target.select()"
-          ></v-text-field>
+          <EditNumberField :value="props.item.bigBlind" label="B.B" />
         </template>
       </v-edit-dialog>
     </template>
@@ -48,14 +35,7 @@
       <v-edit-dialog :return-value.sync="props.item.ante">
         {{ props.item.ante }}
         <template #input>
-          <v-text-field
-            v-model="props.item.ante"
-            label="ANTE"
-            type="number"
-            hide-spin-buttons
-            required
-            @focus="$event.target.select()"
-          ></v-text-field>
+          <EditNumberField :value="props.item.ante" label="ANTE" />
         </template>
       </v-edit-dialog>
     </template>
@@ -64,14 +44,7 @@
       <v-edit-dialog :return-value.sync="props.item.minute">
         {{ props.item.minute }}
         <template #input>
-          <v-text-field
-            v-model="props.item.minute"
-            label="minute"
-            type="number"
-            hide-spin-buttons
-            required
-            @focus="$event.target.select()"
-          ></v-text-field>
+          <EditNumberField :value="props.item.minute" label="Minute" />
         </template>
       </v-edit-dialog>
     </template>
@@ -86,9 +59,14 @@
 import { PropType } from 'vue'
 import { Component, Emit, PropSync, Vue } from 'nuxt-property-decorator'
 
+import EditNumberField from './editNumberField.vue'
 import { BlindStructureDto } from '~/dto/blindStructureDto'
 
-@Component
+@Component({
+  components: {
+    EditNumberField,
+  },
+})
 export default class AdminBlindStructureTemplate extends Vue {
   headers = [
     { text: 'Level', value: 'level' },

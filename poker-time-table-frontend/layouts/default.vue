@@ -85,7 +85,7 @@
       </v-btn>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="fill-height gray8">
       <Nuxt />
     </v-main>
 
@@ -147,7 +147,7 @@ export default class DefaultLayout extends Vue {
       subItems: [
         {
           icon: 'mdi-tournament',
-          title: '토너먼트 편집',
+          title: '신규 토너먼트 생성',
           to: '/admin/tournament',
         },
         {

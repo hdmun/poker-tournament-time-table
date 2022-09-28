@@ -14,8 +14,6 @@ export interface TournamentItem {
   end: boolean
   name: string
   buyIn: string
-  players: number
-  prizePool: number
 }
 
 export interface BlindStructureModel {
@@ -124,7 +122,7 @@ export default class AdminTournamentStore
     const response = await $axios.get<TournamentDetailDto[]>(`/api/tournaments`)
     if (response.status === 200) {
       const tournaments = response.data
-        .map<TournamentItem>((value) => {
+        .map<TournamentItem>((value): TournamentItem => {
           return {
             id: value.id,
             start: value.startDateTime
@@ -136,8 +134,6 @@ export default class AdminTournamentStore
             end: value.endDateTime !== null,
             name: value.title,
             buyIn: `${value.buyIn}`,
-            players: -1,
-            prizePool: -1,
           }
         })
         .filter((value) => !value.end)

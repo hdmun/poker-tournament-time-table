@@ -4,9 +4,9 @@
       :headers="headers"
       :items="tournaments"
       :page.sync="page"
-      :items-per-page="10"
+      :items-per-page="itemPerPage"
       hide-default-footer
-      class="elevation-1"
+      class="elevation-1 gray7"
       @page-count="pageCount = $event"
     >
       <template #[`item.name`]="{ item }">
@@ -26,7 +26,7 @@
         </v-icon>
       </template>
     </v-data-table>
-    <div class="text-center pt-2">
+    <div class="text-center pt-2 gray7">
       <v-pagination v-model="page" :length="pageCount"></v-pagination>
     </div>
 
@@ -66,8 +66,6 @@ export default class TournamentTable extends Vue {
     { text: 'Start', value: 'start' },
     { text: 'Title', value: 'name' },
     { text: 'Buy-in', value: 'buyIn' },
-    { text: 'Players', value: 'players' },
-    { text: 'Prize', value: 'prizePool' },
     { text: 'Close', value: 'close', sortable: false },
   ]
 
@@ -75,6 +73,10 @@ export default class TournamentTable extends Vue {
 
   page: number = 1
   pageCount: number = 1
+
+  get itemPerPage(): number {
+    return 20
+  }
 
   deleteDialog: boolean = false
   deleteTournment: TournamentItem | null = null

@@ -22,7 +22,7 @@
       class="ma-0"
     >
       <template v-if="blind.level > 0">
-        <v-col class="pa-0" :cols="1">
+        <v-col class="pa-0" :cols="2">
           <BlindsStructureTableCell
             :value="blind.level"
             :text-color="cellTextColor(index)"
@@ -56,7 +56,7 @@
       </template>
 
       <template v-else>
-        <v-col class="pa-0" :cols="colsGrid * 3">
+        <v-col class="pa-0" :cols="colsGrid * 3 + 1">
           <v-card
             class="pa-0 fill-height"
             :color="cellBackgroundColor(index)"
@@ -70,7 +70,7 @@
         </v-col>
       </template>
 
-      <v-col class="pa-0" :cols="colsGrid">
+      <v-col class="pa-0" :cols="2">
         <BlindsStructureTableCell
           :value="blind.minute"
           value-prefix="분"
@@ -110,8 +110,10 @@ export default class BlindsStructureTable extends Vue {
   headerCols(headerText: string) {
     switch (headerText) {
       case 'LV':
-        return 1
+        return 2
       case 'ANTE':
+        return 2
+      case 'TIME':
         return 2
       default:
         return this.colsGrid
@@ -132,17 +134,29 @@ export default class BlindsStructureTable extends Vue {
 @import '~/assets/variables.scss';
 
 .header-text {
-  @extend .small-copy-2-exbold;
-  @extend .secondary4-color;
+  @include media('lg-and-up') {
+    @include sub-copy-bold;
+  }
 
+  @include media('md-and-down') {
+    @include small-copy1-bold;
+  }
+
+  @extend .secondary4-color;
   justify-content: center !important;
 }
 .breaktime-text {
-  @extend .sub-copy;
-  @extend .accent1-color;
+  @include media('lg-and-up') {
+    @include title2-bold;
+    padding: 16px !important;
+  }
 
+  @include media('md-and-down') {
+    @include sub-copy-bold;
+  }
+
+  @extend .accent1-color;
   height: 100%;
-  padding: 16px !important;
   justify-content: center !important;
 }
 </style>
