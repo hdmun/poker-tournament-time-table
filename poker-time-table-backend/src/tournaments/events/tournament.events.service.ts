@@ -222,6 +222,12 @@ export class EventService {
       if (currentBlind.minute <= playTimeMinutes) {
         nowDate.setSeconds(nowDate.getSeconds() + 1);
 
+        const clock = await this.calcClock(tournament.id);
+        clock.blindId = tournament.level + 1;
+        if (clock !== null) {
+          this.subjects.next(clock);
+        }
+
         tournament.level++;
         tournament.levelStart = nowDate;
         tournament.pauseTime = null;
