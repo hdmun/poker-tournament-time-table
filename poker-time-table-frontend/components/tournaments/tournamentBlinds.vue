@@ -21,8 +21,6 @@
       <EditBlindsStructureTable
         :blind-structures="blindStructures"
         :blind-id="currentStep"
-        @onBlindUp="onBlindUp"
-        @onBlindDown="onBlindDown"
         @onBlindDelete="onBlindDelete"
       />
     </template>
@@ -135,30 +133,6 @@ export default class TournamentBlinds extends Vue {
     const swap = this.blindStructures
     this.blindStructures = this.blindStructuresBackup
     this.blindStructuresBackup = swap
-  }
-
-  onBlindUp(blind: BlindStructureModel) {
-    const index = this.blindStructures.indexOf(blind, 0)
-    const upIndex = index - 1
-    if (upIndex > -1) {
-      const swap = this.blindStructures[upIndex]
-      this.blindStructures[upIndex] = blind
-      this.blindStructures[index] = swap
-
-      this.updateBlindLevel()
-    }
-  }
-
-  onBlindDown(blind: BlindStructureModel) {
-    const index = this.blindStructures.indexOf(blind, 0)
-    const downIndex = index + 1
-    if (downIndex < this.blindStructures.length) {
-      const swap = this.blindStructures[downIndex]
-      this.blindStructures[downIndex] = blind
-      this.blindStructures[index] = swap
-
-      this.updateBlindLevel()
-    }
   }
 
   onBlindDelete(blind: BlindStructureModel) {

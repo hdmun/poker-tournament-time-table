@@ -30,7 +30,7 @@ export default class BlindsStructureTableCell extends Vue {
 @import '~/assets/variables.scss';
 
 .cell-text {
-  @extend .sub-copy;
+  @extend .title-2-exbold;
 
   height: 100%;
   padding: 16px !important;
