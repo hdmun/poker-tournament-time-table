@@ -66,6 +66,8 @@ export default class TournamentClockPage extends Vue {
   @Ref() blindTable!: TournamentBlinds
 
   clock: TournamentClockDto = createTournamentClockDto()
+  blindUpAudio = new Audio('/blind-up.mp3')
+
   showBlindTable: boolean = false
   editBlindTable: boolean = false
   blindStructure: BlindStructureModel[] = []
@@ -132,6 +134,11 @@ export default class TournamentClockPage extends Vue {
     ) as WsResponse<TournamentClockEventDto>
 
     if (wsResponse.event === `clock-${this.tournamentId}`) {
+      if (this.clock.blindId > -1) {
+        if (this.clock.blindId < wsResponse.data.blindId) {
+          this.blindUpAudio.play()
+        }
+      }
       vxm.tournament.updateClock(wsResponse.data)
     }
   }
