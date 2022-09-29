@@ -18,3 +18,25 @@ export interface TournamentClockDto {
   player: string
   averageStack: string
 }
+
+export function createTournamentClockDto(): TournamentClockDto {
+  return {
+    tournamentId: -1,
+    blindId: -1,
+    started: false,
+    playTime: '00:00:00',
+    nextBreakRemainTime: '00:00',
+    remainHours: '00',
+    remainMinutes: '00',
+    remainSeconds: '00',
+    pause: true,
+    level: 0,
+    title: '로딩 중...',
+    ante: 0,
+    smallBlind: 0,
+    bigBlind: 0,
+    chipsInPlay: '-',
+    player: '-',
+    averageStack: '-',
+  }
+}

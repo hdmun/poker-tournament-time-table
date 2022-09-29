@@ -40,7 +40,10 @@ import TournamentBlinds, {
   BlindEditDto,
 } from '~/components/tournaments/tournamentBlinds.vue'
 import TournamentClock from '~/components/tournaments/tournamentClock.vue'
-import { TournamentClockDto } from '~/dto/tournamentClockDto'
+import {
+  createTournamentClockDto,
+  TournamentClockDto,
+} from '~/dto/tournamentClockDto'
 import {
   TournamentBlindDto,
   TournamentClockEventDto,
@@ -60,29 +63,9 @@ interface WsResponse<T> {
   },
 })
 export default class TournamentClockPage extends Vue {
-  @Ref()
-  blindTable!: TournamentBlinds
+  @Ref() blindTable!: TournamentBlinds
 
-  clock: TournamentClockDto = {
-    tournamentId: -1,
-    blindId: -1,
-    started: false,
-    playTime: '00:00:00',
-    nextBreakRemainTime: '00:00',
-    remainHours: '00',
-    remainMinutes: '00',
-    remainSeconds: '00',
-    pause: true,
-    level: 0,
-    title: '로딩 중...',
-    ante: 0,
-    smallBlind: 0,
-    bigBlind: 0,
-    chipsInPlay: '-',
-    player: '-',
-    averageStack: '-',
-  }
-
+  clock: TournamentClockDto = createTournamentClockDto()
   showBlindTable: boolean = false
   editBlindTable: boolean = false
   blindStructure: BlindStructureModel[] = []

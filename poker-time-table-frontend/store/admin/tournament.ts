@@ -1,5 +1,8 @@
 import { createModule, action, mutation } from 'vuex-class-component'
-import { TournamentClockDto } from '~/dto/tournamentClockDto'
+import {
+  createTournamentClockDto,
+  TournamentClockDto,
+} from '~/dto/tournamentClockDto'
 import {
   RegisterTournamentDto,
   TournamentBlindDto,
@@ -46,25 +49,8 @@ export default class AdminTournamentStore
 {
   readonly tournaments: TournamentItem[] = []
   readonly blinds: BlindStructureModel[] = []
-  readonly clock: TournamentClockDto = {
-    tournamentId: -1,
-    blindId: -1,
-    started: false,
-    playTime: '00:00:00',
-    nextBreakRemainTime: '00:00',
-    remainHours: '00',
-    remainMinutes: '00',
-    remainSeconds: '00',
-    pause: true,
-    level: 0,
-    title: '로딩 중...',
-    ante: 0,
-    smallBlind: 0,
-    bigBlind: 0,
-    chipsInPlay: '-',
-    player: '-',
-    averageStack: '-',
-  }
+
+  readonly clock: TournamentClockDto = createTournamentClockDto()
 
   @mutation update(tournaments: TournamentItem[]) {
     this.tournaments.splice(0)
