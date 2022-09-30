@@ -38,15 +38,4 @@ export class BlindStructure {
     structure.minute = minute;
     return structure;
   }
-
-  static from(metaId: number, dto: BlindStructureDto): BlindStructure {
-    return BlindStructure.create(
-      metaId,
-      dto.level,
-      dto.ante,
-      dto.smallBlind,
-      dto.bigBlind,
-      dto.minute,
-    );
-  }
 }
