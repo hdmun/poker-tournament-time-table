@@ -16,6 +16,7 @@ import {
   TournamentClockEventDto,
   TournamentDetailDto,
   TournamentDto,
+  TournamentDeleteResponse,
 } from './dto/tournament';
 import { TournamentService } from './tournament.service';
 
@@ -59,6 +60,18 @@ export class TournamentController {
 
   @Delete('/:id')
   async deleteTournament(
+    @Param('id') id: number,
+  ): Promise<TournamentDeleteResponse> {
+    try {
+      return await this.tournamentService.deleteTournament(id);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
+  @Put('/:id')
+  async closeTournament(
     @Param('id') id: number,
   ): Promise<TournamentCloseResponse> {
     try {

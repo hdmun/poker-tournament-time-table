@@ -42,6 +42,10 @@ export interface TournamentRegisterResponse {
   blinds: TournamentBlindDto[];
 }
 
+export interface TournamentDeleteResponse {
+  tournamentId: number;
+}
+
 export interface TournamentCloseResponse {
   tournamentId: number;
   endDateTime: Date;

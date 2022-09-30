@@ -8,6 +8,7 @@ import {
   TournamentClockEventDto,
   TournamentDetailDto,
   TournamentDto,
+  TournamentDeleteResponse,
 } from './dto/tournament';
 import { TournamentBlind } from './entities/tournament-blind.entity';
 import { Tournament } from './entities/tournament.entity';
@@ -106,6 +107,25 @@ export class TournamentService {
     return {
       tournament: newTornament,
       blinds: newTornamentBlinds,
+    };
+  }
+
+  async deleteTournament(
+    tournamentId: number,
+  ): Promise<TournamentDeleteResponse> {
+    const tournament = await this.tournamentRepository.findOneBy({
+      id: tournamentId,
+    });
+    if (!tournament) {
+      throw new Error(
+        `[deleteTournament] invalind tournament id, ${tournamentId}`,
+      );
+    }
+
+    await this.tournamentRepository.delete({ id: tournament.id });
+
+    return {
+      tournamentId,
     };
   }
 
