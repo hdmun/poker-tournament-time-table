@@ -35,7 +35,7 @@
           <v-row>
             <v-col cols="12" lg="4">
               <EditNumberField
-                :value="smallBlind"
+                :value.sync="smallBlind"
                 label="S.B"
                 :rules="smallBlindRule"
               />
@@ -43,23 +43,26 @@
 
             <v-col cols="12" lg="4">
               <EditNumberField
-                :value="bigBlind"
+                :value.sync="bigBlind"
                 label="B.B"
                 :rules="bigBlindRule"
               />
             </v-col>
 
             <v-col cols="12" lg="4">
-              <EditNumberField :value="ante" label="ANTE" />
+              <EditNumberField :value.sync="ante" label="ANTE" />
             </v-col>
           </v-row>
 
           <v-row>
             <v-col cols="12" lg="6">
-              <EditNumberField :value="bigBlindInc" label="블라인드 증가 값" />
+              <EditNumberField
+                :value.sync="bigBlindInc"
+                label="블라인드 증가 값"
+              />
             </v-col>
             <v-col cols="12" lg="6">
-              <EditNumberField :value="minute" label="Minute" />
+              <EditNumberField :value.sync="minute" label="Minute" />
             </v-col>
           </v-row>
 
@@ -214,6 +217,9 @@ export default class AdminRegisterBlindStructure extends Vue {
       bigBlind,
       minute: this.minute,
     })
+
+    console.log(this.smallBlind, smallBlind)
+    console.log(this.bigBlind, bigBlind)
 
     this.smallBlind = smallBlind
     this.bigBlind = bigBlind
