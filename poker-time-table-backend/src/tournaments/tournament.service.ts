@@ -25,7 +25,7 @@ export class TournamentService {
     private readonly tournamentRepository: TournamentRepository,
   ) {}
 
-  async tournamentAll() {
+  async tournamentAll(): Promise<Tournament[]> {
     return await this.tournamentRepository.find();
   }
 

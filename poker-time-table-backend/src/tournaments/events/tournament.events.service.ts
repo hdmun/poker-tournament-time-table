@@ -17,7 +17,7 @@ export class EventService {
   public readonly subjects = new Subject<TournamentClockEventDto>();
 
   @Cron(CronExpression.EVERY_SECOND)
-  async updateClock() {
+  async updateClock(): Promise<void> {
     const playingTournaments = await this.tournamentRepository
       .createQueryBuilder('tournament')
       .andWhere('tournament.start_datetime IS NOT NULL')
@@ -163,7 +163,7 @@ export class EventService {
   }
 
   @Cron(CronExpression.EVERY_SECOND)
-  async updateTournamentBlindLevel() {
+  async updateTournamentBlindLevel(): Promise<void> {
     const playingTournaments = await this.tournamentRepository
       .createQueryBuilder('tournament')
       .andWhere('tournament.start_datetime IS NOT NULL')
@@ -246,7 +246,7 @@ export class EventService {
   }
 }
 
-function padTo2Digits(num: number) {
+function padTo2Digits(num: number): string {
   return num.toString().padStart(2, '0');
 }
 
@@ -271,7 +271,7 @@ function convertMsToTime(milliseconds: number): TimeDto {
   };
 }
 
-function convertMsToTimeString(milliseconds: number) {
+function convertMsToTimeString(milliseconds: number): string {
   // https://bobbyhadz.com/blog/typescript-calculate-time-between-dates
   const time = convertMsToTime(milliseconds);
 

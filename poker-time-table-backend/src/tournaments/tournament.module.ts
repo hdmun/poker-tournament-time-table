@@ -10,9 +10,11 @@ import { EventsModule } from './events/tournament.events';
 
 @Module({
   imports: [
-    TypeOrmExModule.forCustomRepository([BlindStructureRepository]),
-    TypeOrmExModule.forCustomRepository([TournamentBlindRepository]),
-    TypeOrmExModule.forCustomRepository([TournamentRepository]),
+    TypeOrmExModule.forCustomRepository([
+      BlindStructureRepository,
+      TournamentBlindRepository,
+      TournamentRepository,
+    ]),
     ScheduleModule.forRoot(),
     EventsModule,
   ],

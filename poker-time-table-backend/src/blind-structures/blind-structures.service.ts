@@ -14,11 +14,11 @@ export class BlindStructureService {
     private readonly blindStructureRepo: BlindStructureRepository,
   ) {}
 
-  async getTemplateAll() {
+  async getTemplateAll(): Promise<BlindStructureMeta[]> {
     return await this.blindStructureMetaRepo.find();
   }
 
-  async getTemplate(id: number) {
+  async getTemplate(id: number): Promise<BlindStructure[]> {
     const template = await this.blindStructureMetaRepo.findOneBy({ id });
     if (!template) {
       return [];
@@ -32,7 +32,7 @@ export class BlindStructureService {
   async registerBlindStructure(
     name: string,
     structureDto: BlindStructureDto[],
-  ) {
+  ): Promise<void> {
     const meta = await this.blindStructureMetaRepo.getByMetaName(name);
     if (meta) {
       this.logger.error(`duplicated '${name}', ${meta}`);
@@ -57,13 +57,7 @@ export class BlindStructureService {
     }
 
     const structures = structureDto.map((value) => {
-      return BlindStructure.create(
-        regBlindMeta.id,
-        value.level,
-        value.smallBlind,
-        value.bigBlind,
-        value.minute,
-      );
+      return BlindStructure.from(regBlindMeta.id, value);
     });
 
     const retStructures = await this.blindStructureRepo.save(structures);
@@ -74,7 +68,7 @@ export class BlindStructureService {
     id: number,
     name: string,
     structureDto: BlindStructureDto[],
-  ) {
+  ): Promise<void> {
     const meta = await this.blindStructureMetaRepo.findOneBy({ id });
     if (!meta) {
       throw new Error(`invalid blind template, id: ${id}, name: ${name}`);

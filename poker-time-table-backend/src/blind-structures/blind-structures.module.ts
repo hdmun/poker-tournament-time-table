@@ -7,8 +7,10 @@ import { BlindStructureRepository } from './blind-structures.repository';
 
 @Module({
   imports: [
-    TypeOrmExModule.forCustomRepository([BlindStructureMetaRepository]),
-    TypeOrmExModule.forCustomRepository([BlindStructureRepository]),
+    TypeOrmExModule.forCustomRepository([
+      BlindStructureMetaRepository,
+      BlindStructureRepository,
+    ]),
   ],
   providers: [BlindStructureService],
   controllers: [BlindStructureController],

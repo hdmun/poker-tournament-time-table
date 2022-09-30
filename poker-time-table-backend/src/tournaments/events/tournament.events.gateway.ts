@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
   SubscribeMessage,
-  MessageBody,
   WebSocketGateway,
   WebSocketServer,
   WsResponse,
