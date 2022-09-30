@@ -21,6 +21,7 @@
       right
       app
       fixed
+      :temporary="isTemporary"
     >
       <TournamentBlinds
         ref="blindTable"
@@ -94,6 +95,16 @@ export default class TournamentClockPage extends Vue {
         }
         return width
       }
+    }
+  }
+
+  get isTemporary(): boolean {
+    switch (this.$vuetify.breakpoint.name) {
+      case 'xl':
+      case 'lg':
+        return false
+      default:
+        return true
     }
   }
 
