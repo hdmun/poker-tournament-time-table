@@ -21,6 +21,7 @@
       right
       app
       fixed
+      :temporary="isTemporary"
     >
       <TournamentBlinds
         ref="blindTable"
@@ -40,7 +41,10 @@ import TournamentBlinds, {
   BlindEditDto,
 } from '~/components/tournaments/tournamentBlinds.vue'
 import TournamentClock from '~/components/tournaments/tournamentClock.vue'
-import { TournamentClockDto } from '~/dto/tournamentClockDto'
+import {
+  createTournamentClockDto,
+  TournamentClockDto,
+} from '~/dto/tournamentClockDto'
 import {
   TournamentBlindDto,
   TournamentClockEventDto,
@@ -60,28 +64,10 @@ interface WsResponse<T> {
   },
 })
 export default class TournamentClockPage extends Vue {
-  @Ref()
-  blindTable!: TournamentBlinds
+  @Ref() blindTable!: TournamentBlinds
 
-  clock: TournamentClockDto = {
-    tournamentId: -1,
-    blindId: -1,
-    started: false,
-    playTime: '00:00:00',
-    nextBreakRemainTime: '00:00',
-    remainHours: '00',
-    remainMinutes: '00',
-    remainSeconds: '00',
-    pause: true,
-    level: 0,
-    title: '로딩 중...',
-    ante: 0,
-    smallBlind: 0,
-    bigBlind: 0,
-    chipsInPlay: '-',
-    player: '-',
-    averageStack: '-',
-  }
+  clock: TournamentClockDto = createTournamentClockDto()
+  blindUpAudio = new Audio('/blind-up.mp3')
 
   showBlindTable: boolean = false
   editBlindTable: boolean = false
@@ -109,6 +95,16 @@ export default class TournamentClockPage extends Vue {
         }
         return width
       }
+    }
+  }
+
+  get isTemporary(): boolean {
+    switch (this.$vuetify.breakpoint.name) {
+      case 'xl':
+      case 'lg':
+        return false
+      default:
+        return true
     }
   }
 
@@ -149,6 +145,11 @@ export default class TournamentClockPage extends Vue {
     ) as WsResponse<TournamentClockEventDto>
 
     if (wsResponse.event === `clock-${this.tournamentId}`) {
+      if (this.clock.blindId > -1) {
+        if (this.clock.blindId < wsResponse.data.blindId) {
+          this.blindUpAudio.play()
+        }
+      }
       vxm.tournament.updateClock(wsResponse.data)
     }
   }
