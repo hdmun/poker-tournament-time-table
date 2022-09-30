@@ -170,6 +170,14 @@ export default class AdminTournamentStore
     this.removeBy(tournamentId)
   }
 
+  @action async closeBy(tournamentId: number) {
+    const response = await $axios.put(`/api/tournaments/${tournamentId}`)
+    // eslint-disable-next-line no-console
+    console.log('closeBy', response.status, response.data)
+
+    this.removeBy(tournamentId)
+  }
+
   @action async updateBlinds(updateBlindDto: UpdateTournamentBlindDto) {
     const response = await $axios.put<BlindStructureModel[]>(
       `/api/tournaments/${updateBlindDto.id}/blinds`,

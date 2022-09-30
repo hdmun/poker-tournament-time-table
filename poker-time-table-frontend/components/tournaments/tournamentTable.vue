@@ -17,31 +17,30 @@
         </router-link>
       </template>
 
-      <template #[`item.close`]="{ item }">
+      <template #[`item.action`]="{ item }">
         <v-icon
           :disabled="item.start === '대기 중'"
           @click="onClickClose(item)"
         >
-          mdi-close-circle
+          mdi-close
         </v-icon>
+        <v-icon @click="onClickDelete(item)"> mdi-delete </v-icon>
       </template>
     </v-data-table>
     <div class="text-center pt-2 gray7">
       <v-pagination v-model="page" :length="pageCount"></v-pagination>
     </div>
 
-    <v-dialog v-model="deleteDialog" persistent max-width="290">
+    <v-dialog v-model="showDialog" persistent max-width="290">
       <v-card>
-        <v-card-title class="text-h5"> 토너먼트 종료 </v-card-title>
-        <v-card-text> '{{ deleteTournment?.name }}' 종료합니다. </v-card-text>
-        <v-card-text>
-          종료하게 되면 토너먼트 리스트에서 사라집니다.
-        </v-card-text>
+        <v-card-title class="text-h5"> {{ dialogTitle }} </v-card-title>
+        <v-card-text> {{ dialogAskText }} </v-card-text>
+        <v-card-text> 토너먼트 리스트에서 사라집니다. </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text @click="onClickDialogCancel()"> 취소 </v-btn>
-          <v-btn color="green accent-1" text @click="onClickCloseTournament()">
-            종료
+          <v-btn color="green accent-1" text @click="onClickDialogOK()">
+            확인
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -66,7 +65,7 @@ export default class TournamentTable extends Vue {
     { text: 'Start', value: 'start' },
     { text: 'Title', value: 'name' },
     { text: 'Buy-in', value: 'buyIn' },
-    { text: 'Close', value: 'close', sortable: false },
+    { text: 'Action', value: 'action', sortable: false },
   ]
 
   tournaments: TournamentItem[] = []
@@ -78,8 +77,30 @@ export default class TournamentTable extends Vue {
     return 20
   }
 
+  closeDialog: boolean = false
   deleteDialog: boolean = false
   deleteTournment: TournamentItem | null = null
+
+  get showDialog(): boolean {
+    return this.closeDialog || this.deleteDialog
+  }
+
+  get dialogTitle(): string {
+    if (this.closeDialog) {
+      return '토너먼트 종료'
+    }
+    if (this.deleteDialog) {
+      return '토너먼트 삭제'
+    }
+    return ''
+  }
+
+  get dialogAskText(): string {
+    if (this.closeDialog) {
+      return `'${this.deleteTournment?.name}' 종료합니다.`
+    }
+    return `'${this.deleteTournment?.name}' 삭제합니다.`
+  }
 
   mounted() {
     vxm.tournament.loadTournaments().then(() => {
@@ -88,16 +109,47 @@ export default class TournamentTable extends Vue {
   }
 
   onClickClose(item: TournamentItem) {
+    this.closeDialog = true
+    this.deleteTournment = item
+  }
+
+  onClickDelete(item: TournamentItem) {
     this.deleteDialog = true
     this.deleteTournment = item
   }
 
   onClickDialogCancel() {
+    this.closeDialog = false
     this.deleteDialog = false
     this.deleteTournment = null
   }
 
+  onClickDialogOK() {
+    if (this.closeDialog) {
+      this.onClickCloseTournament()
+    }
+    if (this.deleteDialog) {
+      this.onClickDeleteTournament()
+    }
+  }
+
   async onClickCloseTournament() {
+    if (!this.deleteTournment) {
+      this.closeDialog = false
+      return
+    }
+
+    try {
+      await vxm.tournament.closeBy(this.deleteTournment.id)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
+
+    this.closeDialog = false
+  }
+
+  async onClickDeleteTournament() {
     if (!this.deleteTournment) {
       this.deleteDialog = false
       return
