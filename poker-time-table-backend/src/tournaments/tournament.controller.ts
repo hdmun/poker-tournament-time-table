@@ -9,15 +9,14 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  CloseTournamentResponseDto,
-  RegisterTournamentDto,
-  RegisterTournamentResponseDto,
+  TournamentCloseResponse,
+  TournamentRegisterRequest,
+  TournamentRegisterResponse,
   TournamentBlindDto,
   TournamentClockEventDto,
   TournamentDetailDto,
+  TournamentDto,
 } from './dto/tournament';
-import { TournamentBlind } from './entities/tournament-blind.entity';
-import { Tournament } from './entities/tournament.entity';
 import { TournamentService } from './tournament.service';
 
 @Controller('tournaments')
@@ -27,7 +26,7 @@ export class TournamentController {
   constructor(private readonly tournamentService: TournamentService) {}
 
   @Get()
-  async tournaments(): Promise<Tournament[]> {
+  async tournaments(): Promise<TournamentDto[]> {
     try {
       return await this.tournamentService.tournamentAll();
     } catch (error) {
@@ -48,8 +47,8 @@ export class TournamentController {
 
   @Post()
   async registerTournament(
-    @Body() dto: RegisterTournamentDto,
-  ): Promise<RegisterTournamentResponseDto> {
+    @Body() dto: TournamentRegisterRequest,
+  ): Promise<TournamentRegisterResponse> {
     try {
       return await this.tournamentService.registerTournament(dto);
     } catch (error) {
@@ -61,7 +60,7 @@ export class TournamentController {
   @Delete('/:id')
   async deleteTournament(
     @Param('id') id: number,
-  ): Promise<CloseTournamentResponseDto> {
+  ): Promise<TournamentCloseResponse> {
     try {
       return await this.tournamentService.closeTournament(id);
     } catch (error) {
@@ -104,7 +103,7 @@ export class TournamentController {
   async updateTournmentBlind(
     @Param('id') tournamentId: number,
     @Body() dto: TournamentBlindDto[],
-  ): Promise<TournamentBlind[]> {
+  ): Promise<TournamentBlindDto[]> {
     try {
       return await this.tournamentService.updateBlind(tournamentId, dto);
     } catch (error) {

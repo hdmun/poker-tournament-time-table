@@ -22,4 +22,24 @@ export class TournamentBlind {
 
   @Column()
   minute: number;
+
+  static create(
+    tournamentId: number,
+    id: number,
+    level: number,
+    ante: number,
+    smallBlind: number,
+    bigBlind: number,
+    minute: number,
+  ): TournamentBlind {
+    const newBlind = new TournamentBlind();
+    newBlind.tournamentId = tournamentId;
+    newBlind.id = id;
+    newBlind.level = level;
+    newBlind.ante = ante;
+    newBlind.smallBlind = smallBlind;
+    newBlind.bigBlind = bigBlind;
+    newBlind.minute = minute;
+    return newBlind;
+  }
 }
