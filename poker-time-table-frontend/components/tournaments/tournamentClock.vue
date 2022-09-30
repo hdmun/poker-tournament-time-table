@@ -124,9 +124,9 @@
       :value="disabledBlindUp"
       :timeout="-1"
       absolute
-      centered
+      top
       tile
-      color="red accent-2"
+      color="ma-12 red accent-2"
     >
       <div class="snackbar-text">{{ snackbarMessage }}</div>
     </v-snackbar>
