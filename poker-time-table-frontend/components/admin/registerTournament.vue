@@ -64,7 +64,14 @@
           </v-col>
         </v-row>
 
-        <v-btn class="mr-4" color="primary" @click="onRegister"> 등록 </v-btn>
+        <v-btn
+          class="mr-4"
+          color="primary"
+          :disabled="disabledEditButton"
+          @click="onRegister"
+        >
+          등록
+        </v-btn>
       </v-form>
     </v-card-text>
   </v-card>
@@ -85,6 +92,12 @@ export default class RegisterTournament extends Vue {
 
   breakTime: number = 20
   breakTimeTerm: number = 3
+
+  get disabledEditButton() {
+    if (this.selectBlindTemplate === null) return true
+    if (this.tournamentName.trim().length <= 0) return true
+    return false
+  }
 
   mounted() {
     this.loadTemplates()

@@ -184,7 +184,9 @@ export default class AdminRegisterBlindStructure extends Vue {
 
   get disabledEditButton() {
     if (this.level < 10) return true
-    return !(this.templateName?.length > 0)
+    if (!this.templateName) return true
+    if (this.templateName.trim().length <= 0) return true
+    return false
   }
 
   onClickMinus() {
