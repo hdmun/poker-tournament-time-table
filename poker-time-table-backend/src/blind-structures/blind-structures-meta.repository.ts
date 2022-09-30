@@ -4,7 +4,7 @@ import { BlindStructureMeta } from './entities/blind-structure-meta.entity';
 
 @CustomRepository(BlindStructureMeta)
 export class BlindStructureMetaRepository extends Repository<BlindStructureMeta> {
-  async getByMetaName(name: string) {
+  async getByMetaName(name: string): Promise<BlindStructureMeta> {
     return await this.findOneBy({ name });
   }
 }

@@ -7,8 +7,10 @@ import { EventService } from './tournament.events.service';
 
 @Module({
   imports: [
-    TypeOrmExModule.forCustomRepository([TournamentBlindRepository]),
-    TypeOrmExModule.forCustomRepository([TournamentRepository]),
+    TypeOrmExModule.forCustomRepository([
+      TournamentBlindRepository,
+      TournamentRepository,
+    ]),
   ],
   providers: [EventGateway, EventService],
   exports: [EventService],

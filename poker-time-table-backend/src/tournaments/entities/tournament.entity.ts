@@ -29,7 +29,7 @@ export class Tournament {
   @Column({ name: 'pause_seconds' })
   pauseSeconds: number;
 
-  static Create(title: string, buyIn: number) {
+  static Create(title: string, buyIn: number): Tournament {
     const newTournament = new Tournament();
     newTournament.title = title;
     newTournament.buyIn = buyIn;

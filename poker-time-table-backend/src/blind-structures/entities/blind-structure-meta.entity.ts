@@ -8,7 +8,7 @@ export class BlindStructureMeta {
   @Column({ unique: true })
   name: string;
 
-  static create(name: string) {
+  static create(name: string): BlindStructureMeta {
     const meta = new BlindStructureMeta();
     meta.name = name;
     return meta;

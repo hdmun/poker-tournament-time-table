@@ -1,16 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BlindStructureRepository } from '~/blind-structures/blind-structures.repository';
 import {
-  CloseTournamentResponseDto,
-  RegisterTournamentDto,
-  RegisterTournamentResponseDto,
+  TournamentCloseResponse,
+  TournamentRegisterRequest,
+  TournamentRegisterResponse,
   TournamentBlindDto,
   TournamentClockEventDto,
   TournamentDetailDto,
+  TournamentDto,
 } from './dto/tournament';
 import { TournamentBlind } from './entities/tournament-blind.entity';
 import { Tournament } from './entities/tournament.entity';
 import { EventService } from './events/tournament.events.service';
+import { mapToTournamentBlind } from './mapper/tournament-blind';
 import { TournamentBlindRepository } from './tournament-blind.repository';
 import { TournamentRepository } from './tournament.repository';
 
@@ -25,8 +27,21 @@ export class TournamentService {
     private readonly tournamentRepository: TournamentRepository,
   ) {}
 
-  async tournamentAll() {
-    return await this.tournamentRepository.find();
+  async tournamentAll(): Promise<TournamentDto[]> {
+    const tounaments = await this.tournamentRepository.find();
+    return tounaments.map<TournamentDto>((tournament: Tournament) => {
+      return {
+        id: tournament.id,
+        title: tournament.title,
+        startDateTime: tournament.startDateTime,
+        endDateTime: tournament.endDateTime,
+        buyIn: tournament.buyIn,
+        level: tournament.level,
+        levelStart: tournament.levelStart,
+        pauseTime: tournament.pauseTime,
+        pauseSeconds: tournament.pauseSeconds,
+      };
+    });
   }
 
   async tournamentBy(id: number): Promise<TournamentDetailDto> {
@@ -54,8 +69,8 @@ export class TournamentService {
   }
 
   async registerTournament(
-    dto: RegisterTournamentDto,
-  ): Promise<RegisterTournamentResponseDto> {
+    dto: TournamentRegisterRequest,
+  ): Promise<TournamentRegisterResponse> {
     const newTornament = Tournament.Create(dto.title, dto.buyIn);
     await this.tournamentRepository.save(newTornament);
 
@@ -64,30 +79,28 @@ export class TournamentService {
     });
 
     const newTornamentBlinds: TournamentBlind[] = [];
-    templateStructure.forEach((value) => {
-      newTornamentBlinds.push({
-        id: newTornamentBlinds.length,
-        tournamentId: newTornament.id,
-        level: value.level,
-        ante: value.ante,
-        smallBlind: value.smallBlind,
-        bigBlind: value.bigBlind,
-        minute: value.minute,
-      });
+    for (const blindDto of templateStructure) {
+      let blindId = newTornamentBlinds.length;
+      newTornamentBlinds.push(
+        mapToTournamentBlind(newTornament.id, blindId, blindDto),
+      );
 
-      const isAddBreakTime = value.level % dto.breakTimeTerm;
+      const isAddBreakTime = blindDto.level % dto.breakTimeTerm;
       if (isAddBreakTime === 0) {
-        newTornamentBlinds.push({
-          id: newTornamentBlinds.length,
-          tournamentId: newTornament.id,
-          level: -1,
-          ante: 0,
-          smallBlind: -1,
-          bigBlind: -1,
-          minute: dto.breakTime,
-        });
+        blindId = newTornamentBlinds.length;
+        newTornamentBlinds.push(
+          TournamentBlind.create(
+            newTornament.id,
+            blindId,
+            -1,
+            0,
+            -1,
+            -1,
+            dto.breakTime,
+          ),
+        );
       }
-    });
+    }
     await this.blindRepository.save(newTornamentBlinds);
 
     return {
@@ -98,7 +111,7 @@ export class TournamentService {
 
   async closeTournament(
     tournamentId: number,
-  ): Promise<CloseTournamentResponseDto> {
+  ): Promise<TournamentCloseResponse> {
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
     });

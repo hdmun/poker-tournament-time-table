@@ -8,10 +8,13 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  RegisterBlindStructureDto,
-  UpdateBlindStructureDto,
+  BlindStructureDto,
+  BlindTemplateMetaResponse,
+  BlindStructureRegisterRequest,
+  BlindStructureUpdateRequest,
 } from './dto/blind-structure';
 import { BlindStructureService } from './blind-structures.service';
+import { BlindStructure } from './entities/blind-structure.entity';
 
 @Controller('blind-structures')
 export class BlindStructureController {
@@ -20,7 +23,7 @@ export class BlindStructureController {
   constructor(private readonly blindStructureService: BlindStructureService) {}
 
   @Get('/templates')
-  async blindStructureTemplates() {
+  async blindStructureTemplates(): Promise<BlindTemplateMetaResponse[]> {
     try {
       return await this.blindStructureService.getTemplateAll();
     } catch (error) {
@@ -30,7 +33,9 @@ export class BlindStructureController {
   }
 
   @Get('/templates/:id')
-  async blindTemplatesStructure(@Param('id') id: number) {
+  async blindTemplatesStructure(
+    @Param('id') id: number,
+  ): Promise<BlindStructureDto[]> {
     try {
       return await this.blindStructureService.getTemplate(id);
     } catch (error) {
@@ -40,7 +45,9 @@ export class BlindStructureController {
   }
 
   @Post('/meta')
-  async registerBlindStructures(@Body() dto: RegisterBlindStructureDto) {
+  async registerBlindStructures(
+    @Body() dto: BlindStructureRegisterRequest,
+  ): Promise<void> {
     try {
       await this.blindStructureService.registerBlindStructure(
         dto.name,
@@ -53,7 +60,9 @@ export class BlindStructureController {
   }
 
   @Put('/meta')
-  async updateBlindStructures(@Body() dto: UpdateBlindStructureDto) {
+  async updateBlindStructures(
+    @Body() dto: BlindStructureUpdateRequest,
+  ): Promise<void> {
     try {
       await this.blindStructureService.updateBlindStructure(
         dto.id,

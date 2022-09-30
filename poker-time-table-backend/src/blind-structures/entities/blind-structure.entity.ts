@@ -28,7 +28,7 @@ export class BlindStructure {
     smallBlind: number,
     bigBlind: number,
     minute: number,
-  ) {
+  ): BlindStructure {
     const structure = new BlindStructure();
     structure.metaId = metaId;
     structure.level = level;
@@ -37,16 +37,5 @@ export class BlindStructure {
     structure.bigBlind = bigBlind;
     structure.minute = minute;
     return structure;
-  }
-
-  static from(metaId: number, dto: BlindStructureDto) {
-    return BlindStructure.create(
-      metaId,
-      dto.level,
-      dto.ante,
-      dto.smallBlind,
-      dto.bigBlind,
-      dto.minute,
-    );
   }
 }

@@ -1,3 +1,8 @@
+export interface BlindTemplateMetaResponse {
+  id: number;
+  name: string;
+}
+
 export interface BlindStructureDto {
   level: number;
   ante: number;
@@ -6,12 +11,12 @@ export interface BlindStructureDto {
   minute: number;
 }
 
-export interface RegisterBlindStructureDto {
+export interface BlindStructureRegisterRequest {
   name: string;
   structures: BlindStructureDto[];
 }
 
-export interface UpdateBlindStructureDto {
+export interface BlindStructureUpdateRequest {
   id: number;
   name: string;
   structures: BlindStructureDto[];

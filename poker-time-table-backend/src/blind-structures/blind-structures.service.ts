@@ -1,9 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BlindStructureMetaRepository } from './blind-structures-meta.repository';
 import { BlindStructureRepository } from './blind-structures.repository';
-import { BlindStructureDto } from './dto/blind-structure';
+import {
+  BlindStructureDto,
+  BlindTemplateMetaResponse,
+} from './dto/blind-structure';
 import { BlindStructureMeta } from './entities/blind-structure-meta.entity';
 import { BlindStructure } from './entities/blind-structure.entity';
+import { mapToBlindStructure } from './mapper/blind-structure';
 
 @Injectable()
 export class BlindStructureService {
@@ -14,25 +18,41 @@ export class BlindStructureService {
     private readonly blindStructureRepo: BlindStructureRepository,
   ) {}
 
-  async getTemplateAll() {
-    return await this.blindStructureMetaRepo.find();
+  async getTemplateAll(): Promise<BlindTemplateMetaResponse[]> {
+    const templates = await this.blindStructureMetaRepo.find();
+    return templates.map<BlindTemplateMetaResponse>((value) => {
+      return {
+        id: value.id,
+        name: value.name,
+      };
+    });
   }
 
-  async getTemplate(id: number) {
+  async getTemplate(id: number): Promise<BlindStructureDto[]> {
     const template = await this.blindStructureMetaRepo.findOneBy({ id });
     if (!template) {
       return [];
     }
 
-    return await this.blindStructureRepo.findBy({
+    const blindTemplate = await this.blindStructureRepo.findBy({
       metaId: template.id,
+    });
+
+    return blindTemplate.map<BlindStructureDto>((value) => {
+      return {
+        level: value.level,
+        ante: value.ante,
+        smallBlind: value.smallBlind,
+        bigBlind: value.bigBlind,
+        minute: value.minute,
+      };
     });
   }
 
   async registerBlindStructure(
     name: string,
     structureDto: BlindStructureDto[],
-  ) {
+  ): Promise<void> {
     const meta = await this.blindStructureMetaRepo.getByMetaName(name);
     if (meta) {
       this.logger.error(`duplicated '${name}', ${meta}`);
@@ -57,13 +77,7 @@ export class BlindStructureService {
     }
 
     const structures = structureDto.map((value) => {
-      return BlindStructure.create(
-        regBlindMeta.id,
-        value.level,
-        value.smallBlind,
-        value.bigBlind,
-        value.minute,
-      );
+      return mapToBlindStructure(regBlindMeta.id, value);
     });
 
     const retStructures = await this.blindStructureRepo.save(structures);
@@ -74,7 +88,7 @@ export class BlindStructureService {
     id: number,
     name: string,
     structureDto: BlindStructureDto[],
-  ) {
+  ): Promise<void> {
     const meta = await this.blindStructureMetaRepo.findOneBy({ id });
     if (!meta) {
       throw new Error(`invalid blind template, id: ${id}, name: ${name}`);
