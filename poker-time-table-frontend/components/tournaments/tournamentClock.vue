@@ -123,6 +123,7 @@
     <v-snackbar
       :value="disabledBlindUp"
       :timeout="-1"
+      absolute
       centered
       tile
       color="red accent-2"
@@ -170,10 +171,10 @@ export default class TournamentClock extends Vue {
       return '종료된 토너먼트 입니다.'
     }
     if (!this.starting) {
-      return '시작하지 않은 토너먼트 입니다.'
+      return '시작 대기 중...'
     }
 
-    return '로딩 중'
+    return '로딩 중...'
   }
 
   get closedTournament(): boolean {
