@@ -77,6 +77,7 @@ export class EventService {
         this.logger.error(
           `tournament pauseTime minus, tournamentId: ${tournamentId}, pauseTime: ${pauseTime}, nowDate: ${nowDate} tournament.pauseTime: ${tournament.pauseTime}`,
         );
+        pauseTime = 0; // 로그 남기고 보정
       }
 
       const remainDate = new Date(
