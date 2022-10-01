@@ -17,7 +17,7 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title
-                  class="small-copy-1-exbold"
+                  class="small-copy-1-bold"
                   color="gray4"
                   v-text="item.title"
                 />
@@ -35,7 +35,7 @@
               <template #activator>
                 <v-list-item-content>
                   <v-list-item-title
-                    class="small-copy-1-exbold"
+                    class="small-copy-1-bold"
                     color="gray4"
                     v-text="item.title"
                   ></v-list-item-title>
@@ -51,7 +51,7 @@
               >
                 <v-list-item-content>
                   <v-list-item-title
-                    class="small-copy-1-exbold"
+                    class="small-copy-1-bold"
                     color="gray4"
                     v-text="child.title"
                   ></v-list-item-title>

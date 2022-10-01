@@ -142,7 +142,7 @@ export default class BlindsStructureTable extends Vue {
     @include small-copy1-bold;
   }
 
-  @extend .secondary4-color;
+  @include secondary4-color;
   justify-content: center !important;
 }
 .breaktime-text {
@@ -155,7 +155,7 @@ export default class BlindsStructureTable extends Vue {
     @include sub-copy-bold;
   }
 
-  @extend .accent1-color;
+  @include accent1-color;
   height: 100%;
   justify-content: center !important;
 }

@@ -2,7 +2,7 @@
   <v-card class="fill-height" color="gray8" outlined tile>
     <v-row class="mt-xl-8">
       <v-col justify="center">
-        <v-card-title class="justify-center title-2-exbold" wrap>
+        <v-card-title class="tournament-title" wrap>
           {{ data.title }}
         </v-card-title>
       </v-col>
@@ -217,14 +217,19 @@ export default class TournamentClock extends Vue {
 <style scoped lang="scss">
 @import '~/assets/variables.scss';
 
+.tournament-title {
+  justify-content: center;
+  @include title2-bold;
+}
+
 .playtime-text {
-  @extend .sub-copy;
-  @extend .primary-color;
+  @include sub-copy;
+  @include primary-color;
 }
 
 .nextbreak-text {
-  @extend .sub-copy;
-  @extend .gray2-color;
+  @include sub-copy;
+  @include gray2-color;
 }
 
 $top-text-size: $title-1-size + 1rem;
@@ -238,7 +243,7 @@ $top-text-size: $title-1-size + 1rem;
     @include title1-bold;
   }
 
-  @extend .primary-color;
+  @include primary-color;
   justify-content: center;
 }
 
@@ -252,7 +257,7 @@ $top-text-size: $title-1-size + 1rem;
     @include title1-bold;
   }
 
-  @extend .gray2-color;
+  @include gray2-color;
   justify-content: center;
 }
 
@@ -269,7 +274,7 @@ $remaintime-xl-size: $head-1-size + 5rem;
 }
 
 .snackbar-text {
-  @extend .title-1-bold;
+  @include title1-bold;
   margin: 1rem !important;
 }
 </style>

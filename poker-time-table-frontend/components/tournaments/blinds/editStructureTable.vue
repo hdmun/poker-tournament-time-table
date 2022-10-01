@@ -148,15 +148,15 @@ export default class EditBlindsStructureTable extends Vue {
 @import '~/assets/variables.scss';
 
 .header-text {
-  @extend .sub-copy-exbold;
-  @extend .secondary4-color;
+  @include sub-copy-bold;
+  @include secondary4-color;
 
   height: 100% !important;
   justify-content: center !important;
 }
 .breaktime-text {
-  @extend .title-2-exbold;
-  @extend .accent1-color;
+  @include title2-bold;
+  @include accent1-color;
 
   height: 100%;
   padding: 16px !important;

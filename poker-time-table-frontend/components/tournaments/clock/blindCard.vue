@@ -83,31 +83,31 @@ export default class BlindCards extends Vue {
 @import '~/assets/variables.scss';
 
 .blindlevel-value {
-  @extend .title-1-bold;
-  @extend .primary-color;
+  @include title1-bold;
+  @include primary-color;
 
   justify-content: center;
   height: 100%;
 }
 
 .breaktime-text {
-  @extend .title-1-bold;
-  @extend .accent1-color;
+  @include title1-bold;
+  @include accent1-color;
 
   justify-content: center;
   height: 100%;
 }
 
 .ante-title {
-  @extend .sub-copy-exbold;
-  @extend .gray3-color;
+  @include sub-copy-bold;
+  @include gray3-color;
 
   justify-content: center;
 }
 
 .blindbtn-title {
-  @extend .sub-copy-exbold;
-  @extend .primary-color;
+  @include sub-copy-bold;
+  @include primary-color;
 
   padding-top: 16px;
   justify-content: center;
@@ -125,7 +125,7 @@ $value-text-size: $title-1-size + 1rem;
     @include title2-bold;
   }
 
-  @extend .gray1-color;
+  @include gray1-color;
   justify-content: center;
 }
 </style>
