@@ -53,16 +53,10 @@
 
         <template v-else>
           <v-col class="pa-0" :cols="colsGrid * 3 + 1">
-            <v-card
-              class="pa-0 fill-height"
-              :color="cellBackgroundColor(index)"
-              outlined
-              tile
-            >
-              <v-card-title class="pa-2 breaktime-text">
-                BREAK TIME
-              </v-card-title>
-            </v-card>
+            <BreakTimeTableCell
+              :text-color="cellTextColor(index)"
+              :back-color="cellBackgroundColor(index)"
+            />
           </v-col>
         </template>
 
@@ -93,12 +87,14 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { PropType } from 'vue'
 import BlindsStructureTableCell from './structureTableCell.vue'
+import BreakTimeTableCell from './breakTimeTableCell.vue'
 import { BlindStructureDto } from '~/dto/blindStructureDto'
 import { BlindStructureModel } from '~/store/admin/tournament'
 
 @Component({
   components: {
     BlindsStructureTableCell,
+    BreakTimeTableCell,
   },
 })
 export default class BlindsStructureTable extends Vue {
@@ -187,20 +183,6 @@ export default class BlindsStructureTable extends Vue {
   }
 
   @include secondary4-color;
-  justify-content: center !important;
-}
-.breaktime-text {
-  @include media('md-and-up') {
-    @include title2-bold;
-    padding: 16px !important;
-  }
-
-  @include media('sm-and-down') {
-    @include sub-copy-bold;
-  }
-
-  @include accent1-color;
-  height: 100%;
   justify-content: center !important;
 }
 </style>
