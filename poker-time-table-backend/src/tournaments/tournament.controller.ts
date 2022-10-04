@@ -147,7 +147,6 @@ export class TournamentController {
   ): Promise<TournamentClockEventDto | null> {
     try {
       const clock = await this.tournamentService.upBlindLevel(id);
-      console.log('blindUp', clock);
       if (clock === null) {
         return null;
       }
