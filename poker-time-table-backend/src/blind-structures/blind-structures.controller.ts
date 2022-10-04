@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Logger,
   Param,
   Post,
@@ -15,6 +17,7 @@ import {
 } from './dto/blind-structure';
 import { BlindStructureService } from './blind-structures.service';
 import { BlindStructure } from './entities/blind-structure.entity';
+import { DuplicateKeyError, InvalidInputError } from '~/common/exceptions';
 
 @Controller('blind-structures')
 export class BlindStructureController {
@@ -54,6 +57,16 @@ export class BlindStructureController {
         dto.structures,
       );
     } catch (error) {
+      if (error instanceof DuplicateKeyError) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       this.logger.error(error);
       throw error;
     }
@@ -70,6 +83,16 @@ export class BlindStructureController {
         dto.structures,
       );
     } catch (error) {
+      if (error instanceof InvalidInputError) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       this.logger.error(error);
       throw error;
     }

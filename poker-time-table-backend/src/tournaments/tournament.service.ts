@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BlindStructureRepository } from '~/blind-structures/blind-structures.repository';
+import { InvalidInputError } from '~/common/exceptions';
 import {
   TournamentCloseResponse,
   TournamentRegisterRequest,
@@ -91,8 +92,8 @@ export class TournamentService {
       id: tournamentId,
     });
     if (!tournament) {
-      throw new Error(
-        `[deleteTournament] invalind tournament id, ${tournamentId}`,
+      throw new InvalidInputError(
+        `잘못된 토너먼트 'id'로 요청했습니다. ${tournamentId}`,
       );
     }
 
@@ -110,8 +111,8 @@ export class TournamentService {
       id: tournamentId,
     });
     if (!tournament) {
-      throw new Error(
-        `[closeTournament] invalind tournament id, ${tournamentId}`,
+      throw new InvalidInputError(
+        `잘못된 토너먼트 'id'로 요청했습니다. ${tournamentId}`,
       );
     }
 
@@ -138,7 +139,9 @@ export class TournamentService {
       id: tournamentId,
     });
     if (!tournament) {
-      throw new Error(`[updateBlind] invalind tournament id, ${tournamentId}`);
+      throw new InvalidInputError(
+        `잘못된 토너먼트 'id'로 요청했습니다. ${tournamentId}`,
+      );
     }
 
     const tournamentBlinds: TournamentBlind[] =
@@ -168,12 +171,12 @@ export class TournamentService {
   async play(id: number): Promise<TournamentClockEventDto | null> {
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
-      throw new Error(`invalind tournament id, ${id}`);
+      throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
     }
 
     if (tournament.startDateTime && !tournament.pauseTime) {
-      throw new Error(
-        `already playing tournment, ${tournament.title}, ${tournament.pauseTime}`,
+      throw new InvalidInputError(
+        `이미 실행중인 토너먼트 입니다. '${tournament.title}'`,
       );
     }
 
@@ -214,12 +217,12 @@ export class TournamentService {
   async pause(id: number): Promise<TournamentClockEventDto | null> {
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
-      throw new Error(`invalid tournament id, ${id}`);
+      throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
     }
 
     if (tournament.startDateTime && tournament.pauseTime) {
-      throw new Error(
-        `already pause tournment, ${tournament.title}, ${tournament.pauseTime}`,
+      throw new InvalidInputError(
+        `이미 일시정지된 토너먼트 입니다. '${tournament.title}'`,
       );
     }
 
@@ -236,11 +239,13 @@ export class TournamentService {
   async downBlindLevel(id: number): Promise<TournamentClockEventDto | null> {
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
-      throw new Error(`invalid tournament id, ${id}`);
+      throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
     }
 
     if (tournament.level === 0) {
-      throw new Error(`do not prev tournament level`);
+      throw new InvalidInputError(
+        `블라인드 레벨을 낮출 수 없습니다. 시작 블라인드입니다. level: ${tournament.level}`,
+      );
     }
 
     tournament.level -= 1;
@@ -269,7 +274,7 @@ export class TournamentService {
   async upBlindLevel(id: number): Promise<TournamentClockEventDto | null> {
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
-      throw new Error(`invalid tournament id, ${id}`);
+      throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
     }
 
     const blinds = await this.blindRepository.findBy({
@@ -278,8 +283,8 @@ export class TournamentService {
 
     tournament.level += 1;
     if (blinds.length <= tournament.level) {
-      throw new Error(
-        `invalid tournament level: ${tournament.level}, blinds: ${blinds.length}`,
+      throw new InvalidInputError(
+        `블라인드 레벨을 올릴 수 없습니다. 마지막 블라인드입니다. level: ${tournament.level}`,
       );
     }
 
