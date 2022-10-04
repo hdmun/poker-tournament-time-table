@@ -154,6 +154,8 @@ export default class TournamentClockPage extends Vue {
         this.webSocket?.send(JSON.stringify({ event: 'clock' }))
       }
     }
+
+    window.addEventListener('resize', this.handleResize)
   }
 
   onmessage(ev: MessageEvent<string>) {
@@ -175,6 +177,12 @@ export default class TournamentClockPage extends Vue {
     if (this.webSocket !== null) {
       this.webSocket.close()
     }
+
+    window.removeEventListener('resize', this.handleResize)
+  }
+
+  handleResize(_event: UIEvent) {
+    this.blindTable?.updateMaxBlindLevel()
   }
 
   async onBlindEdit(dto: BlindEditDto) {
