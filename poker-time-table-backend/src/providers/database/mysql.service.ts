@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-import { BlindStructureMeta } from '~/blind-structures/entities/blind-structure-meta.entity';
-import { BlindStructure } from '~/blind-structures/entities/blind-structure.entity';
-import { TournamentBlind } from '~/tournaments/entities/tournament-blind.entity';
-import { Tournament } from '~/tournaments/entities/tournament.entity';
+import { BlindStructureMeta } from '~/domains/blind-structures/entities/blind-structure-meta.entity';
+import { BlindStructure } from '~/domains/blind-structures/entities/blind-structure.entity';
+import { TournamentBlind } from '~/domains/tournaments/entities/tournament-blind.entity';
+import { Tournament } from '~/domains/tournaments/entities/tournament.entity';
 
 @Injectable()
 export class MySqlConfigService implements TypeOrmOptionsFactory {

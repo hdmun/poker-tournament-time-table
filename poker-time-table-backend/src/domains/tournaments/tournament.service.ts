@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BlindStructureRepository } from '~/blind-structures/blind-structures.repository';
+import { BlindStructureRepository } from '~/domains/blind-structures/blind-structures.repository';
 import { InvalidInputError } from '~/common/exceptions';
 import {
   TournamentCloseResponse,
