@@ -13,6 +13,10 @@ import {
 import { TournamentBlind } from './entities/tournament-blind.entity';
 import { Tournament } from './entities/tournament.entity';
 import { EventService } from './events/tournament.events.service';
+import {
+  mapFromTournament,
+  mapFromTournamentDetail,
+} from './mapper/tournament';
 import { mapToTournamentBlind } from './mapper/tournament-blind';
 import { TournamentBlindRepository } from './tournament-blind.repository';
 import { TournamentRepository } from './tournament.repository';
@@ -31,17 +35,7 @@ export class TournamentService {
   async tournamentAll(): Promise<TournamentDto[]> {
     const tounaments = await this.tournamentRepository.find();
     return tounaments.map<TournamentDto>((tournament: Tournament) => {
-      return {
-        id: tournament.id,
-        title: tournament.title,
-        startDateTime: tournament.startDateTime,
-        endDateTime: tournament.endDateTime,
-        buyIn: tournament.buyIn,
-        level: tournament.level,
-        levelStart: tournament.levelStart,
-        pauseTime: tournament.pauseTime,
-        pauseSeconds: tournament.pauseSeconds,
-      };
+      return mapFromTournament(tournament);
     });
   }
 
@@ -50,23 +44,7 @@ export class TournamentService {
     const blinds = await this.blindRepository.findBy({
       tournamentId: id,
     });
-    return {
-      id: tournament.id,
-      title: tournament.title,
-      startDateTime: tournament.startDateTime,
-      endDateTime: tournament.endDateTime,
-      buyIn: tournament.buyIn,
-      blindId: tournament.level,
-      structures: blinds.map((value) => {
-        return {
-          level: value.level,
-          ante: value.ante,
-          smallBlind: value.smallBlind,
-          bigBlind: value.bigBlind,
-          minute: value.minute,
-        };
-      }),
-    };
+    return mapFromTournamentDetail(tournament, blinds);
   }
 
   async registerTournament(
@@ -90,13 +68,9 @@ export class TournamentService {
       if (isAddBreakTime === 0) {
         blindId = newTornamentBlinds.length;
         newTornamentBlinds.push(
-          TournamentBlind.create(
+          TournamentBlind.createBreakTime(
             newTornament.id,
             blindId,
-            -1,
-            0,
-            -1,
-            -1,
             dto.breakTime,
           ),
         );
@@ -179,15 +153,7 @@ export class TournamentService {
     let blindId = -1;
     const addBlinds = blinds.map<TournamentBlind>((value) => {
       blindId += 1;
-      return {
-        tournamentId: tournament.id,
-        id: blindId,
-        level: value.level,
-        ante: value.ante,
-        smallBlind: value.smallBlind,
-        bigBlind: value.bigBlind,
-        minute: value.minute,
-      };
+      return mapToTournamentBlind(tournament.id, blindId, value);
     });
 
     for (const insertBlind of addBlinds) {
