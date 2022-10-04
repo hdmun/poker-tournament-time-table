@@ -7,7 +7,10 @@ import {
 } from './dto/blind-structure';
 import { BlindStructureMeta } from './entities/blind-structure-meta.entity';
 import { BlindStructure } from './entities/blind-structure.entity';
-import { mapToBlindStructure } from './mapper/blind-structure';
+import {
+  mapFromBlindStructure,
+  mapToBlindStructure,
+} from './mapper/blind-structure';
 
 @Injectable()
 export class BlindStructureService {
@@ -39,13 +42,7 @@ export class BlindStructureService {
     });
 
     return blindTemplate.map<BlindStructureDto>((value) => {
-      return {
-        level: value.level,
-        ante: value.ante,
-        smallBlind: value.smallBlind,
-        bigBlind: value.bigBlind,
-        minute: value.minute,
-      };
+      return mapFromBlindStructure(value);
     });
   }
 
@@ -76,7 +73,7 @@ export class BlindStructureService {
       );
     }
 
-    const structures = structureDto.map((value) => {
+    const structures = structureDto.map<BlindStructure>((value) => {
       return mapToBlindStructure(regBlindMeta.id, value);
     });
 
@@ -116,15 +113,8 @@ export class BlindStructureService {
       this.blindStructureRepo.remove(deleteStructure);
     }
     await this.blindStructureRepo.save(
-      structureDto.map((value) => {
-        return BlindStructure.create(
-          meta.id,
-          value.level,
-          value.ante,
-          value.smallBlind,
-          value.bigBlind,
-          value.minute,
-        );
+      structureDto.map<BlindStructure>((value) => {
+        return mapToBlindStructure(meta.id, value);
       }),
     );
   }
