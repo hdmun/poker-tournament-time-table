@@ -25,7 +25,7 @@ $small-copy-3-size: 0.75rem;
 }
 @mixin head1-bold {
   font-weight: 800;
-  @include head1
+  @include head1;
 }
 
 @mixin head2 {
@@ -34,7 +34,7 @@ $small-copy-3-size: 0.75rem;
 }
 @mixin head2-bold {
   font-weight: 800;
-  @include head2
+  @include head2;
 }
 
 @mixin title1 {
@@ -44,7 +44,7 @@ $small-copy-3-size: 0.75rem;
 }
 @mixin title1-bold {
   font-weight: 800 !important;
-  @include title1
+  @include title1;
 }
 
 @mixin title2 {
@@ -54,7 +54,7 @@ $small-copy-3-size: 0.75rem;
 }
 @mixin title2-bold {
   font-weight: 800 !important;
-  @include title2
+  @include title2;
 }
 
 @mixin sub-copy {
@@ -101,66 +101,65 @@ $small-copy-3-size: 0.75rem;
   font-weight: 800 !important;
 }
 
-
-$primary-code: #D2B895;
+$primary-code: #d2b895;
 @mixin primary-color {
   color: $primary-code !important;
   caret-color: $primary-code;
 }
 @mixin primary-border {
   border-width: thin !important;
-  border-color: $primary-code!important;
+  border-color: $primary-code !important;
 }
 @mixin secondary1-color {
-  color: #D1A576 !important;
+  color: #d1a576 !important;
 }
 @mixin secondary2-color {
-  color: #DB9F65 !important;
+  color: #db9f65 !important;
 }
 @mixin secondary3-color {
-  color: #BB9A65 !important;
+  color: #bb9a65 !important;
 }
 @mixin secondary4-color {
-  color: #9E8864 !important;
+  color: #9e8864 !important;
 }
 @mixin accent-color {
-  color: #566FFF !important;
+  color: #566fff !important;
 }
 @mixin accent1-color {
-  color: #FF5A5A !important;
+  color: #ff5a5a !important;
 }
-@mixin gray1-color{
-  color: #E4E4E4 !important;
+@mixin gray1-color {
+  color: #e4e4e4 !important;
 }
-@mixin gray2-color{
-  color: #B7BAC3 !important;
+@mixin gray2-color {
+  color: #b7bac3 !important;
 }
 
-$gray3-code: #8A94A0;
-@mixin gray3-color{
+$gray3-code: #8a94a0;
+@mixin gray3-color {
   color: $gray3-code !important;
   caret-color: $gray3-code !important;
 }
 @mixin gray3-border {
   border-width: thin !important;
-  border-color: $gray3-code  !important;
+  border-color: $gray3-code !important;
 }
-@mixin gray4-color{
-  color: #3E4C59 !important;
+@mixin gray4-color {
+  color: #3e4c59 !important;
 }
 @mixin gray4-border {
   border-width: thin !important;
-  border-color: #3E4C59 !important;
+  border-color: #3e4c59 !important;
 }
-@mixin gray5-color{
-  color: #323E4A !important;
+@mixin gray5-color {
+  color: #323e4a !important;
 }
-@mixin gray6-color{
-  color: #1F2933 !important;
+@mixin gray6-color {
+  color: #1f2933 !important;
 }
-@mixin gray7-color{
-  color: #141C24 !important;
+@mixin gray7-color {
+  color: #141c24 !important;
 }
-@mixin gray8-color{
-  color: #11181F !important;
+@mixin gray8-color {
+  color: #11181f !important;
 }

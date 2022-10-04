@@ -52,13 +52,19 @@ export default {
 
   proxy: {
     '/api/': {
-      target: process.env.NODE_ENV === 'production' ? 'http://localhost:3001' : 'http://localhost:4001',
+      target:
+        process.env.NODE_ENV === 'production'
+          ? 'http://localhost:3001'
+          : 'http://localhost:4001',
       pathRewrite: {
         '^/api/': '/',
       },
     },
     '/ws/': {
-      target: process.env.NODE_ENV === 'production' ? 'ws://localhost:3001' : 'ws://localhost:4001',
+      target:
+        process.env.NODE_ENV === 'production'
+          ? 'ws://localhost:3001'
+          : 'ws://localhost:4001',
       pathRewrite: {
         '^/ws/': '/',
       },
@@ -93,8 +99,8 @@ export default {
           gray5: '#323E4A',
           gray6: '#1F2933',
           gray7: '#141C24',
-          gray8: '#11181F'
-        }
+          gray8: '#11181F',
+        },
       },
     },
   },

@@ -9,7 +9,7 @@ const ClockTemplate = (args) => ({
   setup() {
     return { args }
   },
-  template: '<v-app><TournamentClock :data=args.data /></v-app>'
+  template: '<v-app><TournamentClock :data=args.data /></v-app>',
 })
 
 export const Clock = ClockTemplate.bind({})
@@ -25,6 +25,6 @@ Clock.args = {
     chipsInPlay: 1800000,
     player: 8,
     totalPlayer: 19,
-    averageStack: 105000
-  }
+    averageStack: 105000,
+  },
 }

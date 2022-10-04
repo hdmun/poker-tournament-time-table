@@ -1,7 +1,7 @@
 import { VApp } from 'vuetify/lib'
 
 export default {
-  title: 'Tournament'
+  title: 'Tournament',
 }
 
 const blindStructure = [
@@ -27,10 +27,10 @@ const Template = (args) => ({
     <v-app>
       <TournamentBlinds :structure=args.blindStructure :currentStep=3 />
     </v-app>
-  `
+  `,
 })
 
 export const Blinds = Template.bind({})
 Blinds.args = {
-  blindStructure
+  blindStructure,
 }
