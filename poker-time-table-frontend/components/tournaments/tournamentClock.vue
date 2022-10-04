@@ -49,7 +49,7 @@
 
     <v-row class="mb-xl-6" justify="center" align="center">
       <v-btn
-        small
+        :small="isSmallBtn"
         fab
         outlined
         color="gray6"
@@ -60,7 +60,7 @@
       </v-btn>
 
       <v-btn
-        x-large
+        :x-large="isXLargeBtn"
         fab
         outlined
         class="ma-6"
@@ -69,11 +69,11 @@
         @click="data.pause ? onPlay() : onPause()"
       >
         <v-icon v-if="data.pause" x-large color="primary"> mdi-play </v-icon>
-        <v-icon v-else x-large color="primary"> mdi-pause </v-icon>
+        <v-icon v-else x-large color="accent1"> mdi-pause </v-icon>
       </v-btn>
 
       <v-btn
-        small
+        :small="isSmallBtn"
         fab
         outlined
         color="gray6"
@@ -179,6 +179,14 @@ export default class TournamentClock extends Vue {
 
   get closedTournament(): boolean {
     return this.blindCount <= this.currentStep
+  }
+
+  get isSmallBtn(): boolean {
+    return this.$vuetify.breakpoint.smAndDown
+  }
+
+  get isXLargeBtn(): boolean {
+    return this.$vuetify.breakpoint.mdAndUp
   }
 
   get disabledBlindUp(): boolean {
