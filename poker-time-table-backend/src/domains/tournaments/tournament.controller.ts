@@ -55,7 +55,13 @@ export class TournamentController {
     @Body() dto: TournamentRegisterRequest,
   ): Promise<TournamentRegisterResponse> {
     try {
-      return await this.tournamentService.registerTournament(dto);
+      return await this.tournamentService.registerTournament(
+        dto.title,
+        dto.blindStructureId,
+        dto.buyIn,
+        dto.breakTimeTerm,
+        dto.breakTime,
+      );
     } catch (error) {
       this.logger.error(error);
       throw error;
