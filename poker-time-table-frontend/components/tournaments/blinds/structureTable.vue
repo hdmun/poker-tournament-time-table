@@ -15,67 +15,68 @@
       </v-col>
     </v-row>
 
-    <v-row
-      v-for="(blind, index) in blindStructures"
-      :key="index"
-      justify="center"
-      class="ma-0"
-    >
-      <template v-if="blind.level > 0">
+    <template v-for="(item, index) in blindStructures">
+      <v-row v-if="isRender(index)" :key="index" justify="center" class="ma-0">
+        <template v-if="item.level > 0">
+          <v-col class="pa-0" :cols="2">
+            <BlindsStructureTableCell
+              :value="item.level"
+              :text-color="cellTextColor(index)"
+              :back-color="cellBackgroundColor(index)"
+            />
+          </v-col>
+
+          <v-col class="pa-0" :cols="colsGrid">
+            <BlindsStructureTableCell
+              :value="item.smallBlind"
+              :text-color="cellTextColor(index)"
+              :back-color="cellBackgroundColor(index)"
+            />
+          </v-col>
+
+          <v-col class="pa-0" :cols="colsGrid">
+            <BlindsStructureTableCell
+              :value="item.bigBlind"
+              :text-color="cellTextColor(index)"
+              :back-color="cellBackgroundColor(index)"
+            />
+          </v-col>
+
+          <v-col class="pa-0" :cols="2">
+            <BlindsStructureTableCell
+              :value="item.ante"
+              :text-color="cellTextColor(index)"
+              :back-color="cellBackgroundColor(index)"
+            />
+          </v-col>
+        </template>
+
+        <template v-else>
+          <v-col class="pa-0" :cols="colsGrid * 3 + 1">
+            <BreakTimeTableCell
+              :text-color="cellTextColor(index)"
+              :back-color="cellBackgroundColor(index)"
+            />
+          </v-col>
+        </template>
+
         <v-col class="pa-0" :cols="2">
           <BlindsStructureTableCell
-            :value="blind.level"
+            :value="item.minute"
+            value-prefix="분"
             :text-color="cellTextColor(index)"
             :back-color="cellBackgroundColor(index)"
           />
         </v-col>
+      </v-row>
+    </template>
 
-        <v-col class="pa-0" :cols="colsGrid">
-          <BlindsStructureTableCell
-            :value="blind.smallBlind"
-            :text-color="cellTextColor(index)"
-            :back-color="cellBackgroundColor(index)"
-          />
-        </v-col>
-
-        <v-col class="pa-0" :cols="colsGrid">
-          <BlindsStructureTableCell
-            :value="blind.bigBlind"
-            :text-color="cellTextColor(index)"
-            :back-color="cellBackgroundColor(index)"
-          />
-        </v-col>
-
-        <v-col class="pa-0" :cols="2">
-          <BlindsStructureTableCell
-            :value="blind.ante"
-            :text-color="cellTextColor(index)"
-            :back-color="cellBackgroundColor(index)"
-          />
-        </v-col>
-      </template>
-
-      <template v-else>
-        <v-col class="pa-0" :cols="colsGrid * 3 + 1">
-          <v-card
-            class="pa-0 fill-height"
-            :color="cellBackgroundColor(index)"
-            outlined
-            tile
-          >
-            <v-card-title class="pa-2 breaktime-text">
-              BREAK TIME
-            </v-card-title>
-          </v-card>
-        </v-col>
-      </template>
-
-      <v-col class="pa-0" :cols="2">
+    <v-row v-if="isMoreBlind" justify="center" class="ma-0">
+      <v-col class="pa-0" :cols="12">
         <BlindsStructureTableCell
-          :value="blind.minute"
-          value-prefix="분"
-          :text-color="cellTextColor(index)"
-          :back-color="cellBackgroundColor(index)"
+          value="..."
+          text-color="primary"
+          back-color="gray5"
         />
       </v-col>
     </v-row>
@@ -86,17 +87,23 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { PropType } from 'vue'
 import BlindsStructureTableCell from './structureTableCell.vue'
+import BreakTimeTableCell from './breakTimeTableCell.vue'
 import { BlindStructureDto } from '~/dto/blindStructureDto'
 import { BlindStructureModel } from '~/store/admin/tournament'
 
 @Component({
   components: {
     BlindsStructureTableCell,
+    BreakTimeTableCell,
   },
 })
 export default class BlindsStructureTable extends Vue {
   headers: string[] = ['LV', 'S.B', 'B.B', 'ANTE', 'TIME']
   colsGrid = 3
+  itemCount = 6
+
+  @Prop({ type: Boolean, default: true })
+  landscapeMode!: boolean
 
   @Prop({
     type: Array as PropType<Array<BlindStructureDto>>,
@@ -106,6 +113,33 @@ export default class BlindsStructureTable extends Vue {
 
   @Prop({ type: Number, required: true })
   blindId!: number
+
+  get isMoreBlind(): boolean {
+    return this.blindStructures.length - this.blindId >= this.itemCount
+  }
+
+  isRender(index: number): boolean {
+    if (this.landscapeMode || this.blindId < 0) {
+      return true
+    }
+
+    const firstRenderIdx = this.blindId - 1
+    if (firstRenderIdx <= index) {
+      const count = index - firstRenderIdx
+      if (count < this.itemCount) {
+        return true
+      }
+    }
+
+    const remainCount = this.blindStructures.length - index
+    if (remainCount <= this.itemCount) {
+      if (!this.isMoreBlind) {
+        return true
+      }
+    }
+
+    return false
+  }
 
   headerCols(headerText: string) {
     switch (headerText) {
@@ -136,27 +170,19 @@ export default class BlindsStructureTable extends Vue {
 .header-text {
   @include media('lg-and-up') {
     @include sub-copy-bold;
+    padding: 8px !important;
   }
 
-  @include media('md-and-down') {
-    @include small-copy1-bold;
-  }
-
-  @extend .secondary4-color;
-  justify-content: center !important;
-}
-.breaktime-text {
-  @include media('lg-and-up') {
+  @include media('md-only') {
     @include title2-bold;
     padding: 16px !important;
   }
 
-  @include media('md-and-down') {
+  @include media('sm-and-down') {
     @include sub-copy-bold;
   }
 
-  @extend .accent1-color;
-  height: 100%;
+  @include secondary4-color;
   justify-content: center !important;
 }
 </style>

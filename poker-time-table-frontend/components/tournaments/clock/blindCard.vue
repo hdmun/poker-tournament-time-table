@@ -1,6 +1,6 @@
 <template>
-  <v-row justify="center">
-    <v-col cols="3" class="pa-0">
+  <v-row class="ma-4" justify="center">
+    <v-col sm="6" md="9" lg="3" xl="3" class="pa-0">
       <v-card class="fill-height" color="gray7" outlined tile>
         <v-card-title v-if="level > 0" class="blindlevel-value">
           Lv. {{ level }}
@@ -9,14 +9,14 @@
       </v-card>
     </v-col>
 
-    <v-col cols="3" class="pa-0">
+    <v-col sm="6" md="9" lg="3" xl="3" class="pa-0">
       <v-card class="fill-height" color="gray7" outlined tile>
         <v-card-title class="pt-4 pb-2 ante-title"> Ante </v-card-title>
         <v-card-title class="info-value"> {{ ante }} </v-card-title>
       </v-card>
     </v-col>
 
-    <v-col cols="3" class="pa-0">
+    <v-col sm="12" md="9" lg="3" xl="3" class="pa-0">
       <v-card class="fill-height" color="gray7" outlined tile>
         <v-card-actions class="pb-0 justify-center">
           <v-btn
@@ -60,16 +60,28 @@ export default class BlindCards extends Vue {
   bigBlind!: Number
 
   get isAddNewLine(): boolean {
+    switch (this.$vuetify.breakpoint.name) {
+      case 'xs':
+      case 'sm':
+      case 'md':
+        return false
+      // return this.isAddNewLineTablet
+      default:
+        return this.isAddNewLineLarge
+    }
+  }
+
+  get isAddNewLineTablet(): boolean {
+    return this.smallBlind >= 100000
+  }
+
+  get isAddNewLineLarge(): boolean {
     if (this.showBlindTable) {
       if (this.smallBlind < 10000) {
         return true
       }
     }
-
-    if (this.smallBlind >= 100000) {
-      return true
-    }
-    return false
+    return this.smallBlind >= 100000
   }
 
   @Emit('onToggleShowBlindTable')
@@ -83,31 +95,31 @@ export default class BlindCards extends Vue {
 @import '~/assets/variables.scss';
 
 .blindlevel-value {
-  @extend .title-1-bold;
-  @extend .primary-color;
+  @include title1-bold;
+  @include primary-color;
 
   justify-content: center;
   height: 100%;
 }
 
 .breaktime-text {
-  @extend .title-1-bold;
-  @extend .accent1-color;
+  @include title1-bold;
+  @include accent1-color;
 
   justify-content: center;
   height: 100%;
 }
 
 .ante-title {
-  @extend .sub-copy-exbold;
-  @extend .gray3-color;
+  @include sub-copy-bold;
+  @include gray3-color;
 
   justify-content: center;
 }
 
 .blindbtn-title {
-  @extend .sub-copy-exbold;
-  @extend .primary-color;
+  @include sub-copy-bold;
+  @include primary-color;
 
   padding-top: 16px;
   justify-content: center;
@@ -115,17 +127,17 @@ export default class BlindCards extends Vue {
 
 $value-text-size: $title-1-size + 1rem;
 .info-value {
-  @include media('lg-and-up') {
+  @include media('md-and-up') {
     @include title1-bold;
     font-size: $value-text-size !important;
     line-height: $value-text-size;
   }
 
-  @include media('md-and-down') {
+  @include media('sm-and-down') {
     @include title2-bold;
   }
 
-  @extend .gray1-color;
+  @include gray1-color;
   justify-content: center;
 }
 </style>

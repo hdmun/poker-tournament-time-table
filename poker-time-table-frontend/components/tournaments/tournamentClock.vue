@@ -2,7 +2,7 @@
   <v-card class="fill-height" color="gray8" outlined tile>
     <v-row class="mt-xl-8">
       <v-col justify="center">
-        <v-card-title class="justify-center title-2-exbold" wrap>
+        <v-card-title class="tournament-title" wrap>
           {{ data.title }}
         </v-card-title>
       </v-col>
@@ -49,7 +49,7 @@
 
     <v-row class="mb-xl-6" justify="center" align="center">
       <v-btn
-        small
+        :small="isSmallBtn"
         fab
         outlined
         color="gray6"
@@ -60,7 +60,7 @@
       </v-btn>
 
       <v-btn
-        x-large
+        :x-large="isXLargeBtn"
         fab
         outlined
         class="ma-6"
@@ -69,11 +69,11 @@
         @click="data.pause ? onPlay() : onPause()"
       >
         <v-icon v-if="data.pause" x-large color="primary"> mdi-play </v-icon>
-        <v-icon v-else x-large color="primary"> mdi-pause </v-icon>
+        <v-icon v-else x-large color="accent1"> mdi-pause </v-icon>
       </v-btn>
 
       <v-btn
-        small
+        :small="isSmallBtn"
         fab
         outlined
         color="gray6"
@@ -123,9 +123,10 @@
     <v-snackbar
       :value="disabledBlindUp"
       :timeout="-1"
-      centered
+      absolute
+      top
       tile
-      color="red accent-2"
+      color="ma-12 red accent-2"
     >
       <div class="snackbar-text">{{ snackbarMessage }}</div>
     </v-snackbar>
@@ -170,14 +171,22 @@ export default class TournamentClock extends Vue {
       return '종료된 토너먼트 입니다.'
     }
     if (!this.starting) {
-      return '시작하지 않은 토너먼트 입니다.'
+      return '시작 대기 중...'
     }
 
-    return '로딩 중'
+    return '로딩 중...'
   }
 
   get closedTournament(): boolean {
     return this.blindCount <= this.currentStep
+  }
+
+  get isSmallBtn(): boolean {
+    return this.$vuetify.breakpoint.smAndDown
+  }
+
+  get isXLargeBtn(): boolean {
+    return this.$vuetify.breakpoint.mdAndUp
   }
 
   get disabledBlindUp(): boolean {
@@ -216,14 +225,19 @@ export default class TournamentClock extends Vue {
 <style scoped lang="scss">
 @import '~/assets/variables.scss';
 
+.tournament-title {
+  justify-content: center;
+  @include title2-bold;
+}
+
 .playtime-text {
-  @extend .sub-copy;
-  @extend .primary-color;
+  @include sub-copy;
+  @include primary-color;
 }
 
 .nextbreak-text {
-  @extend .sub-copy;
-  @extend .gray2-color;
+  @include sub-copy;
+  @include gray2-color;
 }
 
 $top-text-size: $title-1-size + 1rem;
@@ -233,11 +247,15 @@ $top-text-size: $title-1-size + 1rem;
     line-height: $top-text-size;
   }
 
-  @include media('md-and-down') {
+  @include media('md-only') {
     @include title1-bold;
   }
 
-  @extend .primary-color;
+  @include media('sm-and-down') {
+    @include title2-bold;
+  }
+
+  @include primary-color;
   justify-content: center;
 }
 
@@ -247,28 +265,33 @@ $top-text-size: $title-1-size + 1rem;
     line-height: $top-text-size;
   }
 
-  @include media('md-and-down') {
+  @include media('md-only') {
     @include title1-bold;
   }
 
-  @extend .gray2-color;
+  @include media('sm-and-down') {
+    @include title2-bold;
+  }
+
+  @include gray2-color;
   justify-content: center;
 }
 
 $remaintime-xl-size: $head-1-size + 5rem;
 .remaintime-value {
-  @include media('lg-and-up') {
+  @include media('md-and-up') {
+    @include head1-bold;
     font-size: $remaintime-xl-size !important;
     line-height: $remaintime-xl-size;
   }
 
-  @include media('md-and-down') {
-    @include head1-bold;
+  @include media('sm-and-down') {
+    @include head2-bold;
   }
 }
 
 .snackbar-text {
-  @extend .title-1-bold;
+  @include title1-bold;
   margin: 1rem !important;
 }
 </style>

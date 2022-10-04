@@ -218,9 +218,6 @@ export default class AdminRegisterBlindStructure extends Vue {
       minute: this.minute,
     })
 
-    console.log(this.smallBlind, smallBlind)
-    console.log(this.bigBlind, bigBlind)
-
     this.smallBlind = smallBlind
     this.bigBlind = bigBlind
   }

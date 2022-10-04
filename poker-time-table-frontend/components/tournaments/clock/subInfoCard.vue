@@ -26,15 +26,15 @@ export default class SubInfoCard extends Vue {
 @import '~/assets/variables.scss';
 
 .play-info-title {
-  @extend .small-copy-2;
-  @extend .gray3-color;
+  @include small-copy2;
+  @include gray3-color;
 
   justify-content: center;
 }
 
 .play-info-value {
-  @extend .sub-copy-exbold;
-  @extend .gray1-color;
+  @include sub-copy-bold;
+  @include gray1-color;
 
   justify-content: center;
 }

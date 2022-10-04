@@ -11,45 +11,30 @@
 }
 
 $head-1-size: 11.25rem;
-.head-1 {
+$head-2-size: 8rem;
+$title-1-size: 2.75rem;
+$title-2-size: 2rem;
+$sub-copy-size: 1.25rem;
+$small-copy-1-size: 1rem;
+$small-copy-2-size: 0.875rem;
+$small-copy-3-size: 0.75rem;
+
+@mixin head1 {
   font-size: $head-1-size !important;
   line-height: $head-1-size;
 }
-.head-1-bold {
-  @extend .head-1;
-  font-weight: 800 !important;
-}
-
 @mixin head1-bold {
   font-weight: 800;
-  font-size: $head-1-size !important;
-  line-height: $head-1-size;
+  @include head1
 }
 
-$head-2-size: 8rem;
-.head-2 {
+@mixin head2 {
   font-size: $head-2-size !important;
   line-height: $head-2-size;
 }
-.head-2-bold {
-  @extend .head-2;
-  font-weight: 800 !important;
-}
-
 @mixin head2-bold {
   font-weight: 800;
-  font-size: $head-2-size !important;
-  line-height: $head-2-size;
-}
-
-$title-1-size: 2.75rem;
-.title-1 {
-  font-size: $title-1-size !important;
-  line-height: $title-1-size;
-}
-.title-1-bold {
-  @extend .title-1;
-  font-weight: 800 !important;
+  @include head2
 }
 
 @mixin title1 {
@@ -57,21 +42,9 @@ $title-1-size: 2.75rem;
   font-size: $title-1-size !important;
   line-height: $title-1-size;
 }
-
 @mixin title1-bold {
   font-weight: 800 !important;
   @include title1
-}
-
-$title-2-size: 2rem;
-.title-2 {
-  font-size: $title-2-size !important;
-  font-weight: 300;
-  line-height: $title-2-size;
-}
-.title-2-exbold {
-  @extend .title-2;
-  font-weight: 800 !important;
 }
 
 @mixin title2 {
@@ -79,20 +52,9 @@ $title-2-size: 2rem;
   font-size: $title-2-size !important;
   line-height: $title-2-size;
 }
-
 @mixin title2-bold {
   font-weight: 800 !important;
   @include title2
-}
-
-$sub-copy-size: 1.25rem;
-.sub-copy {
-  font-size: $sub-copy-size !important;
-  line-height: $sub-copy-size;
-}
-.sub-copy-exbold {
-  @extend .sub-copy;
-  font-weight: 800 !important;
 }
 
 @mixin sub-copy {
@@ -100,121 +62,105 @@ $sub-copy-size: 1.25rem;
   font-size: $sub-copy-size !important;
   line-height: $sub-copy-size;
 }
-
 @mixin sub-copy-bold {
   @include sub-copy;
   font-weight: 800 !important;
 }
 
-$small-copy-1-size: 1rem;
-.small-copy-1 {
-  font-size: $small-copy-1-size !important;
-  font-weight: 400 !important;
-  line-height: $small-copy-1-size;
-}
-.small-copy-1-exbold {
-  @extend .small-copy-1;
-  font-weight: 800 !important;
-}
-
 @mixin small-copy1 {
-  font-weight: 300;
+  font-weight: 400;
   font-size: $small-copy-1-size !important;
   line-height: $small-copy-1-size;
 }
-
 @mixin small-copy1-bold {
   @include small-copy1;
   font-weight: 800 !important;
 }
+.small-copy-1-bold {
+  @include small-copy1;
+  font-weight: 800 !important;
+}
 
-
-$small-copy-2-size: 0.875rem;
-.small-copy-2 {
+@mixin small-copy2 {
+  font-weight: 300;
   font-size: $small-copy-2-size !important;
-  font-weight: 400 !important;
   line-height: $small-copy-2-size;
 }
-.small-copy-2-exbold {
-  @extend .small-copy-2;
+@mixin small-copy2-bold {
+  @include small-copy2;
   font-weight: 800 !important;
 }
 
-$small-copy-3-size: 0.75rem;
-.small-copy-3 {
+@mixin small-copy3 {
+  font-weight: 400;
   font-size: $small-copy-3-size !important;
-  font-weight: 400 !important;
   line-height: $small-copy-3-size;
 }
-.small-copy-3-exbold {
-  @extend .small-copy-3;
-
-  font-size: 0.75rem !important;
+@mixin small-copy3-bold {
+  @include small-copy2;
   font-weight: 800 !important;
 }
 
+
 $primary-code: #D2B895;
-.primary-color {
+@mixin primary-color {
   color: $primary-code !important;
   caret-color: $primary-code;
 }
-.primary-border {
+@mixin primary-border {
   border-width: thin !important;
   border-color: $primary-code!important;
 }
-
-.secondary1-color {
+@mixin secondary1-color {
   color: #D1A576 !important;
 }
-.secondary2-color {
+@mixin secondary2-color {
   color: #DB9F65 !important;
 }
-.secondary3-color {
+@mixin secondary3-color {
   color: #BB9A65 !important;
 }
-.secondary4-color {
+@mixin secondary4-color {
   color: #9E8864 !important;
 }
-.accent-color{
+@mixin accent-color {
   color: #566FFF !important;
 }
-.accent1-color{
+@mixin accent1-color {
   color: #FF5A5A !important;
 }
-.gray1-color{
+@mixin gray1-color{
   color: #E4E4E4 !important;
 }
-.gray2-color{
+@mixin gray2-color{
   color: #B7BAC3 !important;
 }
 
 $gray3-code: #8A94A0;
-.gray3-color{
+@mixin gray3-color{
   color: $gray3-code !important;
   caret-color: $gray3-code !important;
 }
-.gray3-border {
+@mixin gray3-border {
   border-width: thin !important;
   border-color: $gray3-code  !important;
 }
-
-.gray4-color{
+@mixin gray4-color{
   color: #3E4C59 !important;
 }
-.gray4-border {
+@mixin gray4-border {
   border-width: thin !important;
   border-color: #3E4C59 !important;
 }
-
-.gray5-color{
+@mixin gray5-color{
   color: #323E4A !important;
 }
-.gray6-color{
+@mixin gray6-color{
   color: #1F2933 !important;
 }
-.gray7-color{
+@mixin gray7-color{
   color: #141C24 !important;
 }
-.gray8-color{
+@mixin gray8-color{
   color: #11181F !important;
 }

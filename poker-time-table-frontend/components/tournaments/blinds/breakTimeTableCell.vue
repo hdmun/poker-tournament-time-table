@@ -1,11 +1,6 @@
 <template>
   <v-card class="pa-0 fill-height" :color="backColor" outlined tile>
-    <v-card-title :class="`cell-text ${textColor}--text`">
-      <template v-if="value !== null">
-        {{ value }}
-      </template>
-      {{ valuePrefix }}
-    </v-card-title>
+    <v-card-title :class="`cell-text`"> BREAK TIME </v-card-title>
   </v-card>
 </template>
 
@@ -13,16 +8,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class BlindsStructureTableCell extends Vue {
-  @Prop([Number, String])
-  value!: number | string
-
-  @Prop({ type: String, default: '' })
-  valuePrefix!: String
-
-  @Prop({ type: String, default: 'primary' })
-  textColor!: string
-
+export default class BreakTimeTableCell extends Vue {
   @Prop({ type: String, default: 'gray5' })
   backColor!: string
 }
@@ -34,7 +20,7 @@ export default class BlindsStructureTableCell extends Vue {
 .cell-text {
   @include media('lg-and-up') {
     @include title2-bold;
-    padding: 8px !important;
+    padding: 16px !important;
   }
 
   @include media('md-only') {
@@ -47,6 +33,7 @@ export default class BlindsStructureTableCell extends Vue {
     padding: 8px !important;
   }
 
+  @include accent1-color;
   height: 100%;
   justify-content: center !important;
 }

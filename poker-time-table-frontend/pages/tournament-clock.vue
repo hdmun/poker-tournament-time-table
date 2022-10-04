@@ -1,42 +1,53 @@
 <template>
-  <v-row class="ma-0 fill-height">
-    <v-col :lg="12" class="pa-0" height="100%">
-      <TournamentClock
-        :data="clock"
-        :show-variant.sync="showBlindTable"
-        :current-step="clock.blindId"
-        :blind-count="blindStructure.length"
-        :starting="clock.started"
-        :edit-mode="editBlindTable"
-        @onPlay="onPlay"
-        @onPause="onPause"
-        @onDownBlind="onDownBlind"
-        @onUpBlind="onUpBlind"
-      />
-    </v-col>
+  <v-flex class="ma-0 pa-0">
+    <v-row class="ma-0 fill-height">
+      <v-col :lg="12" class="pa-0" height="100%">
+        <TournamentClock
+          :data="clock"
+          :show-variant.sync="showBlindTable"
+          :current-step="clock.blindId"
+          :blind-count="blindStructure.length"
+          :starting="clock.started"
+          :edit-mode="editBlindTable"
+          @onPlay="onPlay"
+          @onPause="onPause"
+          @onDownBlind="onDownBlind"
+          @onUpBlind="onUpBlind"
+        />
+      </v-col>
 
-    <v-navigation-drawer
-      v-model="showBlindTable"
-      :width="blindTableWidth"
-      right
-      app
-      fixed
-      :temporary="isTemporary"
-    >
-      <TournamentBlinds
-        ref="blindTable"
-        :structure.sync="blindStructure"
-        :current-step="clock.blindId"
-        :edit-mode="editBlindTable"
-        @onBlindEdit="onBlindEdit"
-        @onBlindEditClose="onBlindEditClose"
+      <v-navigation-drawer
+        v-if="landscapeMode"
+        v-model="showBlindTable"
+        :width="blindTableWidth"
+        right
+        app
+        fixed
+        :temporary="isTemporary"
+      >
+        <TournamentBlinds
+          ref="blindTable"
+          :structure.sync="blindStructure"
+          :current-step="clock.blindId"
+          :edit-mode="editBlindTable"
+          @onBlindEdit="onBlindEdit"
+          @onBlindEditClose="onBlindEditClose"
+        />
+      </v-navigation-drawer>
+    </v-row>
+    <v-row v-if="!landscapeMode" cols="12" class="ma-4">
+      <BlindsStructureTable
+        :landscape-mode="landscapeMode"
+        :blind-structures="blindStructure"
+        :blind-id="clock.blindId"
       />
-    </v-navigation-drawer>
-  </v-row>
+    </v-row>
+  </v-flex>
 </template>
 
 <script lang="ts">
 import { Component, Ref, Vue, Watch } from 'nuxt-property-decorator'
+import BlindsStructureTable from '~/components/tournaments/blinds/structureTable.vue'
 import TournamentBlinds, {
   BlindEditDto,
 } from '~/components/tournaments/tournamentBlinds.vue'
@@ -59,6 +70,7 @@ interface WsResponse<T> {
 
 @Component({
   components: {
+    BlindsStructureTable,
     TournamentBlinds,
     TournamentClock,
   },
@@ -79,6 +91,11 @@ export default class TournamentClockPage extends Vue {
     return this.clock.tournamentId
   }
 
+  get landscapeMode(): boolean {
+    const breakpoint = this.$vuetify.breakpoint
+    return breakpoint.width > breakpoint.height
+  }
+
   get blindTableWidth(): number {
     switch (this.$vuetify.breakpoint.name) {
       case 'xs':
@@ -87,9 +104,9 @@ export default class TournamentClockPage extends Vue {
         return 400
       case 'md':
         return 500
-      case 'xl':
-      case 'lg': {
-        const width = 750
+      case 'lg':
+      case 'xl': {
+        const width = Number(this.$vuetify.breakpoint.width / 2.5)
         if (this.editBlindTable) {
           return width + 120
         }
@@ -121,7 +138,7 @@ export default class TournamentClockPage extends Vue {
       .then(() => {
         this.clock = vxm.tournament.clock
         this.blindStructure = vxm.tournament.blinds
-        this.blindTable.updateMaxBlindLevel()
+        this.blindTable?.updateMaxBlindLevel()
       })
       .catch((error) => {
         // eslint-disable-next-line no-console
@@ -137,6 +154,8 @@ export default class TournamentClockPage extends Vue {
         this.webSocket?.send(JSON.stringify({ event: 'clock' }))
       }
     }
+
+    window.addEventListener('resize', this.handleResize)
   }
 
   onmessage(ev: MessageEvent<string>) {
@@ -158,6 +177,12 @@ export default class TournamentClockPage extends Vue {
     if (this.webSocket !== null) {
       this.webSocket.close()
     }
+
+    window.removeEventListener('resize', this.handleResize)
+  }
+
+  handleResize(_event: UIEvent) {
+    this.blindTable?.updateMaxBlindLevel()
   }
 
   async onBlindEdit(dto: BlindEditDto) {
@@ -183,7 +208,7 @@ export default class TournamentClockPage extends Vue {
   onChangeShowBlindTable(val: boolean) {
     // 편집 중에 닫히면 close 처리
     if (this.editBlindTable && !val) {
-      this.blindTable.onBlindEditClose()
+      this.blindTable?.onBlindEditClose()
     }
   }
 
