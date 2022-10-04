@@ -74,7 +74,10 @@ export class EventService {
       }
 
       if (pauseTime < 0) {
-        pauseTime = 0; // 블라인드 레벨을 변경하게 되면 음수가 발생할 수 있다.
+        this.logger.error(
+          `tournament pauseTime minus, tournamentId: ${tournamentId}, pauseTime: ${pauseTime}, nowDate: ${nowDate} tournament.pauseTime: ${tournament.pauseTime}`,
+        );
+        pauseTime = 0; // 로그 남기고 보정
       }
 
       const remainDate = new Date(
@@ -194,9 +197,16 @@ export class EventService {
       }
 
       const nowDate = new Date();
-      let playTimeMs = nowDate.getTime() - tournament.levelStart.getTime();
+      const playTimeMs = nowDate.getTime() - tournament.levelStart.getTime();
       if (playTimeMs < 0) {
-        playTimeMs = 0; // 블라인드 레벨을 변경하게 되면 음수가 발생할 수 있다.
+        this.logger.error(
+          `tournament playTimeMs minus
+          , tournamentId: ${tournament.id}
+          , playTimeMs: ${playTimeMs}
+          , nowDate: ${nowDate}
+          , tournament.levelStart: ${tournament.levelStart}
+          , tournament.pauseTime: ${tournament.pauseTime}`,
+        );
       }
 
       let pauseTime = 0;
