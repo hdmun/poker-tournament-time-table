@@ -51,6 +51,10 @@ export class TournamentService {
   async registerTournament(
     dto: TournamentRegisterRequest,
   ): Promise<TournamentRegisterResponse> {
+    this.logger.log(
+      `registerTournament, title: ${dto.title}, blindStructureId: ${dto.blindStructureId}`,
+    );
+
     const newTornament = Tournament.Create(dto.title, dto.buyIn);
     await this.tournamentRepository.save(newTornament);
 
@@ -88,6 +92,8 @@ export class TournamentService {
   async deleteTournament(
     tournamentId: number,
   ): Promise<TournamentDeleteResponse> {
+    this.logger.log(`deleteTournament, tournamentId: ${tournamentId}`);
+
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
     });
@@ -107,6 +113,8 @@ export class TournamentService {
   async closeTournament(
     tournamentId: number,
   ): Promise<TournamentCloseResponse> {
+    this.logger.log(`closeTournament, tournamentId: ${tournamentId}`);
+
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
     });
@@ -134,6 +142,10 @@ export class TournamentService {
     tournamentId: number,
     blinds: TournamentBlindDto[],
   ): Promise<TournamentBlind[]> {
+    this.logger.log(
+      `updateBlind, tournamentId: ${tournamentId}, blinds: ${blinds.length}`,
+    );
+
     // todo transaction
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
@@ -169,6 +181,8 @@ export class TournamentService {
   }
 
   async play(id: number): Promise<TournamentClockEventDto | null> {
+    this.logger.log(`play, tournamentId: ${id}`);
+
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
       throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
@@ -215,6 +229,8 @@ export class TournamentService {
   }
 
   async pause(id: number): Promise<TournamentClockEventDto | null> {
+    this.logger.log(`pause, tournamentId: ${id}`);
+
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
       throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
@@ -237,6 +253,8 @@ export class TournamentService {
   }
 
   async downBlindLevel(id: number): Promise<TournamentClockEventDto | null> {
+    this.logger.log(`downBlindLevel, tournamentId: ${id}`);
+
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
       throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
@@ -272,6 +290,8 @@ export class TournamentService {
   }
 
   async upBlindLevel(id: number): Promise<TournamentClockEventDto | null> {
+    this.logger.log(`upBlindLevel, tournamentId: ${id}`);
+
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
       throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);

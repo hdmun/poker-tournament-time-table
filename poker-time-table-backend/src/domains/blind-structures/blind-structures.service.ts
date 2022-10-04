@@ -51,6 +51,10 @@ export class BlindStructureService {
     name: string,
     structureDto: BlindStructureDto[],
   ): Promise<void> {
+    this.logger.log(
+      `registerBlindStructure, name: ${name}, blinds: ${structureDto.length}`,
+    );
+
     const meta = await this.blindStructureMetaRepo.getByMetaName(name);
     if (meta) {
       this.logger.error(`duplicated blind template name '${name}', ${meta}`);
@@ -89,6 +93,10 @@ export class BlindStructureService {
     name: string,
     structureDto: BlindStructureDto[],
   ): Promise<void> {
+    this.logger.log(
+      `updateBlindStructure, name: ${name}, id: ${id}, blinds: ${structureDto.length}`,
+    );
+
     const meta = await this.blindStructureMetaRepo.findOneBy({ id });
     if (!meta) {
       throw new InvalidInputError(
