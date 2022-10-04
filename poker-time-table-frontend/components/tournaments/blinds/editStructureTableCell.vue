@@ -2,13 +2,16 @@
   <v-card class="pa-0 fill-height" :color="backColor" outlined tile>
     <v-card-title class="pa-0 fill-height">
       <v-text-field
-        v-model="value"
+        v-model.number="value"
         class="cell-text"
         single-line
         type="number"
+        :min="0"
         hide-spin-buttons
         hide-details
         reverse
+        @input="onInput($event)"
+        @focus="$event.target.select()"
       />
     </v-card-title>
   </v-card>
@@ -24,6 +27,12 @@ export default class EditBlindsStructureTableCell extends Vue {
 
   @Prop({ type: String, default: 'gray5' })
   backColor!: string
+
+  onInput(value: string) {
+    if (value === '') {
+      this.value = 0
+    }
+  }
 }
 </script>
 

@@ -19,7 +19,7 @@
 
     <template v-if="editMode">
       <EditBlindsStructureTable
-        :blind-structures="blindStructures"
+        :edit-blind-structures.sync="blindStructures"
         :blind-id="currentStep"
         @onBlindDelete="onBlindDelete"
       />

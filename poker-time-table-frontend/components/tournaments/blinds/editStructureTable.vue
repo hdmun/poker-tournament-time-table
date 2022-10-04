@@ -89,7 +89,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Emit, Prop, PropSync, Vue } from 'nuxt-property-decorator'
 import { PropType } from 'vue'
 import draggable, { MoveEvent } from 'vuedraggable'
 import BlindsStructureTableCell from './structureTableCell.vue'
@@ -110,7 +110,7 @@ export default class EditBlindsStructureTable extends Vue {
   headers: string[] = ['LV', 'S.B', 'B.B', 'ANTE', 'TIME', '편집']
   colsGrid = 3
 
-  @Prop({
+  @PropSync('editBlindStructures', {
     type: Array as PropType<Array<BlindStructureDto>>,
     required: true,
   })
