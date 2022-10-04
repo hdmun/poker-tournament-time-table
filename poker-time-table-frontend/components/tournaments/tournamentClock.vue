@@ -247,8 +247,12 @@ $top-text-size: $title-1-size + 1rem;
     line-height: $top-text-size;
   }
 
-  @include media('md-and-down') {
+  @include media('md-only') {
     @include title1-bold;
+  }
+
+  @include media('sm-and-down') {
+    @include title2-bold;
   }
 
   @include primary-color;
@@ -261,8 +265,12 @@ $top-text-size: $title-1-size + 1rem;
     line-height: $top-text-size;
   }
 
-  @include media('md-and-down') {
+  @include media('md-only') {
     @include title1-bold;
+  }
+
+  @include media('sm-and-down') {
+    @include title2-bold;
   }
 
   @include gray2-color;
@@ -271,13 +279,14 @@ $top-text-size: $title-1-size + 1rem;
 
 $remaintime-xl-size: $head-1-size + 5rem;
 .remaintime-value {
-  @include media('lg-and-up') {
+  @include media('md-and-up') {
+    @include head1-bold;
     font-size: $remaintime-xl-size !important;
     line-height: $remaintime-xl-size;
   }
 
-  @include media('md-and-down') {
-    @include head1-bold;
+  @include media('sm-and-down') {
+    @include head2-bold;
   }
 }
 

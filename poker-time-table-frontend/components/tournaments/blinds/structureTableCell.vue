@@ -1,8 +1,10 @@
 <template>
   <v-card class="pa-0 fill-height" :color="backColor" outlined tile>
     <v-card-title :class="`cell-text ${textColor}--text`">
-      <template v-if="value !== null">{{ value }}</template
-      >{{ valuePrefix }}
+      <template v-if="value !== null">
+        {{ value }}
+      </template>
+      {{ valuePrefix }}
     </v-card-title>
   </v-card>
 </template>
@@ -12,8 +14,8 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class BlindsStructureTableCell extends Vue {
-  @Prop({ type: Number })
-  value!: number
+  @Prop([Number, String])
+  value!: number | string
 
   @Prop({ type: String, default: '' })
   valuePrefix!: String
@@ -32,10 +34,15 @@ export default class BlindsStructureTableCell extends Vue {
 .cell-text {
   @include media('lg-and-up') {
     @include title2-bold;
+    padding: 8px !important;
+  }
+
+  @include media('md-only') {
+    @include title2-bold;
     padding: 16px !important;
   }
 
-  @include media('md-and-down') {
+  @include media('sm-and-down') {
     @include sub-copy-bold;
     padding: 8px !important;
   }

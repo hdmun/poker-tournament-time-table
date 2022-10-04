@@ -106,7 +106,7 @@ export default class TournamentClockPage extends Vue {
         return 500
       case 'lg':
       case 'xl': {
-        const width = Number(this.$vuetify.breakpoint.width / 3)
+        const width = Number(this.$vuetify.breakpoint.width / 2.5)
         if (this.editBlindTable) {
           return width + 120
         }

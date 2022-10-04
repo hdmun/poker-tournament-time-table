@@ -1,6 +1,6 @@
 <template>
   <v-row class="ma-4" justify="center">
-    <v-col sm="6" md="3" lg="3" xl="3" class="pa-0">
+    <v-col sm="6" md="9" lg="3" xl="3" class="pa-0">
       <v-card class="fill-height" color="gray7" outlined tile>
         <v-card-title v-if="level > 0" class="blindlevel-value">
           Lv. {{ level }}
@@ -9,14 +9,14 @@
       </v-card>
     </v-col>
 
-    <v-col sm="6" md="3" lg="3" xl="3" class="pa-0">
+    <v-col sm="6" md="9" lg="3" xl="3" class="pa-0">
       <v-card class="fill-height" color="gray7" outlined tile>
         <v-card-title class="pt-4 pb-2 ante-title"> Ante </v-card-title>
         <v-card-title class="info-value"> {{ ante }} </v-card-title>
       </v-card>
     </v-col>
 
-    <v-col sm="12" md="3" lg="3" xl="3" class="pa-0">
+    <v-col sm="12" md="9" lg="3" xl="3" class="pa-0">
       <v-card class="fill-height" color="gray7" outlined tile>
         <v-card-actions class="pb-0 justify-center">
           <v-btn
@@ -63,9 +63,9 @@ export default class BlindCards extends Vue {
     switch (this.$vuetify.breakpoint.name) {
       case 'xs':
       case 'sm':
-        return false
       case 'md':
-        return this.isAddNewLineTablet
+        return false
+      // return this.isAddNewLineTablet
       default:
         return this.isAddNewLineLarge
     }
@@ -127,13 +127,13 @@ export default class BlindCards extends Vue {
 
 $value-text-size: $title-1-size + 1rem;
 .info-value {
-  @include media('lg-and-up') {
+  @include media('md-and-up') {
     @include title1-bold;
     font-size: $value-text-size !important;
     line-height: $value-text-size;
   }
 
-  @include media('md-and-down') {
+  @include media('sm-and-down') {
     @include title2-bold;
   }
 

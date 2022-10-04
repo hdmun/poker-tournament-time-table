@@ -76,6 +76,16 @@
         </v-col>
       </v-row>
     </template>
+
+    <v-row v-if="isMoreBlind" justify="center" class="ma-0">
+      <v-col class="pa-0" :cols="12">
+        <BlindsStructureTableCell
+          value="..."
+          text-color="primary"
+          back-color="gray5"
+        />
+      </v-col>
+    </v-row>
   </v-flex>
 </template>
 
@@ -94,7 +104,7 @@ import { BlindStructureModel } from '~/store/admin/tournament'
 export default class BlindsStructureTable extends Vue {
   headers: string[] = ['LV', 'S.B', 'B.B', 'ANTE', 'TIME']
   colsGrid = 3
-  itemCount = 7
+  itemCount = 6
 
   @Prop({ type: Boolean, default: true })
   landscapeMode!: boolean
@@ -108,6 +118,10 @@ export default class BlindsStructureTable extends Vue {
   @Prop({ type: Number, required: true })
   blindId!: number
 
+  get isMoreBlind(): boolean {
+    return this.blindStructures.length - this.blindId >= this.itemCount
+  }
+
   isRender(index: number): boolean {
     if (this.landscapeMode || this.blindId < 0) {
       return true
@@ -120,6 +134,14 @@ export default class BlindsStructureTable extends Vue {
         return true
       }
     }
+
+    const remainCount = this.blindStructures.length - index
+    if (remainCount <= this.itemCount) {
+      if (!this.isMoreBlind) {
+        return true
+      }
+    }
+
     return false
   }
 
@@ -152,22 +174,28 @@ export default class BlindsStructureTable extends Vue {
 .header-text {
   @include media('lg-and-up') {
     @include sub-copy-bold;
+    padding: 8px !important;
   }
 
-  @include media('md-and-down') {
-    @include small-copy1-bold;
+  @include media('md-only') {
+    @include title2-bold;
+    padding: 16px !important;
+  }
+
+  @include media('sm-and-down') {
+    @include sub-copy-bold;
   }
 
   @include secondary4-color;
   justify-content: center !important;
 }
 .breaktime-text {
-  @include media('lg-and-up') {
+  @include media('md-and-up') {
     @include title2-bold;
     padding: 16px !important;
   }
 
-  @include media('md-and-down') {
+  @include media('sm-and-down') {
     @include sub-copy-bold;
   }
 
