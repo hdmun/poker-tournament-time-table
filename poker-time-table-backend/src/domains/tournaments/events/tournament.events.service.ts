@@ -90,6 +90,9 @@ export class EventService {
       let reaminTimeMs = remainDate.getTime() - nowDate.getTime();
       if (reaminTimeMs < 0) {
         // remainDate === nowDate 가 같아지면 밀리초 때문에 미세하게 음수 발생
+        this.logger.error(
+          `tournament reaminTimeMs minus, id: ${tournamentId}, tournament.levelStart: ${tournament.levelStart}, nowDate: ${nowDate} remainDate: ${remainDate}`,
+        );
         reaminTimeMs = 0;
       }
       remainTime = convertMsToTime(reaminTimeMs);
@@ -209,14 +212,8 @@ export class EventService {
         );
       }
 
-      let pauseTime = 0;
-      if (tournament.pauseTime) {
-        pauseTime = tournament.pauseTime.getTime() / 1000 / 60;
-      }
       const playTimeMinutes =
-        Math.floor(playTimeMs / 1000 / 60) -
-        pauseTime -
-        tournament.pauseSeconds * 1000;
+        (Math.floor(playTimeMs / 1000) - tournament.pauseSeconds) / 60;
 
       // 다음 레벨로 넘겨야 할지 체크
       const currentBlind = blinds[tournament.level];
