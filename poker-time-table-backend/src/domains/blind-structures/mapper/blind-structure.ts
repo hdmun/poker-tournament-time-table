@@ -14,3 +14,15 @@ export function mapToBlindStructure(
     dto.minute,
   );
 }
+
+export function mapFromBlindStructure(
+  entity: BlindStructure,
+): BlindStructureDto {
+  return {
+    level: entity.level,
+    ante: entity.ante,
+    smallBlind: entity.smallBlind,
+    bigBlind: entity.bigBlind,
+    minute: entity.minute,
+  };
+}

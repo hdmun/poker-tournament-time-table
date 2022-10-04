@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BlindStructureRepository } from '~/blind-structures/blind-structures.repository';
+import { BlindStructureRepository } from '~/domains/blind-structures/blind-structures.repository';
+import { InvalidInputError } from '~/common/exceptions';
 import {
   TournamentCloseResponse,
   TournamentRegisterRequest,
@@ -13,6 +14,10 @@ import {
 import { TournamentBlind } from './entities/tournament-blind.entity';
 import { Tournament } from './entities/tournament.entity';
 import { EventService } from './events/tournament.events.service';
+import {
+  mapFromTournament,
+  mapFromTournamentDetail,
+} from './mapper/tournament';
 import { mapToTournamentBlind } from './mapper/tournament-blind';
 import { TournamentBlindRepository } from './tournament-blind.repository';
 import { TournamentRepository } from './tournament.repository';
@@ -31,17 +36,7 @@ export class TournamentService {
   async tournamentAll(): Promise<TournamentDto[]> {
     const tounaments = await this.tournamentRepository.find();
     return tounaments.map<TournamentDto>((tournament: Tournament) => {
-      return {
-        id: tournament.id,
-        title: tournament.title,
-        startDateTime: tournament.startDateTime,
-        endDateTime: tournament.endDateTime,
-        buyIn: tournament.buyIn,
-        level: tournament.level,
-        levelStart: tournament.levelStart,
-        pauseTime: tournament.pauseTime,
-        pauseSeconds: tournament.pauseSeconds,
-      };
+      return mapFromTournament(tournament);
     });
   }
 
@@ -50,28 +45,16 @@ export class TournamentService {
     const blinds = await this.blindRepository.findBy({
       tournamentId: id,
     });
-    return {
-      id: tournament.id,
-      title: tournament.title,
-      startDateTime: tournament.startDateTime,
-      endDateTime: tournament.endDateTime,
-      buyIn: tournament.buyIn,
-      blindId: tournament.level,
-      structures: blinds.map((value) => {
-        return {
-          level: value.level,
-          ante: value.ante,
-          smallBlind: value.smallBlind,
-          bigBlind: value.bigBlind,
-          minute: value.minute,
-        };
-      }),
-    };
+    return mapFromTournamentDetail(tournament, blinds);
   }
 
   async registerTournament(
     dto: TournamentRegisterRequest,
   ): Promise<TournamentRegisterResponse> {
+    this.logger.log(
+      `registerTournament, title: ${dto.title}, blindStructureId: ${dto.blindStructureId}`,
+    );
+
     const newTornament = Tournament.Create(dto.title, dto.buyIn);
     await this.tournamentRepository.save(newTornament);
 
@@ -90,13 +73,9 @@ export class TournamentService {
       if (isAddBreakTime === 0) {
         blindId = newTornamentBlinds.length;
         newTornamentBlinds.push(
-          TournamentBlind.create(
+          TournamentBlind.createBreakTime(
             newTornament.id,
             blindId,
-            -1,
-            0,
-            -1,
-            -1,
             dto.breakTime,
           ),
         );
@@ -113,12 +92,14 @@ export class TournamentService {
   async deleteTournament(
     tournamentId: number,
   ): Promise<TournamentDeleteResponse> {
+    this.logger.log(`deleteTournament, tournamentId: ${tournamentId}`);
+
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
     });
     if (!tournament) {
-      throw new Error(
-        `[deleteTournament] invalind tournament id, ${tournamentId}`,
+      throw new InvalidInputError(
+        `잘못된 토너먼트 'id'로 요청했습니다. ${tournamentId}`,
       );
     }
 
@@ -132,12 +113,14 @@ export class TournamentService {
   async closeTournament(
     tournamentId: number,
   ): Promise<TournamentCloseResponse> {
+    this.logger.log(`closeTournament, tournamentId: ${tournamentId}`);
+
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
     });
     if (!tournament) {
-      throw new Error(
-        `[closeTournament] invalind tournament id, ${tournamentId}`,
+      throw new InvalidInputError(
+        `잘못된 토너먼트 'id'로 요청했습니다. ${tournamentId}`,
       );
     }
 
@@ -159,12 +142,18 @@ export class TournamentService {
     tournamentId: number,
     blinds: TournamentBlindDto[],
   ): Promise<TournamentBlind[]> {
+    this.logger.log(
+      `updateBlind, tournamentId: ${tournamentId}, blinds: ${blinds.length}`,
+    );
+
     // todo transaction
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
     });
     if (!tournament) {
-      throw new Error(`[updateBlind] invalind tournament id, ${tournamentId}`);
+      throw new InvalidInputError(
+        `잘못된 토너먼트 'id'로 요청했습니다. ${tournamentId}`,
+      );
     }
 
     const tournamentBlinds: TournamentBlind[] =
@@ -179,15 +168,7 @@ export class TournamentService {
     let blindId = -1;
     const addBlinds = blinds.map<TournamentBlind>((value) => {
       blindId += 1;
-      return {
-        tournamentId: tournament.id,
-        id: blindId,
-        level: value.level,
-        ante: value.ante,
-        smallBlind: value.smallBlind,
-        bigBlind: value.bigBlind,
-        minute: value.minute,
-      };
+      return mapToTournamentBlind(tournament.id, blindId, value);
     });
 
     for (const insertBlind of addBlinds) {
@@ -200,14 +181,16 @@ export class TournamentService {
   }
 
   async play(id: number): Promise<TournamentClockEventDto | null> {
+    this.logger.log(`play, tournamentId: ${id}`);
+
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
-      throw new Error(`invalind tournament id, ${id}`);
+      throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
     }
 
     if (tournament.startDateTime && !tournament.pauseTime) {
-      throw new Error(
-        `already playing tournment, ${tournament.title}, ${tournament.pauseTime}`,
+      throw new InvalidInputError(
+        `이미 실행중인 토너먼트 입니다. '${tournament.title}'`,
       );
     }
 
@@ -246,14 +229,16 @@ export class TournamentService {
   }
 
   async pause(id: number): Promise<TournamentClockEventDto | null> {
+    this.logger.log(`pause, tournamentId: ${id}`);
+
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
-      throw new Error(`invalid tournament id, ${id}`);
+      throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
     }
 
     if (tournament.startDateTime && tournament.pauseTime) {
-      throw new Error(
-        `already pause tournment, ${tournament.title}, ${tournament.pauseTime}`,
+      throw new InvalidInputError(
+        `이미 일시정지된 토너먼트 입니다. '${tournament.title}'`,
       );
     }
 
@@ -268,13 +253,17 @@ export class TournamentService {
   }
 
   async downBlindLevel(id: number): Promise<TournamentClockEventDto | null> {
+    this.logger.log(`downBlindLevel, tournamentId: ${id}`);
+
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
-      throw new Error(`invalid tournament id, ${id}`);
+      throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
     }
 
     if (tournament.level === 0) {
-      throw new Error(`do not prev tournament level`);
+      throw new InvalidInputError(
+        `블라인드 레벨을 낮출 수 없습니다. 시작 블라인드입니다. level: ${tournament.level}`,
+      );
     }
 
     tournament.level -= 1;
@@ -301,9 +290,11 @@ export class TournamentService {
   }
 
   async upBlindLevel(id: number): Promise<TournamentClockEventDto | null> {
+    this.logger.log(`upBlindLevel, tournamentId: ${id}`);
+
     const tournament = await this.tournamentRepository.findOneBy({ id });
     if (!tournament) {
-      throw new Error(`invalid tournament id, ${id}`);
+      throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
     }
 
     const blinds = await this.blindRepository.findBy({
@@ -312,8 +303,8 @@ export class TournamentService {
 
     tournament.level += 1;
     if (blinds.length <= tournament.level) {
-      throw new Error(
-        `invalid tournament level: ${tournament.level}, blinds: ${blinds.length}`,
+      throw new InvalidInputError(
+        `블라인드 레벨을 올릴 수 없습니다. 마지막 블라인드입니다. level: ${tournament.level}`,
       );
     }
 

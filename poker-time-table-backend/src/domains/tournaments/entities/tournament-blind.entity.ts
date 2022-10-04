@@ -42,4 +42,20 @@ export class TournamentBlind {
     newBlind.minute = minute;
     return newBlind;
   }
+
+  static createBreakTime(
+    tournamentId: number,
+    id: number,
+    minute: number,
+  ): TournamentBlind {
+    const newBlind = new TournamentBlind();
+    newBlind.tournamentId = tournamentId;
+    newBlind.id = id;
+    newBlind.level = -1;
+    newBlind.ante = -1;
+    newBlind.smallBlind = -1;
+    newBlind.bigBlind = -1;
+    newBlind.minute = minute;
+    return newBlind;
+  }
 }

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MySqlTypeOrmModule } from './providers/database/mysql.module';
 import { AppConfigMoudle } from './config/app.config';
-import { TournamentModule } from './tournaments/tournament.module';
-import { BlindStructureModule } from './blind-structures/blind-structures.module';
+import { TournamentModule } from './domains/tournaments/tournament.module';
+import { BlindStructureModule } from './domains/blind-structures/blind-structures.module';
 
 @Module({
   imports: [

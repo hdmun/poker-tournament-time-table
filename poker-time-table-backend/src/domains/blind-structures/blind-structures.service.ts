@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { DuplicateKeyError, InvalidInputError } from '~/common/exceptions';
 import { BlindStructureMetaRepository } from './blind-structures-meta.repository';
 import { BlindStructureRepository } from './blind-structures.repository';
 import {
@@ -7,7 +8,10 @@ import {
 } from './dto/blind-structure';
 import { BlindStructureMeta } from './entities/blind-structure-meta.entity';
 import { BlindStructure } from './entities/blind-structure.entity';
-import { mapToBlindStructure } from './mapper/blind-structure';
+import {
+  mapFromBlindStructure,
+  mapToBlindStructure,
+} from './mapper/blind-structure';
 
 @Injectable()
 export class BlindStructureService {
@@ -39,13 +43,7 @@ export class BlindStructureService {
     });
 
     return blindTemplate.map<BlindStructureDto>((value) => {
-      return {
-        level: value.level,
-        ante: value.ante,
-        smallBlind: value.smallBlind,
-        bigBlind: value.bigBlind,
-        minute: value.minute,
-      };
+      return mapFromBlindStructure(value);
     });
   }
 
@@ -53,10 +51,16 @@ export class BlindStructureService {
     name: string,
     structureDto: BlindStructureDto[],
   ): Promise<void> {
+    this.logger.log(
+      `registerBlindStructure, name: ${name}, blinds: ${structureDto.length}`,
+    );
+
     const meta = await this.blindStructureMetaRepo.getByMetaName(name);
     if (meta) {
-      this.logger.error(`duplicated '${name}', ${meta}`);
-      return;
+      this.logger.error(`duplicated blind template name '${name}', ${meta}`);
+      throw new DuplicateKeyError(
+        `블라인드 템플릿 '${name}'이 이미 존재합니다.`,
+      );
     }
 
     const regBlindMeta = BlindStructureMeta.create(name);
@@ -76,7 +80,7 @@ export class BlindStructureService {
       );
     }
 
-    const structures = structureDto.map((value) => {
+    const structures = structureDto.map<BlindStructure>((value) => {
       return mapToBlindStructure(regBlindMeta.id, value);
     });
 
@@ -89,24 +93,29 @@ export class BlindStructureService {
     name: string,
     structureDto: BlindStructureDto[],
   ): Promise<void> {
+    this.logger.log(
+      `updateBlindStructure, name: ${name}, id: ${id}, blinds: ${structureDto.length}`,
+    );
+
     const meta = await this.blindStructureMetaRepo.findOneBy({ id });
     if (!meta) {
-      throw new Error(`invalid blind template, id: ${id}, name: ${name}`);
-    }
-
-    if (meta.name !== name) {
-      meta.name = name;
-      await this.blindStructureMetaRepo.update({ id }, meta);
+      throw new InvalidInputError(
+        `존재하지 않는 블라인드 템플릿입니다. id: ${id}, name: ${name}`,
+      );
     }
 
     const structures = await this.blindStructureRepo.findBy({
       metaId: meta.id,
     });
-
     if (!structures) {
-      throw new Error(
-        `emtpy blind template structure, id: ${id}, name: ${name}`,
+      throw new InvalidInputError(
+        `블라인드 스트럭처가 비어있습니다. id: ${id}, name: ${name}`,
       );
+    }
+
+    if (meta.name !== name) {
+      meta.name = name;
+      await this.blindStructureMetaRepo.update({ id }, meta);
     }
 
     const diffCount = structures.length - structureDto.length;
@@ -116,15 +125,8 @@ export class BlindStructureService {
       this.blindStructureRepo.remove(deleteStructure);
     }
     await this.blindStructureRepo.save(
-      structureDto.map((value) => {
-        return BlindStructure.create(
-          meta.id,
-          value.level,
-          value.ante,
-          value.smallBlind,
-          value.bigBlind,
-          value.minute,
-        );
+      structureDto.map<BlindStructure>((value) => {
+        return mapToBlindStructure(meta.id, value);
       }),
     );
   }

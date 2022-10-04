@@ -3,11 +3,15 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Logger,
   Param,
   Post,
   Put,
+  Res,
 } from '@nestjs/common';
+import { InvalidInputError } from '~/common/exceptions';
 import {
   TournamentCloseResponse,
   TournamentRegisterRequest,
@@ -65,6 +69,16 @@ export class TournamentController {
     try {
       return await this.tournamentService.deleteTournament(id);
     } catch (error) {
+      if (error instanceof InvalidInputError) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       this.logger.error(error);
       throw error;
     }
@@ -77,6 +91,16 @@ export class TournamentController {
     try {
       return await this.tournamentService.closeTournament(id);
     } catch (error) {
+      if (error instanceof InvalidInputError) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       this.logger.error(error);
       throw error;
     }
@@ -91,6 +115,16 @@ export class TournamentController {
       }
       return clock;
     } catch (error) {
+      if (error instanceof InvalidInputError) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       this.logger.error(error);
       throw error;
     }
@@ -107,6 +141,16 @@ export class TournamentController {
       }
       return clock;
     } catch (error) {
+      if (error instanceof InvalidInputError) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       this.logger.error(error);
       throw error;
     }
@@ -120,6 +164,16 @@ export class TournamentController {
     try {
       return await this.tournamentService.updateBlind(tournamentId, dto);
     } catch (error) {
+      if (error instanceof InvalidInputError) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       this.logger.error(error);
       throw error;
     }
@@ -136,6 +190,16 @@ export class TournamentController {
       }
       return clock;
     } catch (error) {
+      if (error instanceof InvalidInputError) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       this.logger.error(error);
       throw error;
     }
@@ -147,12 +211,21 @@ export class TournamentController {
   ): Promise<TournamentClockEventDto | null> {
     try {
       const clock = await this.tournamentService.upBlindLevel(id);
-      console.log('blindUp', clock);
       if (clock === null) {
         return null;
       }
       return clock;
     } catch (error) {
+      if (error instanceof InvalidInputError) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       this.logger.error(error);
       throw error;
     }
