@@ -76,7 +76,7 @@ export default class AdminTournamentStore
     this.clock.remainSeconds = dto.reaminSeconds
     this.clock.pause = dto.pause
     this.clock.level = dto.level > 0 ? dto.level : 0
-    this.clock.ante = dto.ante
+    this.clock.ante = dto.ante > 0 ? dto.ante : 0
     this.clock.smallBlind = dto.smallBlind
     this.clock.bigBlind = dto.bigBlind
 
