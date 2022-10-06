@@ -135,6 +135,10 @@ $value-text-size: $title-1-size + 1rem;
 
   @include media('sm-and-down') {
     @include title2-bold;
+
+    @include galaxy-tab-a8-portrait() {
+      @include title1-bold;
+    }
   }
 
   @include gray1-color;

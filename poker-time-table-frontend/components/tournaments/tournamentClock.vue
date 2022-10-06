@@ -245,6 +245,10 @@ $top-text-size: $title-1-size + 1rem;
   @include media('lg-and-up') {
     font-size: $top-text-size !important;
     line-height: $top-text-size;
+
+    @include galaxy-tab-a8-landscape() {
+      @include title2-bold;
+    }
   }
 
   @include media('md-only') {
@@ -263,6 +267,10 @@ $top-text-size: $title-1-size + 1rem;
   @include media('lg-and-up') {
     font-size: $top-text-size !important;
     line-height: $top-text-size;
+
+    @include galaxy-tab-a8-landscape() {
+      @include title2-bold;
+    }
   }
 
   @include media('md-only') {
@@ -279,7 +287,17 @@ $top-text-size: $title-1-size + 1rem;
 
 $remaintime-xl-size: $head-1-size + 5rem;
 .remaintime-value {
-  @include media('md-and-up') {
+  @include media('lg-and-up') {
+    @include head1-bold;
+    font-size: $remaintime-xl-size !important;
+    line-height: $remaintime-xl-size;
+
+    @include galaxy-tab-a8-landscape() {
+      @include head1-bold;
+    }
+  }
+
+  @include media('md-only') {
     @include head1-bold;
     font-size: $remaintime-xl-size !important;
     line-height: $remaintime-xl-size;
@@ -287,6 +305,12 @@ $remaintime-xl-size: $head-1-size + 5rem;
 
   @include media('sm-and-down') {
     @include head2-bold;
+
+    @include galaxy-tab-a8-portrait() {
+      @include head2-bold;
+      font-size: 10rem !important;
+      line-height: 10rem;
+    }
   }
 }
 

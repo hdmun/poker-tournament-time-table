@@ -10,6 +10,18 @@
   }
 }
 
+@mixin galaxy-tab-a8-landscape() {
+  @media (height: 723px) and (orientation: landscape) {
+    @content;
+  }
+}
+
+@mixin galaxy-tab-a8-portrait() {
+  @media (width: 723px) and (orientation: portrait) {
+    @content;
+  }
+}
+
 $head-1-size: 11.25rem;
 $head-2-size: 8rem;
 $title-1-size: 2.75rem;

@@ -42,7 +42,12 @@ export default class EditBlindsStructureTableCell extends Vue {
 .cell-text {
   @include title2-bold;
 
-  padding: 16px !important;
+  padding: 8px !important;
   justify-content: center !important;
+
+  @include galaxy-tab-a8-landscape() {
+    @include sub-copy-bold;
+    padding: 8px !important;
+  }
 }
 </style>
