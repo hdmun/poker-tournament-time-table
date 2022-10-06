@@ -49,7 +49,7 @@
 
     <v-row class="mb-xl-6" justify="center" align="center">
       <v-btn
-        :small="isSmallBtn"
+        large
         fab
         outlined
         color="gray6"
@@ -60,7 +60,7 @@
       </v-btn>
 
       <v-btn
-        :x-large="isXLargeBtn"
+        x-large
         fab
         outlined
         class="ma-6"
@@ -73,7 +73,7 @@
       </v-btn>
 
       <v-btn
-        :small="isSmallBtn"
+        large
         fab
         outlined
         color="gray6"
@@ -179,14 +179,6 @@ export default class TournamentClock extends Vue {
 
   get closedTournament(): boolean {
     return this.blindCount <= this.currentStep
-  }
-
-  get isSmallBtn(): boolean {
-    return this.$vuetify.breakpoint.smAndDown
-  }
-
-  get isXLargeBtn(): boolean {
-    return this.$vuetify.breakpoint.mdAndUp
   }
 
   get disabledBlindUp(): boolean {
