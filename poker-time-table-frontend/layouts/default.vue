@@ -46,9 +46,13 @@
                 v-for="child in item.subItems"
                 :key="child.title"
                 :to="child.to"
+                class="pl-4"
                 router
                 exact
               >
+                <v-list-item-action>
+                  <v-icon>{{ child.icon }}</v-icon>
+                </v-list-item-action>
                 <v-list-item-content>
                   <v-list-item-title
                     class="small-copy-1-bold"
