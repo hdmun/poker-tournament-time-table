@@ -68,36 +68,24 @@
 
           <v-card-title></v-card-title>
 
-          <v-row>
-            <v-col cols="12" lg="12">
-              <v-btn
-                text
-                :disabled="level <= 0"
-                class="mr-4"
-                @click="onClickMinus"
-              >
-                <v-icon> mdi-minus-box </v-icon>
-              </v-btn>
+          <v-row justify="end">
+            <v-btn
+              text
+              :disabled="disabledAddButton"
+              class="mr-4"
+              @click="onClickPlus"
+            >
+              블라인드 추가
+            </v-btn>
 
-              <v-btn
-                text
-                :disabled="disabledAddButton"
-                class="mr-4"
-                @click="onClickPlus"
-              >
-                <v-icon> mdi-plus-box </v-icon>
-              </v-btn>
-
-              <v-btn
-                rounded
-                :disabled="disabledEditButton"
-                color="primary"
-                class="mr-4"
-                @click="onClickEdit"
-              >
-                {{ selectTemplate ? `갱신` : `등록` }}
-              </v-btn>
-            </v-col>
+            <v-btn
+              :disabled="disabledEditButton"
+              color="accent"
+              class="mr-4"
+              @click="onClickEdit"
+            >
+              {{ selectTemplate ? `갱신` : `등록` }}
+            </v-btn>
           </v-row>
         </v-container>
       </v-form>
@@ -190,12 +178,6 @@ export default class AdminRegisterBlindStructure extends Vue {
     if (!this.templateName) return true
     if (this.templateName.trim().length <= 0) return true
     return false
-  }
-
-  onClickMinus() {
-    if (this.level > 0) {
-      this.editStructures.pop()
-    }
   }
 
   onClickPlus() {
