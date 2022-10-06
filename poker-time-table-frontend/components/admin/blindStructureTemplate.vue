@@ -17,7 +17,7 @@
       <v-edit-dialog :return-value.sync="props.item.smallBlind">
         {{ props.item.smallBlind }}
         <template #input>
-          <EditNumberField :value="props.item.smallBlind" label="S.B" />
+          <EditNumberField :value.sync="props.item.smallBlind" label="S.B" />
         </template>
       </v-edit-dialog>
     </template>
@@ -26,7 +26,7 @@
       <v-edit-dialog :return-value.sync="props.item.bigBlind">
         {{ props.item.bigBlind }}
         <template #input>
-          <EditNumberField :value="props.item.bigBlind" label="B.B" />
+          <EditNumberField :value.sync="props.item.bigBlind" label="B.B" />
         </template>
       </v-edit-dialog>
     </template>
@@ -35,7 +35,7 @@
       <v-edit-dialog :return-value.sync="props.item.ante">
         {{ props.item.ante }}
         <template #input>
-          <EditNumberField :value="props.item.ante" label="ANTE" />
+          <EditNumberField :value.sync="props.item.ante" label="ANTE" />
         </template>
       </v-edit-dialog>
     </template>
@@ -44,7 +44,7 @@
       <v-edit-dialog :return-value.sync="props.item.minute">
         {{ props.item.minute }}
         <template #input>
-          <EditNumberField :value="props.item.minute" label="Minute" />
+          <EditNumberField :value.sync="props.item.minute" label="Minute" />
         </template>
       </v-edit-dialog>
     </template>
