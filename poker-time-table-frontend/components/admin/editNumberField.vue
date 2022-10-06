@@ -1,11 +1,16 @@
 <template>
   <v-text-field
     v-model.number="model"
-    :label="label"
     type="number"
+    class="centered-input"
+    :label="label"
+    :solo="solo"
+    :single-line="solo"
     :min="0"
     :rules="rules"
+    :background-color="backgroundColor"
     hide-spin-buttons
+    hide-details
     required
     @input="onInput($event)"
     @focus="$event.target.select()"
@@ -18,7 +23,7 @@ import { PropType } from 'vue'
 
 @Component
 export default class EditNumberField extends Vue {
-  @Prop({ type: String, required: true })
+  @Prop({ type: String })
   label!: string
 
   @PropSync('value', { type: Number, required: true })
@@ -29,6 +34,12 @@ export default class EditNumberField extends Vue {
   })
   rules!: (true | String)[]
 
+  @Prop({ type: Boolean, default: false })
+  solo!: boolean
+
+  @Prop({ type: String })
+  backgroundColor!: string
+
   onInput(value: string) {
     if (value === '') {
       this.model = 0
@@ -36,3 +47,9 @@ export default class EditNumberField extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.centered-input >>> input {
+  text-align: center;
+}
+</style>

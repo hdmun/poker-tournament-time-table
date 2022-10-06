@@ -73,6 +73,15 @@
               text
               :disabled="disabledAddButton"
               class="mr-4"
+              @click="onClickAddBreakTime"
+            >
+              브레이크 타임 추가
+            </v-btn>
+
+            <v-btn
+              text
+              :disabled="disabledAddButton"
+              class="mr-4"
               @click="onClickPlus"
             >
               블라인드 추가
@@ -178,6 +187,16 @@ export default class AdminRegisterBlindStructure extends Vue {
     if (!this.templateName) return true
     if (this.templateName.trim().length <= 0) return true
     return false
+  }
+
+  onClickAddBreakTime() {
+    this.editStructures.push({
+      level: -1,
+      ante: -1,
+      smallBlind: -1,
+      bigBlind: -1,
+      minute: this.minute,
+    })
   }
 
   onClickPlus() {
