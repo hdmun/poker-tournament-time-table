@@ -6,6 +6,7 @@
         :name.sync="metaName"
         :templates="blindTemplates"
         :editstructure.sync="structure"
+        @delete="onDeleteTemplate"
         @register="onRegister"
       />
     </v-col>
@@ -58,6 +59,14 @@ export default class AdminBlindStructure extends Vue {
       if (a.name > b.name) return 1
       return 0
     })
+  }
+
+  async onDeleteTemplate(id: number) {
+    if (id > 0) {
+      await this.$axios.delete(`/api/blind-structures/templates/${id}`)
+      await this.loadTemplates()
+      this.structure = []
+    }
   }
 
   async onRegister(dto: EditBlindStructureDto) {

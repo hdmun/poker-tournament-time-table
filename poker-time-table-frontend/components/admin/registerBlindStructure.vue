@@ -5,20 +5,34 @@
     <v-card-text>
       <v-form ref="form" lazy-validation>
         <v-container>
-          <v-row>
-            <v-col cols="12">
+          <v-row align="center">
+            <v-col cols="8">
               <v-autocomplete
                 v-model="selectTemplate"
                 :items="templates"
                 clearable
                 dense
                 filled
+                hide-details
                 item-text="name"
                 return-object
                 label="템플릿 리스트"
                 @change="onChangeSelectTemplate()"
+              />
+            </v-col>
+
+            <v-col cols="4">
+              <v-btn
+                text
+                tile
+                outlined
+                class="pa-4"
+                :disabled="selectTemplate === null"
+                @click="onDeleteTemplate"
               >
-              </v-autocomplete>
+                <v-icon left> mdi-delete </v-icon>
+                DELETE
+              </v-btn>
             </v-col>
           </v-row>
 
@@ -240,6 +254,14 @@ export default class AdminRegisterBlindStructure extends Vue {
     this.ante = lastBlind?.ante ?? 0
     this.smallBlind = lastBlind?.smallBlind ?? 100
     this.bigBlind = lastBlind?.bigBlind ?? 200
+  }
+
+  @Emit('delete')
+  onDeleteTemplate(): number {
+    const templateId = this.selectTemplate?.id ?? 0
+    this.templateName = ''
+    this.selectTemplate = null
+    return templateId
   }
 
   @Emit('register')
