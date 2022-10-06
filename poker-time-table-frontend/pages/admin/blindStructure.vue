@@ -1,23 +1,21 @@
 <template>
-  <v-flex class="fill-height gray8">
-    <v-row class="pa-6">
-      <v-col class="gray7">
-        <AdminRegisterBlindStructure
-          ref="registerBlindStructure"
-          :name.sync="metaName"
-          :templates="blindTemplates"
-          :editstructure.sync="structure"
-          @register="onRegister"
-        />
-      </v-col>
-      <v-col>
-        <AdminBlindStructureTemplate
-          :blindstructure.sync="structure"
-          @delete="onDelete"
-        />
-      </v-col>
-    </v-row>
-  </v-flex>
+  <v-row class="pa-6 fill-height">
+    <v-col>
+      <AdminRegisterBlindStructure
+        ref="registerBlindStructure"
+        :name.sync="metaName"
+        :templates="blindTemplates"
+        :editstructure.sync="structure"
+        @register="onRegister"
+      />
+    </v-col>
+    <v-col>
+      <AdminBlindStructureTemplate
+        :blindstructure.sync="structure"
+        @delete="onDelete"
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">
