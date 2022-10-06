@@ -85,7 +85,6 @@ export class EventService {
         (value, index) => tournament.level < index && value.level < 0,
       );
       if (nextBreakIdx > -1) {
-        console.log(tournament.id, 'nextBreak', nextBreakIdx);
         const nextBreakMinute = blinds
           .slice(tournament.level)
           .reduce<number>((accumulate, current, _index, array) => {
