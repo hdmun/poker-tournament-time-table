@@ -80,25 +80,11 @@
       <v-toolbar-title v-text="title"> </v-toolbar-title>
 
       <v-spacer />
-      <v-btn v-if="false" icon @click.stop="rightDrawer = !rightDrawer">
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
     </v-app-bar>
 
     <v-main class="fill-height gray8">
       <Nuxt />
     </v-main>
-
-    <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light> mdi-repeat </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
 
     <v-footer
       class="justify-center gray4--text"
@@ -119,7 +105,6 @@ interface NavigationItem {
   title: string
   to?: string
   subItems?: NavigationItem[]
-  active?: boolean
 }
 
 @Component({
@@ -131,8 +116,6 @@ export default class DefaultLayout extends Vue {
   drawer: boolean = false
   fixed: boolean = false
   miniVariant: boolean = false
-  right: boolean = true
-  rightDrawer: boolean = false
   title: string = 'KMGM 서현점'
 
   items: NavigationItem[] = [
