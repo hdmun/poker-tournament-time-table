@@ -48,7 +48,12 @@ export default class BlindsStructureTableCell extends Vue {
 
   @include media('sm-and-down') {
     @include sub-copy-bold;
-    padding: 8px !important;
+
+    @include galaxy-tab-a8-landscape() {
+      font-size: 1.5rem !important;
+      line-height: 1.5rem;
+    }
+    padding: 16px !important;
   }
 
   height: 100%;
