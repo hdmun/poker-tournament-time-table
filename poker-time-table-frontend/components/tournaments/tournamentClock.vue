@@ -47,9 +47,9 @@
       </v-col>
     </v-row>
 
-    <v-row class="mb-xl-6" justify="center" align="center">
+    <v-row class="mt-lg-0 mb-xl-6" justify="center" align="center">
       <v-btn
-        :small="isSmallBtn"
+        large
         fab
         outlined
         color="gray6"
@@ -60,7 +60,7 @@
       </v-btn>
 
       <v-btn
-        :x-large="isXLargeBtn"
+        x-large
         fab
         outlined
         class="ma-6"
@@ -73,7 +73,7 @@
       </v-btn>
 
       <v-btn
-        :small="isSmallBtn"
+        large
         fab
         outlined
         color="gray6"
@@ -84,8 +84,8 @@
       </v-btn>
     </v-row>
 
-    <v-row justify="center">
-      <v-col cols="12" sm="12" md="12" lg="12" xl="12">
+    <v-row class="mt-lg-0" justify="center">
+      <v-col class="pa-lg-0" cols="12" sm="12" md="12" lg="12" xl="12">
         <TournamentClockBlindCards
           :show-blind-table="showMiniVariant"
           :level="data.level"
@@ -181,14 +181,6 @@ export default class TournamentClock extends Vue {
     return this.blindCount <= this.currentStep
   }
 
-  get isSmallBtn(): boolean {
-    return this.$vuetify.breakpoint.smAndDown
-  }
-
-  get isXLargeBtn(): boolean {
-    return this.$vuetify.breakpoint.mdAndUp
-  }
-
   get disabledBlindUp(): boolean {
     if (this.waitRender) {
       return false
@@ -245,6 +237,10 @@ $top-text-size: $title-1-size + 1rem;
   @include media('lg-and-up') {
     font-size: $top-text-size !important;
     line-height: $top-text-size;
+
+    @include galaxy-tab-a8-landscape() {
+      @include title2-bold;
+    }
   }
 
   @include media('md-only') {
@@ -263,6 +259,10 @@ $top-text-size: $title-1-size + 1rem;
   @include media('lg-and-up') {
     font-size: $top-text-size !important;
     line-height: $top-text-size;
+
+    @include galaxy-tab-a8-landscape() {
+      @include title2-bold;
+    }
   }
 
   @include media('md-only') {
@@ -279,7 +279,17 @@ $top-text-size: $title-1-size + 1rem;
 
 $remaintime-xl-size: $head-1-size + 5rem;
 .remaintime-value {
-  @include media('md-and-up') {
+  @include media('lg-and-up') {
+    @include head1-bold;
+    font-size: $remaintime-xl-size !important;
+    line-height: $remaintime-xl-size;
+
+    @include galaxy-tab-a8-landscape() {
+      @include head1-bold;
+    }
+  }
+
+  @include media('md-only') {
     @include head1-bold;
     font-size: $remaintime-xl-size !important;
     line-height: $remaintime-xl-size;
@@ -287,6 +297,12 @@ $remaintime-xl-size: $head-1-size + 5rem;
 
   @include media('sm-and-down') {
     @include head2-bold;
+
+    @include galaxy-tab-a8-portrait() {
+      @include head2-bold;
+      font-size: 10rem !important;
+      line-height: 10rem;
+    }
   }
 }
 

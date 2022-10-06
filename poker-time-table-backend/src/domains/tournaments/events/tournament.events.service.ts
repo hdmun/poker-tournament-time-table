@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Subject } from 'rxjs';
 import { TournamentClockEventDto } from '../dto/tournament';
+import { TournamentBlind } from '../entities/tournament-blind.entity';
+import { Tournament } from '../entities/tournament.entity';
 import { TournamentBlindRepository } from '../tournament-blind.repository';
 import { TournamentRepository } from '../tournament.repository';
 
@@ -60,94 +62,53 @@ export class EventService {
     const currentBlind = blinds[tournament.level];
     const nowDate = new Date();
 
-    let remainTime: TimeDto = {
-      hours: '00',
-      minutes: '00',
-      seconds: '00',
-    };
+    const pauseTimeMs = calcPauseTimeMs(
+      tournamentId,
+      nowDate,
+      tournament.pauseTime,
+      this.logger,
+    );
+
+    const remainTime = calcReaminTime(
+      tournamentId,
+      nowDate,
+      tournament.levelStart,
+      currentBlind.minute,
+      pauseTimeMs,
+      tournament.pauseSeconds,
+      this.logger,
+    );
+
     let nextBreakRemainTime = '--:--';
-
     if (tournament.levelStart) {
-      let pauseTime = 0;
-      if (tournament.pauseTime) {
-        pauseTime = nowDate.getTime() - tournament.pauseTime.getTime();
-      }
-
-      if (pauseTime < 0) {
-        this.logger.error(
-          `tournament pauseTime minus, tournamentId: ${tournamentId}, pauseTime: ${pauseTime}, nowDate: ${nowDate} tournament.pauseTime: ${tournament.pauseTime}`,
-        );
-        pauseTime = 0; // 로그 남기고 보정
-      }
-
-      const remainDate = new Date(
-        tournament.levelStart.getTime() +
-          currentBlind.minute * 60 * 1000 +
-          pauseTime +
-          tournament.pauseSeconds * 1000,
-      );
-
-      let reaminTimeMs = remainDate.getTime() - nowDate.getTime();
-      if (reaminTimeMs < 0) {
-        // remainDate === nowDate 가 같아지면 밀리초 때문에 미세하게 음수 발생
-        this.logger.error(
-          `tournament reaminTimeMs minus, id: ${tournamentId}, tournament.levelStart: ${tournament.levelStart}, nowDate: ${nowDate} remainDate: ${remainDate}`,
-        );
-        reaminTimeMs = 0;
-      }
-      remainTime = convertMsToTime(reaminTimeMs);
-
-      const nextBreak = blinds.find(
+      const nextBreakIdx = blinds.findIndex(
         (value, index) => tournament.level < index && value.level < 0,
       );
-      if (nextBreak) {
+      if (nextBreakIdx > -1) {
+        console.log(tournament.id, 'nextBreak', nextBreakIdx);
         const nextBreakMinute = blinds
-          .slice(0)
-          .reduce<number>((accumulate, current, index, array) => {
-            if (currentBlind.id < index && current.level < 0) {
+          .slice(tournament.level)
+          .reduce<number>((accumulate, current, _index, array) => {
+            if (current.level < 0) {
               array.splice(1);
-              return accumulate;
-            }
-
-            if (index < currentBlind.id) {
               return accumulate;
             }
 
             return accumulate + current.minute;
           }, 0);
 
-        const nextBreakReamin = new Date(
-          tournament.levelStart.getTime() +
-            nextBreakMinute * 60 * 1000 +
-            pauseTime +
-            tournament.pauseSeconds * 1000,
+        nextBreakRemainTime = calcNextBreakTime(
+          nowDate,
+          tournament.levelStart,
+          nextBreakMinute,
+          pauseTimeMs,
+          tournament.pauseSeconds,
         );
-        let nextBreawkRemainTimeMs =
-          nextBreakReamin.getTime() - nowDate.getTime();
-        if (nextBreawkRemainTimeMs < 0) {
-          nextBreawkRemainTimeMs = 0;
-        }
-        nextBreakRemainTime = convertMsToTimeString(nextBreawkRemainTimeMs);
       }
     }
 
-    let playTimeText = '00:00';
-    let smallBlind = 0;
-    let bigBlind = 0;
-    if (tournament.startDateTime) {
-      const playTimeMs = nowDate.getTime() - tournament.startDateTime.getTime();
-      const playTimeMinutes = playTimeMs;
-      playTimeText = convertMsToTimeString(playTimeMinutes);
-
-      if (currentBlind.level > 0) {
-        smallBlind = currentBlind.smallBlind;
-        bigBlind = currentBlind.bigBlind;
-      } else {
-        const prevBlind = blinds[tournament.level - 1];
-        smallBlind = prevBlind.smallBlind;
-        bigBlind = prevBlind.bigBlind;
-      }
-    }
+    const playTimeText = calcPlayTimeText(nowDate, tournament.startDateTime);
+    const blind = getBlindValue(tournament, currentBlind, blinds);
 
     return {
       tournamentId: tournament.id,
@@ -161,8 +122,8 @@ export class EventService {
       pause: tournament.startDateTime !== null && tournament.pauseTime !== null,
       level: currentBlind.level,
       ante: currentBlind.ante,
-      smallBlind,
-      bigBlind,
+      smallBlind: blind[0],
+      bigBlind: blind[1],
     };
   }
 
@@ -242,6 +203,109 @@ export class EventService {
       }
     }
   }
+}
+
+function calcPlayTimeText(now: Date, start: Date): string {
+  if (start) {
+    const playTimeMs = now.getTime() - start.getTime();
+    return convertMsToTimeString(playTimeMs);
+  }
+  return '00:00';
+}
+
+function calcNextBreakTime(
+  now: Date,
+  levelStart: Date,
+  nextBreakMinute: number,
+  pauseTimeMs: number,
+  pauseSeconds: number,
+): string {
+  if (levelStart) {
+    const nextBreakReamin = new Date(
+      levelStart.getTime() +
+        nextBreakMinute * 60 * 1000 +
+        pauseTimeMs +
+        pauseSeconds * 1000,
+    );
+    let nextBreawkRemainTimeMs = nextBreakReamin.getTime() - now.getTime();
+    if (nextBreawkRemainTimeMs < 0) {
+      nextBreawkRemainTimeMs = 0;
+    }
+    return convertMsToTimeString(nextBreawkRemainTimeMs);
+  }
+
+  return '--:--';
+}
+
+function calcPauseTimeMs(
+  tournamentId: number,
+  now: Date,
+  pauseTime: Date,
+  logger: Logger,
+): number {
+  let pauseTimeMs = 0;
+  if (pauseTime) {
+    pauseTimeMs = now.getTime() - pauseTime.getTime();
+    if (pauseTimeMs < 0) {
+      logger.error(
+        `tournament pauseTime minus, tournamentId: ${tournamentId}, pauseTimeMs: ${pauseTimeMs}, nowDate: ${now} pauseTime: ${pauseTime}`,
+      );
+      pauseTimeMs = 0; // 로그 남기고 보정
+    }
+  }
+
+  return pauseTimeMs;
+}
+
+function calcReaminTime(
+  tournamentId: number,
+  now: Date,
+  levelStart: Date,
+  blindMinute: number,
+  pauseTimeMs: number,
+  pauseSeconds: number,
+  logger: Logger,
+): TimeDto {
+  if (levelStart) {
+    const remainDate = new Date(
+      levelStart.getTime() +
+        blindMinute * 60 * 1000 +
+        pauseTimeMs +
+        pauseSeconds * 1000,
+    );
+
+    let reaminTimeMs = remainDate.getTime() - now.getTime();
+    if (reaminTimeMs < 0) {
+      // remainDate === nowDate 가 같아지면 밀리초 때문에 미세하게 음수 발생
+      logger.error(
+        `tournament reaminTimeMs minus, id: ${tournamentId}, levelStart: ${levelStart}, nowDate: ${now} remainDate: ${remainDate}`,
+      );
+      reaminTimeMs = 0;
+    }
+    return convertMsToTime(reaminTimeMs);
+  }
+
+  return {
+    hours: '00',
+    minutes: '00',
+    seconds: '00',
+  };
+}
+
+function getBlindValue(
+  tournament: Tournament,
+  currentBlind: TournamentBlind,
+  blinds: TournamentBlind[],
+): [number, number] {
+  if (tournament.startDateTime) {
+    if (currentBlind.level > 0) {
+      return [currentBlind.smallBlind, currentBlind.bigBlind];
+    } else {
+      const prevBlind = blinds[tournament.level - 1];
+      return [prevBlind.smallBlind, prevBlind.bigBlind];
+    }
+  }
+  return [0, 0];
 }
 
 function padTo2Digits(num: number): string {

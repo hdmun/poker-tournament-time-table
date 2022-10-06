@@ -1,6 +1,6 @@
 <template>
-  <v-row class="ma-4" justify="center">
-    <v-col sm="6" md="9" lg="3" xl="3" class="pa-0">
+  <v-row class="ma-2" justify="center">
+    <v-col sm="6" md="9" :lg="lgCol" xl="3" class="pa-0">
       <v-card class="fill-height" color="gray7" outlined tile>
         <v-card-title v-if="level > 0" class="blindlevel-value">
           Lv. {{ level }}
@@ -9,14 +9,14 @@
       </v-card>
     </v-col>
 
-    <v-col sm="6" md="9" lg="3" xl="3" class="pa-0">
+    <v-col sm="6" md="9" :lg="lgCol" xl="3" class="pa-0">
       <v-card class="fill-height" color="gray7" outlined tile>
         <v-card-title class="pt-4 pb-2 ante-title"> Ante </v-card-title>
         <v-card-title class="info-value"> {{ ante }} </v-card-title>
       </v-card>
     </v-col>
 
-    <v-col sm="12" md="9" lg="3" xl="3" class="pa-0">
+    <v-col sm="12" md="9" :lg="lgCol" xl="3" class="pa-0">
       <v-card class="fill-height" color="gray7" outlined tile>
         <v-card-actions class="pb-0 justify-center">
           <v-btn
@@ -59,6 +59,23 @@ export default class BlindCards extends Vue {
   @Prop({ type: Number, required: true })
   bigBlind!: Number
 
+  get isGalaxyTabA8(): boolean {
+    const width = this.$vuetify.breakpoint.width
+    const height = this.$vuetify.breakpoint.height
+    if (width > height) {
+      console.log('width === 1291', width, width === 1291)
+      return width === 1291
+    }
+    return width === 723
+  }
+
+  get lgCol(): number {
+    if (this.isGalaxyTabA8) {
+      return 4
+    }
+    return 3
+  }
+
   get isAddNewLine(): boolean {
     switch (this.$vuetify.breakpoint.name) {
       case 'xs':
@@ -76,6 +93,10 @@ export default class BlindCards extends Vue {
   }
 
   get isAddNewLineLarge(): boolean {
+    if (this.isGalaxyTabA8) {
+      return this.bigBlind >= 1000
+    }
+
     if (this.showBlindTable) {
       if (this.smallBlind < 10000) {
         return true
@@ -104,6 +125,13 @@ export default class BlindCards extends Vue {
 
 .breaktime-text {
   @include title1-bold;
+
+  @include media('md-and-up') {
+    @include galaxy-tab-a8-landscape() {
+      @include title2-bold;
+    }
+  }
+
   @include accent1-color;
 
   justify-content: center;
@@ -131,10 +159,18 @@ $value-text-size: $title-1-size + 1rem;
     @include title1-bold;
     font-size: $value-text-size !important;
     line-height: $value-text-size;
+
+    @include galaxy-tab-a8-landscape() {
+      @include title1-bold;
+    }
   }
 
   @include media('sm-and-down') {
     @include title2-bold;
+
+    @include galaxy-tab-a8-portrait() {
+      @include title1-bold;
+    }
   }
 
   @include gray1-color;

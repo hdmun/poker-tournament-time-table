@@ -159,7 +159,7 @@ export default class BlindsStructureTable extends Vue {
   }
 
   cellBackgroundColor(index: number) {
-    return this.blindId === index ? 'primary' : 'gray5'
+    return this.blindId === index ? 'accent1' : 'gray5'
   }
 }
 </script>

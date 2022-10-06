@@ -20,7 +20,12 @@ export default class BreakTimeTableCell extends Vue {
 .cell-text {
   @include media('lg-and-up') {
     @include title2-bold;
-    padding: 16px !important;
+    padding: 8px !important;
+
+    @include galaxy-tab-a8-landscape() {
+      @include sub-copy-bold;
+      padding: 8px !important;
+    }
   }
 
   @include media('md-only') {
