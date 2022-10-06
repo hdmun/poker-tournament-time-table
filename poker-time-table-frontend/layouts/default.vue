@@ -28,7 +28,7 @@
           <template v-else>
             <v-list-group
               :key="item.title"
-              v-model="item.active"
+              :value="true"
               :prepend-icon="item.icon"
               no-action
             >
