@@ -20,34 +20,6 @@
         </v-row>
 
         <v-row>
-          <v-col lg="6">
-            <v-text-field
-              v-model="breakTime"
-              label="Break Time"
-              prepend-icon="mdi-coffee-outline"
-            />
-          </v-col>
-          <v-col lg="6"
-            ><v-text-field
-              v-model="breakTimeTerm"
-              label="Break Time 간격(level)"
-              prepend-icon="mdi-currency-usd"
-            />
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="buyIn"
-              counter="25"
-              label="Buy-in"
-              prepend-icon="mdi-currency-usd"
-            />
-          </v-col>
-        </v-row>
-
-        <v-row>
           <v-col>
             <v-select
               v-model="selectBlindTemplate"
@@ -80,7 +52,7 @@
 <script lang="ts">
 import { Component, Emit, Vue } from 'nuxt-property-decorator'
 import { BlindStructureTemplateDto } from '~/dto/blindStructureDto'
-import { RegisterTournamentDto } from '~/dto/tournamentDto'
+import { TournamentRegisterRequest } from '~/dto/tournamentDto'
 
 @Component
 export default class RegisterTournament extends Vue {
@@ -89,9 +61,6 @@ export default class RegisterTournament extends Vue {
 
   blindTemplates: BlindStructureTemplateDto[] = []
   selectBlindTemplate: BlindStructureTemplateDto | null = null
-
-  breakTime: number = 20
-  breakTimeTerm: number = 3
 
   get disabledEditButton() {
     if (this.selectBlindTemplate === null) return true
@@ -115,7 +84,7 @@ export default class RegisterTournament extends Vue {
   }
 
   @Emit('register')
-  onRegister(): RegisterTournamentDto | null {
+  onRegister(): TournamentRegisterRequest | null {
     if (!this.selectBlindTemplate) {
       return null
     }
@@ -124,8 +93,6 @@ export default class RegisterTournament extends Vue {
       title: this.tournamentName,
       buyIn: this.buyIn,
       blindStructureId: this.selectBlindTemplate.id,
-      breakTime: this.breakTime,
-      breakTimeTerm: this.breakTimeTerm,
     }
   }
 }

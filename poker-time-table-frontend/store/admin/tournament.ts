@@ -4,7 +4,7 @@ import {
   TournamentClockDto,
 } from '~/dto/tournamentClockDto'
 import {
-  RegisterTournamentDto,
+  TournamentRegisterRequest,
   TournamentBlindDto,
   TournamentClockEventDto,
   TournamentDetailDto,
@@ -156,7 +156,7 @@ export default class AdminTournamentStore
     this.setBlinds(blinds)
   }
 
-  @action async registerBy(dto: RegisterTournamentDto) {
+  @action async registerBy(dto: TournamentRegisterRequest) {
     const response = await $axios.post(`/api/tournaments`, dto)
     // eslint-disable-next-line no-console
     console.log('registerBy', response.status, response.data)

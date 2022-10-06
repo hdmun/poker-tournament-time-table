@@ -175,7 +175,7 @@ export default class AdminRegisterBlindStructure extends Vue {
     this.templateName = this.selectTemplate.name
   }
 
-  get level() {
+  get blindCount() {
     return this.editStructures?.length ?? 0
   }
 
@@ -197,7 +197,7 @@ export default class AdminRegisterBlindStructure extends Vue {
   }
 
   get disabledEditButton() {
-    if (this.level < 10) return true
+    if (this.blindCount < 10) return true
     if (!this.templateName) return true
     if (this.templateName.trim().length <= 0) return true
     return false
@@ -210,7 +210,7 @@ export default class AdminRegisterBlindStructure extends Vue {
 
   onClickAddBreakTime() {
     this.editStructures.push({
-      id: this.editStructures.length + 1,
+      id: this.blindCount + 1,
       level: -1,
       ante: -1,
       smallBlind: -1,
@@ -226,13 +226,13 @@ export default class AdminRegisterBlindStructure extends Vue {
 
     let smallBlind = this.smallBlind
     let bigBlind = this.bigBlind
-    if (this.editStructures.length > 0) {
+    if (this.blindCount > 0) {
       bigBlind += this.bigBlindInc
       smallBlind = bigBlind / 2
     }
 
     this.editStructures.push({
-      id: this.editStructures.length + 1,
+      id: this.blindCount + 1,
       level: this.maxLevel + 1,
       ante: this.ante,
       smallBlind,
