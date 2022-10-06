@@ -47,7 +47,7 @@
       </v-col>
     </v-row>
 
-    <v-row class="mb-xl-6" justify="center" align="center">
+    <v-row class="mt-lg-0 mb-xl-6" justify="center" align="center">
       <v-btn
         large
         fab
@@ -84,8 +84,8 @@
       </v-btn>
     </v-row>
 
-    <v-row justify="center">
-      <v-col cols="12" sm="12" md="12" lg="12" xl="12">
+    <v-row class="mt-lg-0" justify="center">
+      <v-col class="pa-lg-0" cols="12" sm="12" md="12" lg="12" xl="12">
         <TournamentClockBlindCards
           :show-blind-table="showMiniVariant"
           :level="data.level"
