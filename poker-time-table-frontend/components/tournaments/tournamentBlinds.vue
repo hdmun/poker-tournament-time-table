@@ -202,7 +202,7 @@ export default class TournamentBlinds extends Vue {
 
 .blind-table-title {
   @include media('lg-and-up') {
-    @include title1-bold;
+    @include title2-bold;
   }
 
   @include media('md-and-down') {
