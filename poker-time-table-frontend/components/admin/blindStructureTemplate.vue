@@ -20,7 +20,7 @@
                   depressed
                   no-focus
                 >
-                  Level {{ index + 1 }}
+                  Level {{ item.level }}
                 </v-btn>
               </v-list-item-action>
             </v-col>

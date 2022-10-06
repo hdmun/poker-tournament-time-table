@@ -80,15 +80,14 @@ export default class AdminBlindStructure extends Vue {
   onDelete(blind: BlindStructureDto) {
     const deleteIndex = this.structure.indexOf(blind)
     this.structure.splice(deleteIndex, 1)
-    this.structure = this.structure.map((value, index) => {
-      return {
-        level: index + 1,
-        ante: value.ante,
-        smallBlind: value.smallBlind,
-        bigBlind: value.bigBlind,
-        minute: value.minute,
+
+    let level = 1
+    for (const blind of this.structure) {
+      if (blind.level > 0) {
+        blind.level = level
+        level += 1
       }
-    })
+    }
 
     this.registerBlindStructure.updateBlind()
   }

@@ -189,8 +189,14 @@ export default class AdminRegisterBlindStructure extends Vue {
     return false
   }
 
+  get maxLevel(): number {
+    const maxLevel = Math.max(...this.editStructures.map((o) => o.level))
+    return isFinite(maxLevel) ? maxLevel : 0
+  }
+
   onClickAddBreakTime() {
     this.editStructures.push({
+      id: this.editStructures.length + 1,
       level: -1,
       ante: -1,
       smallBlind: -1,
@@ -212,7 +218,8 @@ export default class AdminRegisterBlindStructure extends Vue {
     }
 
     this.editStructures.push({
-      level: this.editStructures.length + 1,
+      id: this.editStructures.length + 1,
+      level: this.maxLevel + 1,
       ante: this.ante,
       smallBlind,
       bigBlind,
@@ -224,17 +231,15 @@ export default class AdminRegisterBlindStructure extends Vue {
   }
 
   updateBlind() {
-    const blindCount = this.editStructures.length
-    if (blindCount > 0) {
-      const lastBlind = this.editStructures[blindCount - 1]
-      this.ante = lastBlind.ante
-      this.smallBlind = lastBlind.smallBlind
-      this.bigBlind = lastBlind.bigBlind
-    } else {
-      this.ante = 0
-      this.smallBlind = 100
-      this.bigBlind = 200
+    let lastBlind: BlindStructureDto | undefined
+    const maxLevel = this.maxLevel
+    if (maxLevel > 0) {
+      lastBlind = this.editStructures.find((value) => value.level === maxLevel)
     }
+
+    this.ante = lastBlind?.ante ?? 0
+    this.smallBlind = lastBlind?.smallBlind ?? 100
+    this.bigBlind = lastBlind?.bigBlind ?? 200
   }
 
   @Emit('register')
