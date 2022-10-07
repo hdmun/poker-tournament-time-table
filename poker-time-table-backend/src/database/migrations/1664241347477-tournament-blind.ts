@@ -26,16 +26,16 @@ export class tournamentBlind1664241347477 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE \`tournament\` CHANGE \`pause_time\` \`pause_time\` datetime NULL DEFAULT 'NULL'`,
+      `ALTER TABLE \`tournament\` CHANGE \`pause_time\` \`pause_time\` datetime NULL DEFAULT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE \`tournament\` CHANGE \`level_start\` \`level_start\` datetime NULL DEFAULT 'NULL'`,
+      `ALTER TABLE \`tournament\` CHANGE \`level_start\` \`level_start\` datetime NULL DEFAULT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE \`tournament\` CHANGE \`end_datetime\` \`end_datetime\` datetime NULL DEFAULT 'NULL'`,
+      `ALTER TABLE \`tournament\` CHANGE \`end_datetime\` \`end_datetime\` datetime NULL DEFAULT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE \`tournament\` CHANGE \`start_datetime\` \`start_datetime\` datetime NULL DEFAULT 'NULL'`,
+      `ALTER TABLE \`tournament\` CHANGE \`start_datetime\` \`start_datetime\` datetime NULL DEFAULT NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE \`tournament_blind\` DROP COLUMN \`ante\``,
