@@ -59,8 +59,6 @@ export class TournamentController {
         dto.title,
         dto.blindStructureId,
         dto.buyIn,
-        dto.breakTimeTerm,
-        dto.breakTime,
       );
     } catch (error) {
       this.logger.error(error);

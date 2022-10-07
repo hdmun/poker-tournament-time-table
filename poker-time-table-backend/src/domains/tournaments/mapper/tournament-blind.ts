@@ -3,18 +3,18 @@ import { TournamentBlind } from '../entities/tournament-blind.entity';
 
 export function mapToTournamentBlind(
   tournamentId: number,
-  id: number,
+  blindId: number,
   dto: TournamentBlindDto,
 ): TournamentBlind {
-  const entity = new TournamentBlind();
-  entity.tournamentId = tournamentId;
-  entity.id = id;
-  entity.level = dto.level;
-  entity.ante = dto.ante;
-  entity.smallBlind = dto.smallBlind;
-  entity.bigBlind = dto.bigBlind;
-  entity.minute = dto.minute;
-  return entity;
+  return TournamentBlind.create(
+    tournamentId,
+    blindId,
+    dto.level,
+    dto.ante,
+    dto.smallBlind,
+    dto.bigBlind,
+    dto.minute,
+  );
 }
 
 export function mapFromTournamentBlind(
