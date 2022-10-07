@@ -202,7 +202,7 @@ export default class AdminRegisterBlindStructure extends Vue {
 
   get maxLevel(): number {
     const maxLevel = Math.max(...this.editStructures.map((o) => o.level))
-    return isFinite(maxLevel) ? maxLevel : 0
+    return isFinite(maxLevel) && maxLevel > 0 ? maxLevel : 0
   }
 
   onClickAddBreakTime() {
