@@ -138,6 +138,10 @@ export default class AdminBlindStructureTemplate extends Vue {
       from.level = toLevel
     }
 
+    const toId = to.id
+    to.id = from.id
+    from.id = toId
+
     return true
   }
 
