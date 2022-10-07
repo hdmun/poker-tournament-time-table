@@ -3,7 +3,11 @@
     <v-card-title> BLIND STRUCTURE TEMPLATE </v-card-title>
 
     <v-list class="gray7">
-      <draggable v-model="blindStructures" draggable=".item" :move="onMove">
+      <draggable
+        v-model="blindStructures"
+        draggable=".item"
+        @change="onChanged"
+      >
         <v-list-item
           v-for="(item, index) in blindStructures"
           :key="index"
@@ -102,7 +106,7 @@
 import { PropType } from 'vue'
 import { Component, Emit, PropSync, Vue } from 'nuxt-property-decorator'
 
-import draggable, { MoveEvent } from 'vuedraggable'
+import draggable from 'vuedraggable'
 import EditNumberField from './editNumberField.vue'
 import { BlindStructureDto } from '~/dto/blindStructureDto'
 
@@ -129,20 +133,18 @@ export default class AdminBlindStructureTemplate extends Vue {
 
   benched: number = 0
 
-  onMove(event: MoveEvent<BlindStructureDto>): boolean {
-    const from = event.draggedContext.element
-    const to = event.relatedContext.element
-    if (from.level > 0 && to.level > 0) {
-      const toLevel = to.level
-      to.level = from.level
-      from.level = toLevel
+  onChanged() {
+    // 드래그 앤 드랍 이벤트가 끝나면 id, level 값을 보정해주자
+    // 많아봤자 100개 이내이므로 너무 복잡하게 처리할 필요가 없다.
+    let level = 0
+    for (let i = 0; i < this.blindStructures.length; i++) {
+      const blind = this.blindStructures[i]
+      blind.id = i + 1
+      if (blind.level > 0) {
+        level += 1
+        blind.level = level
+      }
     }
-
-    const toId = to.id
-    to.id = from.id
-    from.id = toId
-
-    return true
   }
 
   @Emit('delete')
