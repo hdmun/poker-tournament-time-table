@@ -18,7 +18,6 @@
               <v-list-item-content>
                 <v-list-item-title
                   class="small-copy-1-bold"
-                  color="gray4"
                   v-text="item.title"
                 />
               </v-list-item-content>
@@ -36,7 +35,6 @@
                 <v-list-item-content>
                   <v-list-item-title
                     class="small-copy-1-bold"
-                    color="gray4"
                     v-text="item.title"
                   ></v-list-item-title>
                 </v-list-item-content>
@@ -46,7 +44,7 @@
                 v-for="child in item.subItems"
                 :key="child.title"
                 :to="child.to"
-                class="pl-4"
+                class="pl-4 gray5"
                 router
                 exact
               >
@@ -56,7 +54,6 @@
                 <v-list-item-content>
                   <v-list-item-title
                     class="small-copy-1-bold"
-                    color="gray4"
                     v-text="child.title"
                   ></v-list-item-title>
                 </v-list-item-content>
