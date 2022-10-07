@@ -53,6 +53,7 @@
 import { Component, Emit, Vue } from 'nuxt-property-decorator'
 import { BlindStructureTemplateDto } from '~/dto/blindStructureDto'
 import { TournamentRegisterRequest } from '~/dto/tournamentDto'
+import { vxm } from '~/store'
 
 @Component
 export default class RegisterTournament extends Vue {
@@ -69,18 +70,8 @@ export default class RegisterTournament extends Vue {
   }
 
   mounted() {
-    this.loadTemplates()
-  }
-
-  async loadTemplates() {
-    const res = await this.$axios.get<BlindStructureTemplateDto[]>(
-      `/api/blind-structures/templates`
-    )
-    this.blindTemplates = res.data.sort((a, b) => {
-      if (a.name < b.name) return -1
-      if (a.name > b.name) return 1
-      return 0
-    })
+    this.blindTemplates = vxm.blindTemplate.templates
+    vxm.blindTemplate.getBlindTemplates()
   }
 
   @Emit('register')

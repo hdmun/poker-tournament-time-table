@@ -125,6 +125,7 @@ import {
   BlindStructureDto,
   BlindStructureTemplateDto,
 } from '~/dto/blindStructureDto'
+import { vxm } from '~/store'
 
 export interface EditBlindStructureDto {
   id?: number
@@ -160,16 +161,12 @@ export default class AdminRegisterBlindStructure extends Vue {
   async onChangeSelectTemplate() {
     if (this.selectTemplate === null) {
       this.templateName = ''
-      this.editStructures = []
+      this.editStructures.splice(0)
       return
     }
 
     if (this.selectTemplate.id > 0) {
-      const res = await this.$axios.get<BlindStructureDto[]>(
-        `/api/blind-structures/templates/${this.selectTemplate.id}`
-      )
-
-      this.editStructures = res.data
+      await vxm.blindTemplate.getBlindTemplateById(this.selectTemplate.id)
     }
 
     this.templateName = this.selectTemplate.name

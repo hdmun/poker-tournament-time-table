@@ -31,6 +31,7 @@ import {
   RegisterBlindStructureDto,
   UpdateBlindStructureDto,
 } from '~/dto/blindStructureDto'
+import { vxm } from '~/store'
 
 @Component({
   components: {
@@ -47,43 +48,36 @@ export default class AdminBlindStructure extends Vue {
   structure: BlindStructureDto[] = []
 
   mounted() {
-    this.loadTemplates()
-  }
-
-  async loadTemplates() {
-    const res = await this.$axios.get<BlindStructureTemplateDto[]>(
-      `/api/blind-structures/templates`
-    )
-    this.blindTemplates = res.data.sort((a, b) => {
-      if (a.name < b.name) return -1
-      if (a.name > b.name) return 1
-      return 0
-    })
+    this.blindTemplates = vxm.blindTemplate.templates
+    this.structure = vxm.blindTemplate.templateStructures
+    vxm.blindTemplate.getBlindTemplates()
   }
 
   async onDeleteTemplate(id: number) {
     if (id > 0) {
-      await this.$axios.delete(`/api/blind-structures/templates/${id}`)
-      await this.loadTemplates()
-      this.structure = []
+      await vxm.blindTemplate.deleteTemplateById(id)
+      await vxm.blindTemplate.getBlindTemplates()
+      vxm.blindTemplate.updateTemplateStructures([])
     }
   }
 
   async onRegister(dto: EditBlindStructureDto) {
     if (dto.id) {
-      await this.$axios.put(`/api/blind-structures/meta`, {
+      const requestDto: UpdateBlindStructureDto = {
         id: dto.id,
         name: dto.name,
         structures: dto.structures,
-      } as UpdateBlindStructureDto)
+      }
+      await vxm.blindTemplate.updateBlindStructure(requestDto)
     } else {
-      await this.$axios.post(`/api/blind-structures/meta`, {
+      const requestDto: RegisterBlindStructureDto = {
         name: dto.name,
         structures: dto.structures,
-      } as RegisterBlindStructureDto)
+      }
+      await vxm.blindTemplate.registerBlindStructure(requestDto)
     }
 
-    this.loadTemplates()
+    await vxm.blindTemplate.getBlindTemplates()
   }
 
   onDelete(blind: BlindStructureDto) {
