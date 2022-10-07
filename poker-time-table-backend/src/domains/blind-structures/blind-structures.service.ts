@@ -64,11 +64,16 @@ export class BlindStructureService {
     }
 
     const regBlindMeta = BlindStructureMeta.create(name);
+    this.logger.log(
+      `save 'BlindStructureMeta', ${regBlindMeta.id}, ${regBlindMeta.name}`,
+    );
+
     const retRegBlindMeta = await this.blindStructureMetaRepo.save(
       regBlindMeta,
     );
-
-    this.logger.log(regBlindMeta, retRegBlindMeta);
+    this.logger.log(
+      `save reuslt: ${retRegBlindMeta.id}, ${retRegBlindMeta.name}`,
+    );
 
     const structureCount = await this.blindStructureRepo.countBy({
       metaId: regBlindMeta.id,
@@ -84,8 +89,8 @@ export class BlindStructureService {
       return mapToBlindStructure(regBlindMeta.id, value);
     });
 
-    const retStructures = await this.blindStructureRepo.save(structures);
-    this.logger.log(structures, retStructures);
+    this.logger.log(`request: ${structures.length}`);
+    await this.blindStructureRepo.insert(structures);
   }
 
   async updateBlindStructure(
