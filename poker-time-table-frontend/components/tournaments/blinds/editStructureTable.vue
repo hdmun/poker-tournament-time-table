@@ -15,7 +15,7 @@
       </v-col>
     </v-row>
 
-    <draggable v-model="blindStructures" draggable=".item" :move="onMove">
+    <draggable v-model="blindStructures" draggable=".item" @change="onChanged">
       <v-row
         v-for="(blind, index) in blindStructures"
         :key="index"
@@ -91,7 +91,7 @@
 <script lang="ts">
 import { Component, Emit, Prop, PropSync, Vue } from 'nuxt-property-decorator'
 import { PropType } from 'vue'
-import draggable, { MoveEvent } from 'vuedraggable'
+import draggable from 'vuedraggable'
 import BlindsStructureTableCell from './structureTableCell.vue'
 import EditBlindsStructureTableCell from './editStructureTableCell.vue'
 import BreakTimeTableCell from './breakTimeTableCell.vue'
@@ -142,16 +142,17 @@ export default class EditBlindsStructureTable extends Vue {
     return this.blindId === index ? 'primary' : 'gray5'
   }
 
-  onMove(event: MoveEvent<BlindStructureModel>): boolean {
-    const from = event.draggedContext.element
-    const to = event.relatedContext.element
-    if (from.level > 0 && to.level > 0) {
-      const toLevel = to.level
-      to.level = from.level
-      from.level = toLevel
+  onChanged() {
+    // 드래그 앤 드랍 이벤트가 끝나면 `level` 값을 보정해주자
+    // 많아봤자 100개 이내이므로 너무 복잡하게 처리할 필요가 없다.
+    let level = 0
+    for (let i = 0; i < this.blindStructures.length; i++) {
+      const blind = this.blindStructures[i]
+      if (blind.level > 0) {
+        level += 1
+        blind.level = level
+      }
     }
-
-    return true
   }
 
   @Emit('onBlindDelete')
