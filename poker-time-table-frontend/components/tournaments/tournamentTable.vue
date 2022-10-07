@@ -64,7 +64,6 @@ export default class TournamentTable extends Vue {
   headers: TableHeader[] = [
     { text: 'Start', value: 'start' },
     { text: 'Title', value: 'name' },
-    { text: 'Buy-in', value: 'buyIn' },
     { text: 'Action', value: 'action', sortable: false },
   ]
 
@@ -103,6 +102,10 @@ export default class TournamentTable extends Vue {
   }
 
   mounted() {
+    this.loadTournaments()
+  }
+
+  loadTournaments() {
     vxm.tournament.loadTournaments().then(() => {
       this.tournaments = vxm.tournament.tournaments
     })

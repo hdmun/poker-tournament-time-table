@@ -35,7 +35,7 @@ export default class AdminTournament extends Vue {
       // eslint-disable-next-line no-console
       console.error(error)
     }
-    this.$router.go(0)
+    this.tournamentTable.loadTournaments()
   }
 }
 </script>
