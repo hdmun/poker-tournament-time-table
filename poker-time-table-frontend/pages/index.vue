@@ -1,10 +1,9 @@
 <template>
   <v-flex class="fill-height gray8">
     <v-row class="pa-6">
-      <v-col cols="12" sm="12" md="6" lg="6" xl="6">
+      <v-col cols="12" sm="12" md="12" lg="12" xl="12">
         <TournamentTable ref="tournamentTable" />
       </v-col>
-      <v-col lg="9" class="pa-0"> </v-col>
     </v-row>
   </v-flex>
 </template>
