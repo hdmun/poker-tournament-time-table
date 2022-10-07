@@ -130,4 +130,19 @@ export class BlindStructureService {
       }),
     );
   }
+
+  async deleteBy(templateId: number): Promise<void> {
+    this.logger.log(`deleteBy, templateId: ${templateId}`);
+
+    const resStructure = await this.blindStructureRepo.delete({
+      metaId: templateId,
+    });
+    const resStructureMeta = await this.blindStructureMetaRepo.delete({
+      id: templateId,
+    });
+
+    if (resStructure.affected === 0 || resStructureMeta.affected === 0) {
+      // todo
+    }
+  }
 }

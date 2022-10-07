@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -82,6 +83,26 @@ export class BlindStructureController {
         dto.name,
         dto.structures,
       );
+    } catch (error) {
+      if (error instanceof InvalidInputError) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
+  @Delete('/templates/:id')
+  async deleteBlindTemplate(@Param('id') id: number): Promise<void> {
+    try {
+      await this.blindStructureService.deleteBy(id);
     } catch (error) {
       if (error instanceof InvalidInputError) {
         throw new HttpException(
