@@ -11,9 +11,18 @@ import {
 } from '~/dto/tournamentDto'
 import { $axios } from '~/utils/api'
 
+export const eTournamentState = {
+  Wait: '대기 중',
+  Play: '진행 중',
+} as const
+// eslint-disable-next-line no-redeclare
+export type eTournamentState =
+  typeof eTournamentState[keyof typeof eTournamentState]
+
 export interface TournamentItem {
   id: number
   start: string
+  state: eTournamentState
   end: boolean
   name: string
   buyIn: string
@@ -108,19 +117,8 @@ export default class AdminTournamentStore
     const response = await $axios.get<TournamentDetailDto[]>(`/api/tournaments`)
     if (response.status === 200) {
       const tournaments = response.data
-        .map<TournamentItem>((value): TournamentItem => {
-          return {
-            id: value.id,
-            start: value.startDateTime
-              ? new Date(value.startDateTime)
-                  .toISOString()
-                  .replace('T', ' ')
-                  .substring(0, 19)
-              : '대기 중',
-            end: value.endDateTime !== null,
-            name: value.title,
-            buyIn: `${value.buyIn}`,
-          }
+        .map<TournamentItem>((value: TournamentDetailDto): TournamentItem => {
+          return mapToTournamentItem(value)
         })
         .filter((value) => !value.end)
         .sort(
@@ -224,5 +222,26 @@ export default class AdminTournamentStore
     )
 
     this.updateClock(response.data)
+  }
+}
+
+function mapToTournamentItem(dto: TournamentDetailDto): TournamentItem {
+  let startDateTime: string = ''
+  let tournamentState: eTournamentState = eTournamentState.Wait
+  if (dto.startDateTime) {
+    startDateTime = new Date(dto.startDateTime)
+      .toISOString()
+      .replace('T', ' ')
+      .substring(0, 19)
+
+    tournamentState = eTournamentState.Play
+  }
+  return {
+    id: dto.id,
+    start: startDateTime,
+    state: tournamentState,
+    end: dto.endDateTime !== null,
+    name: dto.title,
+    buyIn: `${dto.buyIn}`,
   }
 }
