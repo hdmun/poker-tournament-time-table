@@ -53,6 +53,10 @@ export default class AdminBlindStructure extends Vue {
     vxm.blindTemplate.getBlindTemplates()
   }
 
+  beforeDestroy() {
+    vxm.blindTemplate.updateTemplateStructures([])
+  }
+
   async onDeleteTemplate(id: number) {
     if (id > 0) {
       await vxm.blindTemplate.deleteTemplateById(id)

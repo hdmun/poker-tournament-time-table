@@ -22,15 +22,16 @@
         <v-row>
           <v-col>
             <v-select
-              v-model="selectBlindTemplate"
+              v-model="selectTemplate"
               :items="blindTemplates"
               label="Blind Structure"
               prepend-icon="mdi-table"
               item-text="name"
               single-line
               return-object
-              :rules="[(v) => !!v || 'This field is required']"
+              :rules="[(v) => !!v || '블라인드를 선택해주세요']"
               required
+              @change="onChangeSelectTemplate()"
             >
             </v-select>
           </v-col>
@@ -61,10 +62,10 @@ export default class RegisterTournament extends Vue {
   buyIn: number = 0
 
   blindTemplates: BlindStructureTemplateDto[] = []
-  selectBlindTemplate: BlindStructureTemplateDto | null = null
+  selectTemplate: BlindStructureTemplateDto | null = null
 
   get disabledEditButton() {
-    if (this.selectBlindTemplate === null) return true
+    if (this.selectTemplate === null) return true
     if (this.tournamentName.trim().length <= 0) return true
     return false
   }
@@ -74,16 +75,27 @@ export default class RegisterTournament extends Vue {
     vxm.blindTemplate.getBlindTemplates()
   }
 
+  async onChangeSelectTemplate() {
+    if (this.selectTemplate === null) {
+      vxm.blindTemplate.updateTemplateStructures([])
+      return
+    }
+
+    if (this.selectTemplate.id > 0) {
+      await vxm.blindTemplate.getBlindTemplateById(this.selectTemplate.id)
+    }
+  }
+
   @Emit('register')
   onRegister(): TournamentRegisterRequest | null {
-    if (!this.selectBlindTemplate) {
+    if (!this.selectTemplate) {
       return null
     }
 
     return {
       title: this.tournamentName,
       buyIn: this.buyIn,
-      blindStructureId: this.selectBlindTemplate.id,
+      blindStructureId: this.selectTemplate.id,
     }
   }
 }
