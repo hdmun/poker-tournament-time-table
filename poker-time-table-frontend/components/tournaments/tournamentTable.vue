@@ -12,6 +12,7 @@
       <template #[`item.name`]="{ item }">
         <router-link
           :to="{ path: '/tournament-clock', query: { id: item.id } }"
+          style="text-decoration: none; color: inherit"
         >
           {{ item.name }}
         </router-link>
