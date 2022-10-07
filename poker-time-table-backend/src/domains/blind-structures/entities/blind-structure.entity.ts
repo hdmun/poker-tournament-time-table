@@ -1,12 +1,14 @@
 import { Entity, Column, PrimaryColumn } from 'typeorm';
-import { BlindStructureDto } from '../dto/blind-structure';
 
 @Entity({ name: 'blind_structure' })
 export class BlindStructure {
   @PrimaryColumn({ name: 'meta_id' })
   metaId: number;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ name: 'id' })
+  id: number;
+
+  @Column()
   level: number;
 
   @Column({ name: 'ante' })
@@ -23,6 +25,7 @@ export class BlindStructure {
 
   static create(
     metaId: number,
+    id: number,
     level: number,
     ante: number,
     smallBlind: number,
@@ -31,6 +34,7 @@ export class BlindStructure {
   ): BlindStructure {
     const structure = new BlindStructure();
     structure.metaId = metaId;
+    structure.id = id;
     structure.level = level;
     structure.ante = ante;
     structure.smallBlind = smallBlind;
