@@ -52,8 +52,6 @@ export class TournamentService {
     title: string,
     blindStructureId: number,
     buyIn: number,
-    breakTimeTerm: number,
-    breakTime: number,
   ): Promise<TournamentRegisterResponse> {
     this.logger.log(
       `registerTournament, title: ${title}, blindStructureId: ${blindStructureId}`,
@@ -68,19 +66,11 @@ export class TournamentService {
 
     const newTornamentBlinds: TournamentBlind[] = [];
     for (const blindDto of templateStructure) {
-      let blindId = newTornamentBlinds.length;
       newTornamentBlinds.push(
-        mapToTournamentBlind(newTornament.id, blindId, blindDto),
+        mapToTournamentBlind(newTornament.id, blindDto.id, blindDto),
       );
-
-      const isAddBreakTime = blindDto.level % breakTimeTerm;
-      if (isAddBreakTime === 0) {
-        blindId = newTornamentBlinds.length;
-        newTornamentBlinds.push(
-          TournamentBlind.createBreakTime(newTornament.id, blindId, breakTime),
-        );
-      }
     }
+
     await this.blindRepository.save(newTornamentBlinds);
 
     return {

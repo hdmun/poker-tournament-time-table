@@ -33,8 +33,6 @@ export interface TournamentRegisterRequest {
   title: string;
   buyIn: number;
   blindStructureId: number;
-  breakTime: number;
-  breakTimeTerm: number;
 }
 
 export interface TournamentRegisterResponse {

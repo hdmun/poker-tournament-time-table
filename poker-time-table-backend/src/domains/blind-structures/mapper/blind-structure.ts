@@ -7,6 +7,7 @@ export function mapToBlindStructure(
 ): BlindStructure {
   return BlindStructure.create(
     metaId,
+    dto.id,
     dto.level,
     dto.ante,
     dto.smallBlind,
@@ -19,6 +20,7 @@ export function mapFromBlindStructure(
   entity: BlindStructure,
 ): BlindStructureDto {
   return {
+    id: entity.id,
     level: entity.level,
     ante: entity.ante,
     smallBlind: entity.smallBlind,
