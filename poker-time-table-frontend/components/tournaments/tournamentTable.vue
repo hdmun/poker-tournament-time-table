@@ -12,21 +12,34 @@
       <template #[`item.name`]="{ item }">
         <router-link
           :to="{ path: '/tournament-clock', query: { id: item.id } }"
+          style="text-decoration: none; color: inherit"
         >
           {{ item.name }}
         </router-link>
       </template>
 
-      <template #[`item.action`]="{ item }">
-        <v-icon
-          :disabled="item.start === '대기 중'"
+      <template #[`item.state`]="{ item }">
+        <v-chip small :color="getStateColor(item.state)" dark>
+          {{ item.state }}
+        </v-chip>
+      </template>
+
+      <template #[`item.close`]="{ item }">
+        <v-btn
+          rounded
+          class="accent"
+          :disabled="disabledCloseBtn(item.state)"
           @click="onClickClose(item)"
         >
-          mdi-close
-        </v-icon>
-        <v-icon @click="onClickDelete(item)"> mdi-delete </v-icon>
+          종료
+        </v-btn>
+      </template>
+
+      <template #[`item.delete`]="{ item }">
+        <v-btn rounded class="gray5" @click="onClickDelete(item)"> 삭제 </v-btn>
       </template>
     </v-data-table>
+
     <div class="text-center pt-2 gray7">
       <v-pagination v-model="page" :length="pageCount"></v-pagination>
     </div>
@@ -51,21 +64,23 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import { vxm } from '~/store'
-import { TournamentItem } from '~/store/admin/tournament'
+import { eTournamentState, TournamentItem } from '~/store/admin/tournament'
 
 interface TableHeader {
   text: string
   value: string
   sortable?: boolean
+  align?: 'start' | 'center' | 'end'
 }
 
 @Component
 export default class TournamentTable extends Vue {
   headers: TableHeader[] = [
-    { text: 'Start', value: 'start' },
-    { text: 'Title', value: 'name' },
-    { text: 'Buy-in', value: 'buyIn' },
-    { text: 'Action', value: 'action', sortable: false },
+    { text: '시작 시간', value: 'start', align: 'center' },
+    { text: '상태', value: 'state', align: 'center' },
+    { text: '토너먼트', value: 'name' },
+    { text: '종료', value: 'close', sortable: false, align: 'center' },
+    { text: '삭제', value: 'delete', sortable: false, align: 'center' },
   ]
 
   tournaments: TournamentItem[] = []
@@ -102,7 +117,24 @@ export default class TournamentTable extends Vue {
     return `'${this.deleteTournment?.name}' 삭제합니다.`
   }
 
+  disabledCloseBtn(state: eTournamentState): boolean {
+    return state !== eTournamentState.Play
+  }
+
+  getStateColor(state: eTournamentState): string {
+    switch (state) {
+      case eTournamentState.Play:
+        return 'green'
+      default:
+        return 'gray5'
+    }
+  }
+
   mounted() {
+    this.loadTournaments()
+  }
+
+  loadTournaments() {
     vxm.tournament.loadTournaments().then(() => {
       this.tournaments = vxm.tournament.tournaments
     })

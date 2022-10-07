@@ -5,20 +5,34 @@
     <v-card-text>
       <v-form ref="form" lazy-validation>
         <v-container>
-          <v-row>
-            <v-col cols="12">
+          <v-row align="center">
+            <v-col cols="8">
               <v-autocomplete
                 v-model="selectTemplate"
                 :items="templates"
                 clearable
                 dense
                 filled
+                hide-details
                 item-text="name"
                 return-object
                 label="템플릿 리스트"
                 @change="onChangeSelectTemplate()"
+              />
+            </v-col>
+
+            <v-col cols="4">
+              <v-btn
+                text
+                tile
+                outlined
+                class="pa-4"
+                :disabled="selectTemplate === null"
+                @click="onDeleteTemplate"
               >
-              </v-autocomplete>
+                <v-icon left> mdi-delete </v-icon>
+                DELETE
+              </v-btn>
             </v-col>
           </v-row>
 
@@ -68,36 +82,33 @@
 
           <v-card-title></v-card-title>
 
-          <v-row>
-            <v-col cols="12" lg="12">
-              <v-btn
-                text
-                :disabled="level <= 0"
-                class="mr-4"
-                @click="onClickMinus"
-              >
-                <v-icon> mdi-minus-box </v-icon>
-              </v-btn>
+          <v-row justify="end">
+            <v-btn
+              text
+              :disabled="disabledAddButton"
+              class="mr-4"
+              @click="onClickAddBreakTime"
+            >
+              브레이크 타임 추가
+            </v-btn>
 
-              <v-btn
-                text
-                :disabled="disabledAddButton"
-                class="mr-4"
-                @click="onClickPlus"
-              >
-                <v-icon> mdi-plus-box </v-icon>
-              </v-btn>
+            <v-btn
+              text
+              :disabled="disabledAddButton"
+              class="mr-4"
+              @click="onClickPlus"
+            >
+              블라인드 추가
+            </v-btn>
 
-              <v-btn
-                rounded
-                :disabled="disabledEditButton"
-                color="primary"
-                class="mr-4"
-                @click="onClickEdit"
-              >
-                {{ selectTemplate ? `갱신` : `등록` }}
-              </v-btn>
-            </v-col>
+            <v-btn
+              :disabled="disabledEditButton"
+              color="accent"
+              class="mr-4"
+              @click="onClickEdit"
+            >
+              {{ selectTemplate ? `갱신` : `등록` }}
+            </v-btn>
           </v-row>
         </v-container>
       </v-form>
@@ -164,7 +175,7 @@ export default class AdminRegisterBlindStructure extends Vue {
     this.templateName = this.selectTemplate.name
   }
 
-  get level() {
+  get blindCount() {
     return this.editStructures?.length ?? 0
   }
 
@@ -186,16 +197,26 @@ export default class AdminRegisterBlindStructure extends Vue {
   }
 
   get disabledEditButton() {
-    if (this.level < 10) return true
+    if (this.blindCount < 10) return true
     if (!this.templateName) return true
     if (this.templateName.trim().length <= 0) return true
     return false
   }
 
-  onClickMinus() {
-    if (this.level > 0) {
-      this.editStructures.pop()
-    }
+  get maxLevel(): number {
+    const maxLevel = Math.max(...this.editStructures.map((o) => o.level))
+    return isFinite(maxLevel) ? maxLevel : 0
+  }
+
+  onClickAddBreakTime() {
+    this.editStructures.push({
+      id: this.blindCount + 1,
+      level: -1,
+      ante: -1,
+      smallBlind: -1,
+      bigBlind: -1,
+      minute: this.minute,
+    })
   }
 
   onClickPlus() {
@@ -205,13 +226,14 @@ export default class AdminRegisterBlindStructure extends Vue {
 
     let smallBlind = this.smallBlind
     let bigBlind = this.bigBlind
-    if (this.editStructures.length > 0) {
+    if (this.blindCount > 0) {
       bigBlind += this.bigBlindInc
       smallBlind = bigBlind / 2
     }
 
     this.editStructures.push({
-      level: this.editStructures.length + 1,
+      id: this.blindCount + 1,
+      level: this.maxLevel + 1,
       ante: this.ante,
       smallBlind,
       bigBlind,
@@ -223,17 +245,23 @@ export default class AdminRegisterBlindStructure extends Vue {
   }
 
   updateBlind() {
-    const blindCount = this.editStructures.length
-    if (blindCount > 0) {
-      const lastBlind = this.editStructures[blindCount - 1]
-      this.ante = lastBlind.ante
-      this.smallBlind = lastBlind.smallBlind
-      this.bigBlind = lastBlind.bigBlind
-    } else {
-      this.ante = 0
-      this.smallBlind = 100
-      this.bigBlind = 200
+    let lastBlind: BlindStructureDto | undefined
+    const maxLevel = this.maxLevel
+    if (maxLevel > 0) {
+      lastBlind = this.editStructures.find((value) => value.level === maxLevel)
     }
+
+    this.ante = lastBlind?.ante ?? 0
+    this.smallBlind = lastBlind?.smallBlind ?? 100
+    this.bigBlind = lastBlind?.bigBlind ?? 200
+  }
+
+  @Emit('delete')
+  onDeleteTemplate(): number {
+    const templateId = this.selectTemplate?.id ?? 0
+    this.templateName = ''
+    this.selectTemplate = null
+    return templateId
   }
 
   @Emit('register')

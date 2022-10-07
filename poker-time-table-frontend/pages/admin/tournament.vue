@@ -16,7 +16,7 @@
 import { Component, Ref, Vue } from 'nuxt-property-decorator'
 import TournamentTable from '~/components/tournaments/tournamentTable.vue'
 import AdminRegisterTournament from '~/components/admin/registerTournament.vue'
-import { RegisterTournamentDto } from '~/dto/tournamentDto'
+import { TournamentRegisterRequest } from '~/dto/tournamentDto'
 import { vxm } from '~/store'
 
 @Component({
@@ -28,14 +28,14 @@ import { vxm } from '~/store'
 export default class AdminTournament extends Vue {
   @Ref() tournamentTable!: TournamentTable
 
-  async onRegister(dto: RegisterTournamentDto) {
+  async onRegister(dto: TournamentRegisterRequest) {
     try {
       await vxm.tournament.registerBy(dto)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error)
     }
-    this.$router.go(0)
+    this.tournamentTable.loadTournaments()
   }
 }
 </script>

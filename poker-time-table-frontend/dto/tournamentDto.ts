@@ -6,12 +6,10 @@ export interface TournamentBlindDto {
   minute: number
 }
 
-export interface RegisterTournamentDto {
+export interface TournamentRegisterRequest {
   title: string
   buyIn: number
   blindStructureId: number
-  breakTime: number
-  breakTimeTerm: number
 }
 
 export interface TournamentDetailDto {

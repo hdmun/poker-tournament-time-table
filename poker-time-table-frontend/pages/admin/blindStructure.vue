@@ -1,23 +1,22 @@
 <template>
-  <v-flex class="fill-height gray8">
-    <v-row class="pa-6">
-      <v-col class="gray7">
-        <AdminRegisterBlindStructure
-          ref="registerBlindStructure"
-          :name.sync="metaName"
-          :templates="blindTemplates"
-          :editstructure.sync="structure"
-          @register="onRegister"
-        />
-      </v-col>
-      <v-col>
-        <AdminBlindStructureTemplate
-          :blindstructure.sync="structure"
-          @delete="onDelete"
-        />
-      </v-col>
-    </v-row>
-  </v-flex>
+  <v-row class="pa-6 fill-height">
+    <v-col>
+      <AdminRegisterBlindStructure
+        ref="registerBlindStructure"
+        :name.sync="metaName"
+        :templates="blindTemplates"
+        :editstructure.sync="structure"
+        @delete="onDeleteTemplate"
+        @register="onRegister"
+      />
+    </v-col>
+    <v-col>
+      <AdminBlindStructureTemplate
+        :blindstructure.sync="structure"
+        @delete="onDelete"
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">
@@ -62,6 +61,14 @@ export default class AdminBlindStructure extends Vue {
     })
   }
 
+  async onDeleteTemplate(id: number) {
+    if (id > 0) {
+      await this.$axios.delete(`/api/blind-structures/templates/${id}`)
+      await this.loadTemplates()
+      this.structure = []
+    }
+  }
+
   async onRegister(dto: EditBlindStructureDto) {
     if (dto.id) {
       await this.$axios.put(`/api/blind-structures/meta`, {
@@ -82,15 +89,14 @@ export default class AdminBlindStructure extends Vue {
   onDelete(blind: BlindStructureDto) {
     const deleteIndex = this.structure.indexOf(blind)
     this.structure.splice(deleteIndex, 1)
-    this.structure = this.structure.map((value, index) => {
-      return {
-        level: index + 1,
-        ante: value.ante,
-        smallBlind: value.smallBlind,
-        bigBlind: value.bigBlind,
-        minute: value.minute,
+
+    let level = 1
+    for (const blind of this.structure) {
+      if (blind.level > 0) {
+        blind.level = level
+        level += 1
       }
-    })
+    }
 
     this.registerBlindStructure.updateBlind()
   }

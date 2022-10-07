@@ -63,7 +63,6 @@ export default class BlindCards extends Vue {
     const width = this.$vuetify.breakpoint.width
     const height = this.$vuetify.breakpoint.height
     if (width > height) {
-      console.log('width === 1291', width, width === 1291)
       return width === 1291
     }
     return width === 723
