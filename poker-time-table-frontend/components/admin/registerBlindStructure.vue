@@ -207,7 +207,7 @@ export default class AdminRegisterBlindStructure extends Vue {
 
   onClickAddBreakTime() {
     this.editStructures.push({
-      id: this.blindCount + 1,
+      id: this.blindCount,
       level: -1,
       ante: -1,
       smallBlind: -1,
@@ -229,7 +229,7 @@ export default class AdminRegisterBlindStructure extends Vue {
     }
 
     this.editStructures.push({
-      id: this.blindCount + 1,
+      id: this.blindCount,
       level: this.maxLevel + 1,
       ante: this.ante,
       smallBlind,
