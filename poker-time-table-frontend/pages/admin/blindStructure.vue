@@ -16,6 +16,12 @@
         @delete="onDelete"
       />
     </v-col>
+
+    <ErrorDialog
+      :show-dialog="showErrorDialog"
+      :dialog-message="errorDialogMessage"
+      @confirm="onConfirmErrorDialog"
+    />
   </v-row>
 </template>
 
@@ -25,6 +31,7 @@ import AdminBlindStructureTemplate from '~/components/admin/blindStructureTempla
 import AdminRegisterBlindStructure, {
   EditBlindStructureDto,
 } from '~/components/admin/registerBlindStructure.vue'
+import ErrorDialog from '~/components/ui/errorDialog.vue'
 import {
   BlindStructureDto,
   BlindStructureTemplateDto,
@@ -32,11 +39,13 @@ import {
   UpdateBlindStructureDto,
 } from '~/dto/blindStructureDto'
 import { vxm } from '~/store'
+import { AxiosError } from '~/utils/api'
 
 @Component({
   components: {
     AdminBlindStructureTemplate,
     AdminRegisterBlindStructure,
+    ErrorDialog,
   },
 })
 export default class AdminBlindStructure extends Vue {
@@ -46,6 +55,10 @@ export default class AdminBlindStructure extends Vue {
   metaName: string = ''
   blindTemplates: BlindStructureTemplateDto[] = []
   structure: BlindStructureDto[] = []
+
+  showErrorDialog: boolean = false
+  errorDialogTitle: string = ''
+  errorDialogMessage: string = ''
 
   mounted() {
     this.blindTemplates = vxm.blindTemplate.templates
@@ -66,22 +79,34 @@ export default class AdminBlindStructure extends Vue {
   }
 
   async onRegister(dto: EditBlindStructureDto) {
-    if (dto.id) {
-      const requestDto: UpdateBlindStructureDto = {
-        id: dto.id,
-        name: dto.name,
-        structures: dto.structures,
+    try {
+      if (dto.id) {
+        const requestDto: UpdateBlindStructureDto = {
+          id: dto.id,
+          name: dto.name,
+          structures: dto.structures,
+        }
+        await vxm.blindTemplate.updateBlindStructure(requestDto)
+      } else {
+        const requestDto: RegisterBlindStructureDto = {
+          name: dto.name,
+          structures: dto.structures,
+        }
+        await vxm.blindTemplate.registerBlindStructure(requestDto)
       }
-      await vxm.blindTemplate.updateBlindStructure(requestDto)
-    } else {
-      const requestDto: RegisterBlindStructureDto = {
-        name: dto.name,
-        structures: dto.structures,
-      }
-      await vxm.blindTemplate.registerBlindStructure(requestDto)
-    }
 
-    await vxm.blindTemplate.getBlindTemplates()
+      await vxm.blindTemplate.getBlindTemplates()
+    } catch (error) {
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        // eslint-disable-next-line no-console
+        console.error('AxiosError', axiosError.toJSON())
+        // eslint-disable-next-line no-console
+        console.error(axiosError.response)
+        this.errorDialogMessage = axiosError.response?.data.error
+        this.showErrorDialog = true
+      }
+    }
   }
 
   onDelete(blind: BlindStructureDto) {
@@ -97,6 +122,10 @@ export default class AdminBlindStructure extends Vue {
     }
 
     this.registerBlindStructure.updateBlind()
+  }
+
+  onConfirmErrorDialog() {
+    this.showErrorDialog = false
   }
 }
 </script>
