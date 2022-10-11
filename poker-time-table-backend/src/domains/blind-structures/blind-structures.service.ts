@@ -85,8 +85,17 @@ export class BlindStructureService {
       );
     }
 
-    const structures = structureDto.map<BlindStructure>((value) => {
-      return mapToBlindStructure(regBlindMeta.id, value);
+    const structures = structureDto.map<BlindStructure>((value, index) => {
+      // 일단 임시로 서버에서 보정 작업해주자
+      const entity = mapToBlindStructure(regBlindMeta.id, value);
+      this.logger.log(
+        `updateBlindStructure, name: ${name}, id: ${regBlindMeta.id}, index: ${
+          index + 1
+        }, blindId ${entity.id}`,
+      );
+
+      entity.id = index;
+      return entity;
     });
 
     this.logger.log(`request: ${structures.length}`);
@@ -121,6 +130,18 @@ export class BlindStructureService {
     if (meta.name !== name) {
       meta.name = name;
       await this.blindStructureMetaRepo.update({ id }, meta);
+    }
+
+    // 일단 임시로 서버에서 보정 작업해주자
+    for (let i = 0; i < structureDto.length; i++) {
+      const blind = structureDto[i];
+      this.logger.log(
+        `updateBlindStructure, name: ${name}, id: ${id}, index: ${
+          i + 1
+        }, blindId ${blind.id}`,
+      );
+
+      blind.id = i;
     }
 
     const diffCount = structures.length - structureDto.length;
