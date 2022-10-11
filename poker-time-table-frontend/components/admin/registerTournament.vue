@@ -51,17 +51,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'nuxt-property-decorator'
+import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
 import { BlindStructureTemplateDto } from '~/dto/blindStructureDto'
 import { TournamentRegisterRequest } from '~/dto/tournamentDto'
-import { vxm } from '~/store'
 
 @Component
 export default class RegisterTournament extends Vue {
   tournamentName: string = ''
   buyIn: number = 0
 
-  blindTemplates: BlindStructureTemplateDto[] = []
+  @Prop({ type: Array<BlindStructureTemplateDto>, required: true })
+  blindTemplates!: BlindStructureTemplateDto[]
+
   selectTemplate: BlindStructureTemplateDto | null = null
 
   get disabledEditButton() {
@@ -70,20 +71,15 @@ export default class RegisterTournament extends Vue {
     return false
   }
 
-  mounted() {
-    this.blindTemplates = vxm.blindTemplate.templates
-    vxm.blindTemplate.getBlindTemplates()
-  }
+  mounted() {}
 
-  async onChangeSelectTemplate() {
+  @Emit('selectBlind')
+  onChangeSelectTemplate(): number {
     if (this.selectTemplate === null) {
-      vxm.blindTemplate.updateTemplateStructures([])
-      return
+      return 0
     }
 
-    if (this.selectTemplate.id > 0) {
-      await vxm.blindTemplate.getBlindTemplateById(this.selectTemplate.id)
-    }
+    return this.selectTemplate.id
   }
 
   @Emit('register')

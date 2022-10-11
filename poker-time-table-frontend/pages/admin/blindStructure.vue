@@ -6,6 +6,7 @@
         :name.sync="metaName"
         :templates="blindTemplates"
         :editstructure.sync="structure"
+        @select="onSelectTemplate"
         @delete="onDeleteTemplate"
         @register="onRegister"
       />
@@ -70,11 +71,31 @@ export default class AdminBlindStructure extends Vue {
     vxm.blindTemplate.updateTemplateStructures([])
   }
 
+  async onSelectTemplate(id: number) {
+    if (id > 0) {
+      try {
+        await vxm.blindTemplate.getBlindTemplateById(id)
+      } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError !== null) {
+          this.onError(axiosError)
+        }
+      }
+    }
+  }
+
   async onDeleteTemplate(id: number) {
     if (id > 0) {
-      await vxm.blindTemplate.deleteTemplateById(id)
-      await vxm.blindTemplate.getBlindTemplates()
-      vxm.blindTemplate.updateTemplateStructures([])
+      try {
+        await vxm.blindTemplate.deleteTemplateById(id)
+        await vxm.blindTemplate.getBlindTemplates()
+        vxm.blindTemplate.updateTemplateStructures([])
+      } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError !== null) {
+          this.onError(axiosError)
+        }
+      }
     }
   }
 
@@ -99,12 +120,7 @@ export default class AdminBlindStructure extends Vue {
     } catch (error) {
       const axiosError = error as AxiosError
       if (axiosError !== null) {
-        // eslint-disable-next-line no-console
-        console.error('AxiosError', axiosError.toJSON())
-        // eslint-disable-next-line no-console
-        console.error(axiosError.response)
-        this.errorDialogMessage = axiosError.response?.data.error
-        this.showErrorDialog = true
+        this.onError(axiosError)
       }
     }
   }
@@ -122,6 +138,15 @@ export default class AdminBlindStructure extends Vue {
     }
 
     this.registerBlindStructure.updateBlind()
+  }
+
+  onError(error: AxiosError) {
+    // eslint-disable-next-line no-console
+    console.error('AxiosError', error.toJSON())
+    // eslint-disable-next-line no-console
+    console.error(error.response)
+    this.errorDialogMessage = error.response?.data.error
+    this.showErrorDialog = true
   }
 
   onConfirmErrorDialog() {

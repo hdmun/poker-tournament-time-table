@@ -2,7 +2,11 @@
   <v-flex>
     <v-row class="pa-6">
       <v-col lg="4">
-        <AdminRegisterTournament @register="onRegister" />
+        <AdminRegisterTournament
+          :blind-templates="blindTemplates"
+          @selectBlind="onSelectBlind"
+          @register="onRegister"
+        />
 
         <v-card class="mt-4 gray7">
           <v-card-title> 블라인드 스트럭쳐</v-card-title>
@@ -41,46 +45,149 @@
       </v-col>
 
       <v-col lg="8">
-        <TournamentTable ref="tournamentTable" />
+        <TournamentTable
+          :tournaments.sync="tournaments"
+          @close="onClose"
+          @delete="onDelete"
+        />
       </v-col>
     </v-row>
+
+    <ErrorDialog
+      :show-dialog="showErrorDialog"
+      :dialog-message="errorDialogMessage"
+      @confirm="onConfirmErrorDialog"
+    />
   </v-flex>
 </template>
 
 <script lang="ts">
-import { Component, Ref, Vue } from 'nuxt-property-decorator'
+import { Component, Vue } from 'nuxt-property-decorator'
 import TournamentTable from '~/components/tournaments/tournamentTable.vue'
 import AdminRegisterTournament from '~/components/admin/registerTournament.vue'
 import { TournamentRegisterRequest } from '~/dto/tournamentDto'
 import { vxm } from '~/store'
-import { BlindStructureDto } from '~/dto/blindStructureDto'
+import {
+  BlindStructureDto,
+  BlindStructureTemplateDto,
+} from '~/dto/blindStructureDto'
+import { AxiosError } from '~/utils/api'
+import ErrorDialog from '~/components/ui/errorDialog.vue'
+import { TournamentItem } from '~/store/admin/tournament'
 
 @Component({
   components: {
     AdminRegisterTournament,
+    ErrorDialog,
     TournamentTable,
   },
 })
 export default class AdminTournament extends Vue {
-  @Ref() tournamentTable!: TournamentTable
+  tournaments: TournamentItem[] = []
+  blindTemplates: BlindStructureTemplateDto[] = []
   templateStructures: BlindStructureDto[] = []
 
-  mounted() {
+  showErrorDialog: boolean = false
+  errorDialogMessage: string = ''
+
+  async mounted() {
+    this.tournaments = vxm.tournament.tournaments
+    this.blindTemplates = vxm.blindTemplate.templates
     this.templateStructures = vxm.blindTemplate.templateStructures
+
+    this.loadTournaments()
+
+    try {
+      await vxm.blindTemplate.getBlindTemplates()
+    } catch (error) {
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
+    }
   }
 
   beforeDestroy() {
     vxm.blindTemplate.updateTemplateStructures([])
   }
 
+  async loadTournaments() {
+    try {
+      await vxm.tournament.loadTournaments()
+    } catch (error) {
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
+    }
+  }
+
+  async onSelectBlind(templateId: number) {
+    if (templateId <= 0) {
+      vxm.blindTemplate.updateTemplateStructures([])
+      return
+    }
+
+    try {
+      await vxm.blindTemplate.getBlindTemplateById(templateId)
+    } catch (error) {
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
+    }
+  }
+
   async onRegister(dto: TournamentRegisterRequest) {
     try {
       await vxm.tournament.registerBy(dto)
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error)
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
     }
-    this.tournamentTable.loadTournaments()
+
+    this.loadTournaments()
+  }
+
+  async onClose(tournamentId: number) {
+    if (tournamentId > 0) {
+      try {
+        await vxm.tournament.closeBy(tournamentId)
+      } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError !== null) {
+          this.onError(axiosError)
+        }
+      }
+    }
+  }
+
+  async onDelete(tournamentId: number) {
+    if (tournamentId > 0) {
+      try {
+        await vxm.tournament.deleteBy(tournamentId)
+      } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError !== null) {
+          this.onError(axiosError)
+        }
+      }
+    }
+  }
+
+  onError(error: AxiosError) {
+    // eslint-disable-next-line no-console
+    console.error('AxiosError', error.toJSON())
+    // eslint-disable-next-line no-console
+    console.error(error.response)
+    this.errorDialogMessage = error.response?.data.error
+    this.showErrorDialog = true
+  }
+
+  onConfirmErrorDialog() {
+    this.showErrorDialog = false
   }
 }
 </script>
