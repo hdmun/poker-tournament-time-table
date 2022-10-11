@@ -115,6 +115,9 @@ export default class BlindsStructureTable extends Vue {
   blindId!: number
 
   get isMoreBlind(): boolean {
+    if (this.landscapeMode) {
+      return false
+    }
     return this.blindStructures.length - this.blindId >= this.itemCount
   }
 
