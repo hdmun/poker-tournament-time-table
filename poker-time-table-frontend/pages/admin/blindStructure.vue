@@ -58,13 +58,20 @@ export default class AdminBlindStructure extends Vue {
   structure: BlindStructureDto[] = []
 
   showErrorDialog: boolean = false
-  errorDialogTitle: string = ''
   errorDialogMessage: string = ''
 
   mounted() {
     this.blindTemplates = vxm.blindTemplate.templates
     this.structure = vxm.blindTemplate.templateStructures
-    vxm.blindTemplate.getBlindTemplates()
+
+    try {
+      vxm.blindTemplate.getBlindTemplates()
+    } catch (error) {
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
+    }
   }
 
   beforeDestroy() {

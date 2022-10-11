@@ -9,6 +9,12 @@
         />
       </v-col>
     </v-row>
+
+    <ErrorDialog
+      :show-dialog="showErrorDialog"
+      :dialog-message="errorDialogMessage"
+      @confirm="onConfirmErrorDialog"
+    />
   </v-flex>
 </template>
 
@@ -76,6 +82,10 @@ export default class IndexPage extends Vue {
     console.error(error.response)
     this.errorDialogMessage = error.response?.data.error
     this.showErrorDialog = true
+  }
+
+  onConfirmErrorDialog() {
+    this.showErrorDialog = false
   }
 }
 </script>
