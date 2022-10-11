@@ -8,6 +8,7 @@ import {
   TournamentBlindDto,
   TournamentClockEventDto,
   TournamentDetailDto,
+  TournamentLogDto,
 } from '~/dto/tournamentDto'
 import { $axios } from '~/utils/api'
 
@@ -36,6 +37,19 @@ export interface BlindStructureModel {
   minute: number
 }
 
+export interface TournamentLogRequest {
+  year: number
+  month: number
+  day: number
+}
+
+export interface TournamentLogItem {
+  name: string
+  start: string // toLocaleTimeString()
+  end: string // toLocaleTimeString()
+  playTime: string // 00:00:00
+}
+
 export interface UpdateTournamentBlindDto {
   id: number
   blinds: TournamentBlindDto[]
@@ -45,6 +59,7 @@ interface AdminTournamentState {
   readonly tournaments: TournamentItem[]
   readonly blinds: BlindStructureModel[]
   readonly clock: TournamentClockDto
+  readonly logs: TournamentLogItem[]
 }
 
 const VuexModule = createModule({
@@ -60,6 +75,8 @@ export default class AdminTournamentStore
   readonly blinds: BlindStructureModel[] = []
 
   readonly clock: TournamentClockDto = createTournamentClockDto()
+
+  readonly logs: TournamentLogItem[] = []
 
   @mutation update(tournaments: TournamentItem[]) {
     this.tournaments.splice(0)
@@ -113,6 +130,11 @@ export default class AdminTournamentStore
     this.blinds.push(...blinds)
   }
 
+  @mutation updateLog(logs: TournamentLogItem[]) {
+    this.logs.splice(0)
+    this.logs.push(...logs)
+  }
+
   @action async loadTournaments() {
     const response = await $axios.get<TournamentDetailDto[]>(`/api/tournaments`)
     if (response.status === 200) {
@@ -153,6 +175,29 @@ export default class AdminTournamentStore
       }
     )
     this.setBlinds(blinds)
+  }
+
+  @action async loadTournamentLog(dto: TournamentLogRequest) {
+    const response = await $axios.get<TournamentLogDto[]>(
+      `/api/tournaments/${dto.year}/${dto.month}/${dto.day}`
+    )
+
+    if (response.status === 200) {
+      const tournamentsLog = response.data.map<TournamentLogItem>(
+        (dto: TournamentLogDto): TournamentLogItem => {
+          const start = new Date(dto.startDateTime)
+          const end = new Date(dto.endDateTime)
+
+          return {
+            name: dto.title,
+            start: start.toLocaleTimeString(),
+            end: end.toLocaleTimeString(),
+            playTime: convertMsToTimeString(end.getTime() - start.getTime()),
+          }
+        }
+      )
+      this.updateLog(tournamentsLog)
+    }
   }
 
   @action async registerBy(dto: TournamentRegisterRequest) {
@@ -245,4 +290,46 @@ function mapToTournamentItem(dto: TournamentDetailDto): TournamentItem {
     name: dto.title,
     buyIn: `${dto.buyIn}`,
   }
+}
+
+interface TimeDto {
+  hours: string
+  minutes: string
+  seconds: string
+}
+
+function convertMsToTimeString(milliseconds: number): string {
+  // https://bobbyhadz.com/blog/typescript-calculate-time-between-dates
+  const time = convertMsToTime(milliseconds)
+
+  // 👇️ If you want to roll hours over, e.g. 00 to 24
+  // 👇️ uncomment the line below
+  // uncommenting next line gets you `00:00:00` instead of `24:00:00`
+  // or `12:15:31` instead of `36:15:31`, etc.
+  // 👇️ (roll hours over)
+  // hours = hours % 24;
+  if (time.hours === '00') {
+    return `${time.minutes}:${time.seconds}`
+  }
+
+  return `${time.hours}:${time.minutes}:${time.seconds}`
+}
+
+function convertMsToTime(milliseconds: number): TimeDto {
+  let seconds = Math.floor(milliseconds / 1000)
+  let minutes = Math.floor(seconds / 60)
+  const hours = Math.floor(minutes / 60)
+
+  seconds = seconds % 60
+  minutes = minutes % 60
+
+  return {
+    hours: padTo2Digits(hours),
+    minutes: padTo2Digits(minutes),
+    seconds: padTo2Digits(seconds),
+  }
+}
+
+function padTo2Digits(num: number): string {
+  return num.toString().padStart(2, '0')
 }

@@ -126,6 +126,11 @@ export default class DefaultLayout extends Vue {
       to: '/',
     },
     {
+      icon: 'mdi-history',
+      title: '토너먼트 기록',
+      to: '/tournament-log',
+    },
+    {
       icon: 'mdi-cog',
       title: '관리자 메뉴',
       subItems: [
