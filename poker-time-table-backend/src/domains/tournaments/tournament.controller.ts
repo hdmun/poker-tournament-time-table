@@ -21,6 +21,7 @@ import {
   TournamentDetailDto,
   TournamentDto,
   TournamentDeleteResponse,
+  TournamentLogDto,
 } from './dto/tournament';
 import { TournamentService } from './tournament.service';
 
@@ -44,6 +45,28 @@ export class TournamentController {
   async tournamentsBy(@Param('id') id: number): Promise<TournamentDetailDto> {
     try {
       return await this.tournamentService.tournamentBy(id);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
+  @Get('/:year/:month/:day')
+  async tournamentsByDate(
+    @Param('year') year: number,
+    @Param('month') month: number,
+    @Param('day') day: number,
+  ): Promise<TournamentLogDto[]> {
+    this.logger.log(`tournamentsByDate, ${year}/${month}/${day}`);
+
+    try {
+      const hours = 6; // 새벽에 시작하는 경우도 있으니 오전 6시를 기준으로 잡자
+      const start = new Date(year, month - 1, day, hours, 0, 0, 0);
+
+      const end = new Date(start.valueOf());
+      end.setDate(start.getDate() + 1); // 하루만 조회
+
+      return await this.tournamentService.tournamentByDate(start, end);
     } catch (error) {
       this.logger.error(error);
       throw error;

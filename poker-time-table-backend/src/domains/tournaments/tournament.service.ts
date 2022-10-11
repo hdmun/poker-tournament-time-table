@@ -3,13 +3,13 @@ import { BlindStructureRepository } from '~/domains/blind-structures/blind-struc
 import { InvalidInputError } from '~/common/exceptions';
 import {
   TournamentCloseResponse,
-  TournamentRegisterRequest,
   TournamentRegisterResponse,
   TournamentBlindDto,
   TournamentClockEventDto,
   TournamentDetailDto,
   TournamentDto,
   TournamentDeleteResponse,
+  TournamentLogDto,
 } from './dto/tournament';
 import { TournamentBlind } from './entities/tournament-blind.entity';
 import { Tournament } from './entities/tournament.entity';
@@ -17,10 +17,12 @@ import { EventService } from './events/tournament.events.service';
 import {
   mapFromTournament,
   mapFromTournamentDetail,
+  mapToLogFromTournament,
 } from './mapper/tournament';
 import { mapToTournamentBlind } from './mapper/tournament-blind';
 import { TournamentBlindRepository } from './tournament-blind.repository';
 import { TournamentRepository } from './tournament.repository';
+import { Between, IsNull, Not } from 'typeorm';
 
 @Injectable()
 export class TournamentService {
@@ -46,6 +48,23 @@ export class TournamentService {
       tournamentId: id,
     });
     return mapFromTournamentDetail(tournament, blinds);
+  }
+
+  async tournamentByDate(start: Date, end: Date): Promise<TournamentLogDto[]> {
+    this.logger.log(`tournamentByDate, start: ${start}, end: ${end}`);
+
+    // if (start.getTime() > end.getTime() ) throw
+
+    const tournamentLogs = await this.tournamentRepository.find({
+      where: {
+        startDateTime: Between(start, end),
+        endDateTime: Not(IsNull()),
+      },
+    });
+
+    return tournamentLogs.map((tournament) => {
+      return mapToLogFromTournament(tournament);
+    });
   }
 
   async registerTournament(

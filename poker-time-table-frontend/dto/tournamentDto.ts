@@ -23,6 +23,12 @@ export interface TournamentDetailDto {
   structures: TournamentBlindDto[]
 }
 
+export interface TournamentLogDto {
+  title: string
+  startDateTime: Date
+  endDateTime: Date
+}
+
 export interface TournamentClockEventDto {
   tournamentId: number
   blindId: number

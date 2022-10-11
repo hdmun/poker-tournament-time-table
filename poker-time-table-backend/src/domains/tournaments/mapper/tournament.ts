@@ -1,4 +1,8 @@
-import { TournamentDetailDto, TournamentDto } from '../dto/tournament';
+import {
+  TournamentDetailDto,
+  TournamentDto,
+  TournamentLogDto,
+} from '../dto/tournament';
 import { TournamentBlind } from '../entities/tournament-blind.entity';
 import { Tournament } from '../entities/tournament.entity';
 import { mapFromTournamentBlind } from './tournament-blind';
@@ -45,5 +49,15 @@ export function mapFromTournamentDetail(
     structures: blinds.map((value) => {
       return mapFromTournamentBlind(value);
     }),
+  };
+}
+
+export function mapToLogFromTournament(
+  tournament: Tournament,
+): TournamentLogDto {
+  return {
+    title: tournament.title,
+    startDateTime: tournament.startDateTime,
+    endDateTime: tournament.endDateTime,
   };
 }
