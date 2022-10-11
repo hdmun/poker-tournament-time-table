@@ -42,6 +42,12 @@
         :blind-id="clock.blindId"
       />
     </v-row>
+
+    <ErrorDialog
+      :show-dialog="showErrorDialog"
+      :dialog-message="errorDialogMessage"
+      @confirm="onConfirmErrorDialog"
+    />
   </v-flex>
 </template>
 
@@ -52,6 +58,7 @@ import TournamentBlinds, {
   BlindEditDto,
 } from '~/components/tournaments/tournamentBlinds.vue'
 import TournamentClock from '~/components/tournaments/tournamentClock.vue'
+import ErrorDialog from '~/components/ui/errorDialog.vue'
 import {
   createTournamentClockDto,
   TournamentClockDto,
@@ -62,6 +69,7 @@ import {
 } from '~/dto/tournamentDto'
 import { vxm } from '~/store'
 import { BlindStructureModel } from '~/store/admin/tournament'
+import { AxiosError } from '~/utils/api'
 
 interface WsResponse<T> {
   event: string
@@ -71,6 +79,7 @@ interface WsResponse<T> {
 @Component({
   components: {
     BlindsStructureTable,
+    ErrorDialog,
     TournamentBlinds,
     TournamentClock,
   },
@@ -87,6 +96,9 @@ export default class TournamentClockPage extends Vue {
   blindStructure: BlindStructureModel[] = []
 
   webSocket: WebSocket | null = null
+
+  showErrorDialog: boolean = false
+  errorDialogMessage: string = ''
 
   get tournamentId() {
     return this.clock.tournamentId
@@ -144,8 +156,10 @@ export default class TournamentClockPage extends Vue {
         this.blindTable?.updateMaxBlindLevel()
       })
       .catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error(error)
+        const axiosError = error as AxiosError
+        if (axiosError !== null) {
+          this.onError(axiosError)
+        }
       })
 
     if (this.webSocket === null) {
@@ -214,8 +228,10 @@ export default class TournamentClockPage extends Vue {
           blinds: updateBlinds,
         })
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error)
+        const axiosError = error as AxiosError
+        if (axiosError !== null) {
+          this.onError(axiosError)
+        }
       }
     }
   }
@@ -236,8 +252,10 @@ export default class TournamentClockPage extends Vue {
     try {
       await vxm.tournament.play(this.tournamentId)
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error)
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
     }
   }
 
@@ -245,8 +263,10 @@ export default class TournamentClockPage extends Vue {
     try {
       await vxm.tournament.pause(this.tournamentId)
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error)
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
     }
   }
 
@@ -254,8 +274,10 @@ export default class TournamentClockPage extends Vue {
     try {
       await vxm.tournament.blindDown(this.tournamentId)
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error)
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
     }
   }
 
@@ -263,9 +285,24 @@ export default class TournamentClockPage extends Vue {
     try {
       await vxm.tournament.blindUp(this.tournamentId)
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error)
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
     }
+  }
+
+  onError(error: AxiosError) {
+    // eslint-disable-next-line no-console
+    console.error('AxiosError', error.toJSON())
+    // eslint-disable-next-line no-console
+    console.error(error.response)
+    this.errorDialogMessage = error.response?.data.error
+    this.showErrorDialog = true
+  }
+
+  onConfirmErrorDialog() {
+    this.showErrorDialog = false
   }
 }
 </script>

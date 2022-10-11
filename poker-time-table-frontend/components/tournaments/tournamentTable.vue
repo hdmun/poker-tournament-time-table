@@ -2,7 +2,7 @@
   <v-card>
     <v-data-table
       :headers="headers"
-      :items="tournaments"
+      :items="syncedTournaments"
       :page.sync="page"
       :items-per-page="itemPerPage"
       hide-default-footer
@@ -62,8 +62,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import { vxm } from '~/store'
+import { Component, Emit, PropSync, Vue } from 'nuxt-property-decorator'
+import { PropType } from 'vue'
 import { eTournamentState, TournamentItem } from '~/store/admin/tournament'
 
 interface TableHeader {
@@ -83,7 +83,11 @@ export default class TournamentTable extends Vue {
     { text: '삭제', value: 'delete', sortable: false, align: 'center' },
   ]
 
-  tournaments: TournamentItem[] = []
+  @PropSync('tournaments', {
+    type: Array as PropType<Array<TournamentItem>>,
+    required: true,
+  })
+  syncedTournaments!: TournamentItem[]
 
   page: number = 1
   pageCount: number = 1
@@ -130,16 +134,6 @@ export default class TournamentTable extends Vue {
     }
   }
 
-  mounted() {
-    this.loadTournaments()
-  }
-
-  loadTournaments() {
-    vxm.tournament.loadTournaments().then(() => {
-      this.tournaments = vxm.tournament.tournaments
-    })
-  }
-
   onClickClose(item: TournamentItem) {
     this.closeDialog = true
     this.deleteTournment = item
@@ -165,36 +159,25 @@ export default class TournamentTable extends Vue {
     }
   }
 
-  async onClickCloseTournament() {
+  @Emit('close')
+  onClickCloseTournament(): number {
     if (!this.deleteTournment) {
       this.closeDialog = false
-      return
-    }
-
-    try {
-      await vxm.tournament.closeBy(this.deleteTournment.id)
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error)
+      return 0
     }
 
     this.closeDialog = false
+    return this.deleteTournment.id
   }
 
-  async onClickDeleteTournament() {
+  @Emit('delete')
+  onClickDeleteTournament(): number {
     if (!this.deleteTournment) {
       this.deleteDialog = false
-      return
+      return 0
     }
 
-    try {
-      await vxm.tournament.deleteBy(this.deleteTournment.id)
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error)
-    }
-
-    this.deleteDialog = false
+    return this.deleteTournment.id
   }
 }
 </script>

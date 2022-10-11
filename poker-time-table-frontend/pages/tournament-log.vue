@@ -19,14 +19,22 @@
       >
       </v-data-table>
     </v-card>
+
+    <ErrorDialog
+      :show-dialog="showErrorDialog"
+      :dialog-message="errorDialogMessage"
+      @confirm="onConfirmErrorDialog"
+    />
   </v-flex>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import ErrorDialog from '~/components/ui/errorDialog.vue'
 import TableToolbarWithDatePicker from '~/components/ui/tableToolbarWithDatePicker.vue'
 import { vxm } from '~/store'
 import { TournamentLogItem } from '~/store/admin/tournament'
+import { AxiosError } from '~/utils/api'
 
 interface TableHeader {
   text: string
@@ -37,6 +45,7 @@ interface TableHeader {
 
 @Component({
   components: {
+    ErrorDialog,
     TableToolbarWithDatePicker,
   },
 })
@@ -49,6 +58,9 @@ export default class TournamentLogPage extends Vue {
   ]
 
   tournaments: TournamentLogItem[] = []
+
+  showErrorDialog: boolean = false
+  errorDialogMessage: string = ''
 
   page: number = 1
   pageCount: number = 1
@@ -63,13 +75,31 @@ export default class TournamentLogPage extends Vue {
   }
 
   async onPickDate(date: Date) {
-    // this.showDatePicker = false
+    try {
+      await vxm.tournament.loadTournamentLog({
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: date.getDate(),
+      })
+    } catch (error) {
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
+    }
+  }
 
-    await vxm.tournament.loadTournamentLog({
-      year: date.getFullYear(),
-      month: date.getMonth() + 1,
-      day: date.getDate(),
-    })
+  onError(error: AxiosError) {
+    // eslint-disable-next-line no-console
+    console.error('AxiosError', error.toJSON())
+    // eslint-disable-next-line no-console
+    console.error(error.response)
+    this.errorDialogMessage = error.response?.data.error
+    this.showErrorDialog = true
+  }
+
+  onConfirmErrorDialog() {
+    this.showErrorDialog = false
   }
 }
 </script>

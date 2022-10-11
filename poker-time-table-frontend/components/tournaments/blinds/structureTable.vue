@@ -54,7 +54,7 @@
         <template v-else>
           <v-col class="pa-0" :cols="colsGrid * 3 + 1">
             <BreakTimeTableCell
-              :text-color="cellTextColor(index)"
+              :text-color="breakTimeTextColor(index)"
               :back-color="cellBackgroundColor(index)"
             />
           </v-col>
@@ -115,6 +115,9 @@ export default class BlindsStructureTable extends Vue {
   blindId!: number
 
   get isMoreBlind(): boolean {
+    if (this.landscapeMode) {
+      return false
+    }
     return this.blindStructures.length - this.blindId >= this.itemCount
   }
 
@@ -156,6 +159,10 @@ export default class BlindsStructureTable extends Vue {
 
   cellTextColor(index: number) {
     return this.blindId === index ? 'white' : 'primary'
+  }
+
+  breakTimeTextColor(index: number) {
+    return this.blindId === index ? 'white' : 'accent1'
   }
 
   cellBackgroundColor(index: number) {

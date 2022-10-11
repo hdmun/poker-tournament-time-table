@@ -6,6 +6,7 @@
         :name.sync="metaName"
         :templates="blindTemplates"
         :editstructure.sync="structure"
+        @select="onSelectTemplate"
         @delete="onDeleteTemplate"
         @register="onRegister"
       />
@@ -16,6 +17,12 @@
         @delete="onDelete"
       />
     </v-col>
+
+    <ErrorDialog
+      :show-dialog="showErrorDialog"
+      :dialog-message="errorDialogMessage"
+      @confirm="onConfirmErrorDialog"
+    />
   </v-row>
 </template>
 
@@ -25,6 +32,7 @@ import AdminBlindStructureTemplate from '~/components/admin/blindStructureTempla
 import AdminRegisterBlindStructure, {
   EditBlindStructureDto,
 } from '~/components/admin/registerBlindStructure.vue'
+import ErrorDialog from '~/components/ui/errorDialog.vue'
 import {
   BlindStructureDto,
   BlindStructureTemplateDto,
@@ -32,11 +40,13 @@ import {
   UpdateBlindStructureDto,
 } from '~/dto/blindStructureDto'
 import { vxm } from '~/store'
+import { AxiosError } from '~/utils/api'
 
 @Component({
   components: {
     AdminBlindStructureTemplate,
     AdminRegisterBlindStructure,
+    ErrorDialog,
   },
 })
 export default class AdminBlindStructure extends Vue {
@@ -47,41 +57,79 @@ export default class AdminBlindStructure extends Vue {
   blindTemplates: BlindStructureTemplateDto[] = []
   structure: BlindStructureDto[] = []
 
+  showErrorDialog: boolean = false
+  errorDialogMessage: string = ''
+
   mounted() {
     this.blindTemplates = vxm.blindTemplate.templates
     this.structure = vxm.blindTemplate.templateStructures
-    vxm.blindTemplate.getBlindTemplates()
+
+    try {
+      vxm.blindTemplate.getBlindTemplates()
+    } catch (error) {
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
+    }
   }
 
   beforeDestroy() {
     vxm.blindTemplate.updateTemplateStructures([])
   }
 
+  async onSelectTemplate(id: number) {
+    if (id > 0) {
+      try {
+        await vxm.blindTemplate.getBlindTemplateById(id)
+      } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError !== null) {
+          this.onError(axiosError)
+        }
+      }
+    }
+  }
+
   async onDeleteTemplate(id: number) {
     if (id > 0) {
-      await vxm.blindTemplate.deleteTemplateById(id)
-      await vxm.blindTemplate.getBlindTemplates()
-      vxm.blindTemplate.updateTemplateStructures([])
+      try {
+        await vxm.blindTemplate.deleteTemplateById(id)
+        await vxm.blindTemplate.getBlindTemplates()
+        vxm.blindTemplate.updateTemplateStructures([])
+      } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError !== null) {
+          this.onError(axiosError)
+        }
+      }
     }
   }
 
   async onRegister(dto: EditBlindStructureDto) {
-    if (dto.id) {
-      const requestDto: UpdateBlindStructureDto = {
-        id: dto.id,
-        name: dto.name,
-        structures: dto.structures,
+    try {
+      if (dto.id) {
+        const requestDto: UpdateBlindStructureDto = {
+          id: dto.id,
+          name: dto.name,
+          structures: dto.structures,
+        }
+        await vxm.blindTemplate.updateBlindStructure(requestDto)
+      } else {
+        const requestDto: RegisterBlindStructureDto = {
+          name: dto.name,
+          structures: dto.structures,
+        }
+        await vxm.blindTemplate.registerBlindStructure(requestDto)
       }
-      await vxm.blindTemplate.updateBlindStructure(requestDto)
-    } else {
-      const requestDto: RegisterBlindStructureDto = {
-        name: dto.name,
-        structures: dto.structures,
-      }
-      await vxm.blindTemplate.registerBlindStructure(requestDto)
-    }
 
-    await vxm.blindTemplate.getBlindTemplates()
+      await vxm.blindTemplate.getBlindTemplates()
+    } catch (error) {
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
+    }
   }
 
   onDelete(blind: BlindStructureDto) {
@@ -97,6 +145,19 @@ export default class AdminBlindStructure extends Vue {
     }
 
     this.registerBlindStructure.updateBlind()
+  }
+
+  onError(error: AxiosError) {
+    // eslint-disable-next-line no-console
+    console.error('AxiosError', error.toJSON())
+    // eslint-disable-next-line no-console
+    console.error(error.response)
+    this.errorDialogMessage = error.response?.data.error
+    this.showErrorDialog = true
+  }
+
+  onConfirmErrorDialog() {
+    this.showErrorDialog = false
   }
 }
 </script>

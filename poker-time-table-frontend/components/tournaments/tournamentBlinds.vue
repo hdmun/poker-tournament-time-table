@@ -56,7 +56,6 @@ import BlindsStructureTable from './blinds/structureTable.vue'
 import EditBlindsStructureTable from './blinds/editStructureTable.vue'
 import AddBlindsStructureTableRow from './blinds/addStructureTableRow.vue'
 import { BlindStructureDto } from '~/dto/blindStructureDto'
-import { vxm } from '~/store'
 import { BlindStructureModel } from '~/store/admin/tournament'
 
 function isEqual(a: BlindStructureModel, b: BlindStructureModel) {
@@ -145,13 +144,20 @@ export default class TournamentBlinds extends Vue {
 
   onBlindAdd(addBlind: BlindStructureModel) {
     if (this.addBlindRow.isAddBreakTime) {
-      // break time
-      vxm.tournament.addBreakTime(addBlind.minute)
+      // add break time
+      this.blindStructures.push({
+        level: -1,
+        ante: -1,
+        smallBlind: -1,
+        bigBlind: -1,
+        minute: addBlind.minute,
+      })
     } else {
       if (!this.lastBlind) {
         return
       }
-      vxm.tournament.addBlind({
+
+      this.blindStructures.push({
         level: this.lastBlind.level + 1,
         ante: addBlind.ante,
         smallBlind: addBlind.smallBlind,
