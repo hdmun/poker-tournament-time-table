@@ -29,6 +29,12 @@ export interface TournamentBlindDto {
   minute: number;
 }
 
+export interface TournamentLogDto {
+  title: string;
+  startDateTime: Date;
+  endDateTime: Date;
+}
+
 export interface TournamentRegisterRequest {
   title: string;
   buyIn: number;
