@@ -21,12 +21,14 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import TournamentTable from '~/components/tournaments/tournamentTable.vue'
+import ErrorDialog from '~/components/ui/errorDialog.vue'
 import { vxm } from '~/store'
 import { TournamentItem } from '~/store/admin/tournament'
 import { AxiosError } from '~/utils/api'
 
 @Component({
   components: {
+    ErrorDialog,
     TournamentTable,
   },
 })
