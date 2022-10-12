@@ -195,7 +195,7 @@ export default class TournamentClockPage extends Vue {
           this.isPlayedSound = true
         }
 
-        if (this.clock.blindId > wsResponse.data.blindId) {
+        if (this.clock.blindId < wsResponse.data.blindId) {
           this.isPlayedSound = false
         }
       }
