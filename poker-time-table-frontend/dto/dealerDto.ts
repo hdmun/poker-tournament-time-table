@@ -4,3 +4,11 @@ export interface DealerPlayDto {
   tournament: string
   dealingTime: string
 }
+
+export interface DealerPlayLogDto {
+  name: string
+  tournament: string
+  sitInTime: string
+  sitOutTime: string
+  dealingTime: string
+}
