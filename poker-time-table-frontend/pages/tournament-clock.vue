@@ -88,8 +88,7 @@ export default class TournamentClockPage extends Vue {
   @Ref() blindTable!: TournamentBlinds
 
   clock: TournamentClockDto = createTournamentClockDto()
-  blindUpAudio = new Audio('/blind-up.mp3')
-  isPlayedSound: boolean = false
+  playSound: boolean = false
 
   showBlindTable: boolean = false
   editBlindTable: boolean = false
@@ -139,7 +138,7 @@ export default class TournamentClockPage extends Vue {
   }
 
   mounted() {
-    this.isPlayedSound = false
+    this.playSound = true
 
     const tournamentId = this.$route.query?.id as string
     if (tournamentId === null) {
@@ -189,14 +188,14 @@ export default class TournamentClockPage extends Vue {
           remainHours === 0 &&
           reaminMinutes === 0 &&
           reaminSeconds < 10 &&
-          !this.isPlayedSound
+          this.playSound
         ) {
-          this.blindUpAudio.play()
-          this.isPlayedSound = true
+          new Audio('/blind-up.mp3').play()
+          this.playSound = false
         }
 
         if (this.clock.blindId < wsResponse.data.blindId) {
-          this.isPlayedSound = false
+          this.playSound = true
         }
       }
       vxm.tournament.updateClock(wsResponse.data)
