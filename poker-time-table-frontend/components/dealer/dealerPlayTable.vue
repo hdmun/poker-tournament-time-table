@@ -4,7 +4,12 @@
       딜러 상태
       <v-spacer></v-spacer>
 
-      <v-btn color="accent" dark class="ma-3" @click="addDealerDialog = true">
+      <v-btn
+        color="accent"
+        dark
+        class="ma-3"
+        @click="showAddDealerDialog = true"
+      >
         딜러 추가
       </v-btn>
     </v-card-title>
@@ -43,7 +48,7 @@
     />
 
     <AddDelaerDialog
-      :show-dialog.sync="addDealerDialog"
+      :show-add-dialog.sync="showAddDealerDialog"
       @addDealer="onAddDelaer"
     />
   </v-card>
@@ -54,8 +59,8 @@ import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
 import { PropType } from 'vue'
 import ConfirmDialog from '../ui/confirmDialog.vue'
 import TableToolbarWithDatePicker from '../ui/tableToolbarWithDatePicker.vue'
-import AddDealerdialog from './addDelaerDialog.vue'
-import { DealerPlayDto } from '~/dto/dealerDto'
+import AddDelaerDialog from './addDelaerDialog.vue'
+import { DealerPlayDto } from '~/store/admin/dealer'
 
 interface TableHeader {
   text: string
@@ -65,7 +70,7 @@ interface TableHeader {
 
 @Component({
   components: {
-    AddDealerdialog,
+    AddDelaerDialog,
     TableToolbarWithDatePicker,
     ConfirmDialog,
   },
@@ -84,7 +89,7 @@ export default class DealerPlayTable extends Vue {
   @Prop({ type: Array as PropType<Array<DealerPlayDto>>, required: true })
   dealers!: DealerPlayDto[]
 
-  addDealerDialog: boolean = false
+  showAddDealerDialog: boolean = false
   selectDealer?: DealerPlayDto
 
   showConfirmDialog: boolean = false
@@ -95,7 +100,7 @@ export default class DealerPlayTable extends Vue {
 
   @Emit('addDelaer')
   onAddDelaer(name: string) {
-    this.addDealerDialog = false
+    this.showAddDealerDialog = false
     return name
   }
 

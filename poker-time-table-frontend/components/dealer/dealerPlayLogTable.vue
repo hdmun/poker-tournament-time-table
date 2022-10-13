@@ -26,7 +26,7 @@
 import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
 import { PropType } from 'vue'
 import TableToolbarWithDatePicker from '../ui/tableToolbarWithDatePicker.vue'
-import { DealerPlayLogDto } from '~/dto/dealerDto'
+import { DealerPlayLogDto } from '~/store/admin/dealer'
 
 interface TableHeader {
   text: string

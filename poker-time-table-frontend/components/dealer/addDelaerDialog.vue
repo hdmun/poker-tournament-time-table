@@ -1,9 +1,7 @@
 <template>
   <v-dialog v-model="showDialog" max-width="300px">
     <v-card>
-      <v-card-title>
-        <span class="text-h5">딜러 추가</span>
-      </v-card-title>
+      <v-card-title class="text-h5"> 딜러 추가 </v-card-title>
 
       <v-card-text>
         <v-container>
@@ -20,13 +18,10 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="showDialog = false">
-          취소
-        </v-btn>
+        <v-btn text @click="showDialog = false"> 취소 </v-btn>
         <v-btn
-          color="blue darken-1"
-          :disabled="dealerName.length <= 0 || dealerName.trim() === ''"
-          text
+          color="accent"
+          :disabled="disabledAddBtn"
           @click="onClickAddDelaer"
         >
           등록
@@ -42,15 +37,19 @@ import { Component, Emit, PropSync, Vue } from 'nuxt-property-decorator'
 @Component({
   components: {},
 })
-export default class AddDealerdialog extends Vue {
-  @PropSync('showDialog', { type: Boolean, required: true })
+export default class AddDelaerDialog extends Vue {
+  @PropSync('showAddDialog', { type: Boolean, required: true })
   showDialog!: boolean
 
   dealerName: string = ''
 
+  get disabledAddBtn(): boolean {
+    return this.dealerName.length <= 0 || this.dealerName.trim() === ''
+  }
+
   @Emit('addDealer')
   onClickAddDelaer(_event: PointerEvent) {
-    return this.dealerName
+    return this.dealerName.trim()
   }
 }
 </script>
