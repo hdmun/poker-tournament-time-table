@@ -22,6 +22,7 @@ import {
   TournamentDto,
   TournamentDeleteResponse,
   TournamentLogDto,
+  GetSitInTournamentResponse as GetTournamentNonDealersResponse,
 } from './dto/tournament';
 import { TournamentService } from './tournament.service';
 
@@ -35,6 +36,23 @@ export class TournamentController {
   async tournaments(): Promise<TournamentDto[]> {
     try {
       return await this.tournamentService.tournamentAll();
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
+  @Get('/non-dealers') // 네이밍..
+  async getNonDealers(): Promise<GetTournamentNonDealersResponse[]> {
+    try {
+      const tournaments =
+        await this.tournamentService.getNonDealerTournaments();
+      return tournaments.map<GetTournamentNonDealersResponse>((tournament) => {
+        return {
+          id: tournament.id,
+          title: tournament.title,
+        };
+      });
     } catch (error) {
       this.logger.error(error);
       throw error;

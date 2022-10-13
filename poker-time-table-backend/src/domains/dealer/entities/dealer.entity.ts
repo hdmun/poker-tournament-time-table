@@ -28,7 +28,7 @@ export class Dealer {
     nullable: true,
     createForeignKeyConstraints: false,
   })
-  @JoinColumn({ name: 'tournament_id' })
+  @JoinColumn({ name: 'tournament_id', referencedColumnName: 'id' })
   tournament: Tournament;
 
   static Create(
