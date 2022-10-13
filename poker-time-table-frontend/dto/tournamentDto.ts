@@ -29,6 +29,11 @@ export interface TournamentLogDto {
   endDateTime: Date
 }
 
+export interface GetSitInTournamentResponse {
+  id: number
+  title: string
+}
+
 export interface TournamentClockEventDto {
   tournamentId: number
   blindId: number

@@ -9,6 +9,7 @@ import {
   TournamentClockEventDto,
   TournamentDetailDto,
   TournamentLogDto,
+  GetSitInTournamentResponse,
 } from '~/dto/tournamentDto'
 import { $axios } from '~/utils/api'
 
@@ -50,6 +51,11 @@ export interface TournamentLogItem {
   playTime: string // 00:00:00
 }
 
+export interface TournamentSitIn {
+  tournamentId: number
+  tournamentTitle: string
+}
+
 export interface UpdateTournamentBlindDto {
   id: number
   blinds: TournamentBlindDto[]
@@ -77,6 +83,8 @@ export default class AdminTournamentStore
   readonly clock: TournamentClockDto = createTournamentClockDto()
 
   readonly logs: TournamentLogItem[] = []
+
+  readonly tournamentsSitIn: TournamentSitIn[] = []
 
   @mutation update(tournaments: TournamentItem[]) {
     this.tournaments.splice(0)
@@ -133,6 +141,11 @@ export default class AdminTournamentStore
   @mutation updateLog(logs: TournamentLogItem[]) {
     this.logs.splice(0)
     this.logs.push(...logs)
+  }
+
+  @mutation setSitIn(tournamentsSitIn: TournamentSitIn[]) {
+    this.tournamentsSitIn.splice(0)
+    this.tournamentsSitIn.push(...tournamentsSitIn)
   }
 
   @action async loadTournaments() {
@@ -198,6 +211,20 @@ export default class AdminTournamentStore
       )
       this.updateLog(tournamentsLog)
     }
+  }
+
+  @action async loadNoneDealer() {
+    const response = await $axios.get<GetSitInTournamentResponse[]>(
+      `/api/tournaments/non-dealers`
+    )
+    this.setSitIn(
+      response.data.map<TournamentSitIn>((tournaments) => {
+        return {
+          tournamentId: tournaments.id,
+          tournamentTitle: tournaments.title,
+        }
+      })
+    )
   }
 
   @action async registerBy(dto: TournamentRegisterRequest) {

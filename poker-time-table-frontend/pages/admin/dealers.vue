@@ -4,8 +4,11 @@
       <v-col height="100%">
         <DealerPlayTable
           :dealers="dealers"
+          :tournaments-sit-in="tournamentsSitIn"
           @addDelaer="onAddDealer"
-          @dealerTableInOut="onDealerTableInOut"
+          @dealerTableIn="onDealerTableIn"
+          @dealerTableOut="onDealerTableOut"
+          @loadTournaments="onLoadTournaments"
         />
       </v-col>
 
@@ -21,9 +24,10 @@ import { Context } from '@nuxt/types'
 import { Component, Vue } from 'nuxt-property-decorator'
 import DealerPlayTable from '~/components/dealer/dealerPlayTable.vue'
 import DealerPlayLogTable from '~/components/dealer/dealerPlayLogTable.vue'
-import { RegisterDealerRequest } from '~/dto/dealerDto'
-import { DealerPlayDto, DealerPlayLogDto } from '~/store/admin/dealer'
+import { RegisterDealerRequest, UpdateDealerRequest } from '~/dto/dealerDto'
 import { vxm } from '~/store'
+import { DealerPlayDto, DealerPlayLogDto } from '~/store/admin/dealer'
+import { TournamentSitIn } from '~/store/admin/tournament'
 
 @Component({
   components: {
@@ -37,9 +41,11 @@ import { vxm } from '~/store'
 export default class DealersPage extends Vue {
   dealers: DealerPlayDto[] = []
   dealerLogs: DealerPlayLogDto[] = []
+  tournamentsSitIn: TournamentSitIn[] = []
 
   mounted() {
     this.dealers = vxm.dealer.dealers
+    this.tournamentsSitIn = vxm.tournament.tournamentsSitIn
     vxm.dealer.load()
   }
 
@@ -51,17 +57,18 @@ export default class DealersPage extends Vue {
     } as RegisterDealerRequest)
   }
 
-  async onDealerTableInOut(dto?: DealerPlayDto) {
-    console.log(dto)
-
+  async onDealerTableIn(dto?: UpdateDealerRequest) {
     if (dto) {
-      const isOut = dto.tournament !== ''
-      if (isOut) {
-        await vxm.dealer.tableSitOut(dto.id)
-      } else {
-        await vxm.dealer.tableSitIn(dto.id)
-      }
+      await vxm.dealer.update(dto)
     }
+  }
+
+  async onDealerTableOut(dealerId: number) {
+    await vxm.dealer.update({ dealerId, tournamentId: 0 })
+  }
+
+  async onLoadTournaments() {
+    await vxm.tournament.loadNoneDealer()
   }
 }
 </script>

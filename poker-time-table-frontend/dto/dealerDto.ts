@@ -18,3 +18,16 @@ export interface RegisterDealerResponse {
   name: string
   registerDate: Date
 }
+
+export interface UpdateDealerRequest {
+  dealerId: number
+  tournamentId: number
+}
+
+export interface UpdateDealerResponse {
+  dealerId: number
+  dealerName: string
+  tournamentId: number
+  tournamentTitle: string
+  sitInTime: string
+}

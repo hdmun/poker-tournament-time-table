@@ -40,16 +40,24 @@
 
     <ConfirmDialog
       :show-dialog="showConfirmDialog"
-      :dialog-title="confirmDialogTitle"
-      :dialog-message="confirmDialogMessage"
+      :dialog-title="dialogTitle"
+      :dialog-message="dialogMessage"
       :dialog-confirm-text="'확인'"
-      @confirm="onConfirmTableInOut"
+      @confirm="onConfirmTableOut"
       @cancel="onCancelTableInOut"
     />
 
     <AddDelaerDialog
       :show-add-dialog.sync="showAddDealerDialog"
       @addDealer="onAddDelaer"
+    />
+
+    <SelectDialog
+      :show-select-dialog.sync="showSelectDialog"
+      :dialog-title="dialogTitle"
+      :dialog-message="dialogMessage"
+      :select-items="selectItems"
+      @select="onConfirmTableIn"
     />
   </v-card>
 </template>
@@ -59,8 +67,11 @@ import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
 import { PropType } from 'vue'
 import ConfirmDialog from '../ui/confirmDialog.vue'
 import TableToolbarWithDatePicker from '../ui/tableToolbarWithDatePicker.vue'
+import SelectDialog, { SelectDialogItem } from '../ui/selectDialog.vue'
 import AddDelaerDialog from './addDelaerDialog.vue'
 import { DealerPlayDto } from '~/store/admin/dealer'
+import { TournamentSitIn } from '~/store/admin/tournament'
+import { UpdateDealerRequest } from '~/dto/dealerDto'
 
 interface TableHeader {
   text: string
@@ -71,8 +82,9 @@ interface TableHeader {
 @Component({
   components: {
     AddDelaerDialog,
-    TableToolbarWithDatePicker,
     ConfirmDialog,
+    SelectDialog,
+    TableToolbarWithDatePicker,
   },
 })
 export default class DealerPlayTable extends Vue {
@@ -89,14 +101,28 @@ export default class DealerPlayTable extends Vue {
   @Prop({ type: Array as PropType<Array<DealerPlayDto>>, required: true })
   dealers!: DealerPlayDto[]
 
+  @Prop({ type: Array as PropType<Array<TournamentSitIn>>, required: true })
+  tournamentsSitIn!: TournamentSitIn[]
+
   showAddDealerDialog: boolean = false
   selectDealer?: DealerPlayDto
 
   showConfirmDialog: boolean = false
-  confirmDialogTitle: string = ''
-  confirmDialogMessage: string = ''
+  dialogTitle: string = ''
+  dialogMessage: string = ''
+
+  showSelectDialog: boolean = false
 
   mounted() {}
+
+  get selectItems(): SelectDialogItem[] {
+    return this.tournamentsSitIn.map<SelectDialogItem>((value) => {
+      return {
+        id: value.tournamentId,
+        label: value.tournamentTitle,
+      }
+    })
+  }
 
   @Emit('addDelaer')
   onAddDelaer(name: string) {
@@ -104,31 +130,41 @@ export default class DealerPlayTable extends Vue {
     return name
   }
 
+  @Emit('loadTournaments')
   onClickTableIn(dealer: DealerPlayDto) {
     this.selectDealer = dealer
-    this.confirmDialogTitle = `'${this.selectDealer.name}' 딜러`
-    this.confirmDialogMessage = `투입 하시겠습니까?`
-    this.showConfirmDialog = true
+    this.dialogTitle = `'${this.selectDealer.name}' 딜러`
+    this.dialogMessage = `토너먼트를 선택해주세요`
+    this.showSelectDialog = true
+  }
 
-    return dealer.id
+  @Emit('dealerTableIn')
+  onConfirmTableIn(tournamentId: number): UpdateDealerRequest | undefined {
+    this.showSelectDialog = false
+    if (this.selectDealer) {
+      return {
+        dealerId: this.selectDealer.id,
+        tournamentId,
+      }
+    }
+    return undefined
   }
 
   onClickTableOut(dealer: DealerPlayDto) {
     this.selectDealer = dealer
-    this.confirmDialogTitle = `'${this.selectDealer.name}' 딜러`
-    this.confirmDialogMessage = `아웃 하시겠습니까?`
+    this.dialogTitle = `'${this.selectDealer.name}' 딜러`
+    this.dialogMessage = `아웃 하시겠습니까?`
     this.showConfirmDialog = true
   }
 
-  @Emit('dealerTableInOut')
-  onConfirmTableInOut(): DealerPlayDto | undefined {
-    this.showConfirmDialog = false
-    return this.selectDealer
-  }
-
-  onCancelTableInOut(): number {
+  @Emit('dealerTableOut')
+  onConfirmTableOut(): number {
     this.showConfirmDialog = false
     return this.selectDealer?.id ?? 0
+  }
+
+  onCancelTableInOut() {
+    this.showConfirmDialog = false
   }
 }
 </script>

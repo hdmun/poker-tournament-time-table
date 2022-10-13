@@ -3,6 +3,8 @@ import {
   GetDealersResponse,
   RegisterDealerRequest,
   RegisterDealerResponse,
+  UpdateDealerRequest,
+  UpdateDealerResponse,
 } from '~/dto/dealerDto'
 import { $axios } from '~/utils/api'
 
@@ -45,6 +47,14 @@ export default class AdminDealerStore
     this.dealers.push(dealer)
   }
 
+  @mutation updateDealer(dealer: DealerPlayDto) {
+    const findDealer = this.dealers.find((value) => value.id === dealer.id)
+    if (findDealer) {
+      findDealer.tournament = dealer.tournament
+      findDealer.dealingTime = dealer.dealingTime
+    }
+  }
+
   @action async load() {
     const response = await $axios.get<GetDealersResponse>(`/api/dealers`)
     const dealers = response.data.dealers.map<DealerPlayDto>((dealer) => {
@@ -72,12 +82,57 @@ export default class AdminDealerStore
       dto
     )
 
-    const newDealer = response.data
-    this.addDealer({
-      id: newDealer.id,
-      name: newDealer.name,
-      tournament: '',
-      dealingTime: '',
-    })
+    // eslint-disable-next-line no-console
+    console.log('register', response.status, response.data)
+
+    if (response.status === 201) {
+      const newDealer = response.data
+      const playDto = mapToDealerPlayDto(newDealer.id, newDealer.name)
+      this.addDealer(playDto)
+    }
+  }
+
+  @action async update(dto: UpdateDealerRequest) {
+    const response = await $axios.put<UpdateDealerResponse>(
+      `/api/dealers/${dto.dealerId}`,
+      dto
+    )
+
+    // eslint-disable-next-line no-console
+    console.log('update', response.status, response.data)
+
+    const playDto = mapToPlayDtoFromUpdateResponse(response.data)
+    this.updateDealer(playDto)
+  }
+}
+
+function mapToPlayDtoFromUpdateResponse(
+  dto: UpdateDealerResponse
+): DealerPlayDto {
+  return mapToDealerPlayDto(
+    dto.dealerId,
+    dto.dealerName,
+    dto.tournamentTitle,
+    dto.sitInTime
+  )
+}
+
+function mapToDealerPlayDto(
+  id: number,
+  name: string,
+  tournament?: string,
+  sitInTime?: string
+): DealerPlayDto {
+  let dealingTimeStr = '-'
+  if (sitInTime) {
+    const dealingTime = new Date().getTime() - new Date(sitInTime).getTime()
+    dealingTimeStr = dealingTime.toLocaleString()
+  }
+
+  return {
+    id,
+    name,
+    tournament: tournament ?? '',
+    dealingTime: dealingTimeStr,
   }
 }
