@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="showDialog" max-width="300px">
-    <v-card>
+    <v-card class="gray7">
       <v-card-title class="text-h5"> 딜러 추가 </v-card-title>
 
       <v-card-text>

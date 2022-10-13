@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="gray7">
     <v-card-title>
       딜러 상태
       <v-spacer></v-spacer>
@@ -19,7 +19,7 @@
       :items="dealers"
       :items-per-page="10"
       hide-default-footer
-      class="elevation-1"
+      class="elevation-1 gray7"
       @page-count="pageCount = $event"
     >
       <template #[`item.action`]="{ item }">

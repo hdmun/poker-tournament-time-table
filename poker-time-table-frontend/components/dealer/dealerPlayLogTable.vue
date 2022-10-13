@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="gray7">
     <v-card-title>
       {{ tableTitle }}
       <v-spacer></v-spacer>
@@ -12,7 +12,7 @@
       :items="dealers"
       :items-per-page="itemPerPage"
       hide-default-footer
-      class="elevation-1"
+      class="elevation-1 gray7"
       @page-count="pageCount = $event"
     />
 
