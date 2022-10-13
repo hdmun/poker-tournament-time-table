@@ -1,5 +1,6 @@
 import { action, createModule, mutation } from 'vuex-class-component'
 import {
+  DealerDto,
   GetDealersResponse,
   RegisterDealerRequest,
   RegisterDealerResponse,
@@ -7,6 +8,7 @@ import {
   UpdateDealerResponse,
 } from '~/dto/dealerDto'
 import { $axios } from '~/utils/api'
+import { convertMsToTimeString } from '~/utils/time'
 
 export interface DealerPlayDto {
   id: number
@@ -58,19 +60,7 @@ export default class AdminDealerStore
   @action async load() {
     const response = await $axios.get<GetDealersResponse>(`/api/dealers`)
     const dealers = response.data.dealers.map<DealerPlayDto>((dealer) => {
-      let dealingTimeStr = '-'
-      if (dealer.sitInTime) {
-        const dealingTime =
-          new Date().getTime() - new Date(dealer.sitInTime).getTime()
-        dealingTimeStr = dealingTime.toLocaleString()
-      }
-
-      return {
-        id: dealer.id,
-        name: dealer.name,
-        tournament: dealer.tournament ?? '',
-        dealingTime: dealingTimeStr,
-      }
+      return mapToPlayDtoFromDealerDto(dealer)
     })
 
     this.setDealers(dealers)
@@ -106,6 +96,10 @@ export default class AdminDealerStore
   }
 }
 
+function mapToPlayDtoFromDealerDto(dto: DealerDto): DealerPlayDto {
+  return mapToDealerPlayDto(dto.id, dto.name, dto.tournament, dto.sitInTime)
+}
+
 function mapToPlayDtoFromUpdateResponse(
   dto: UpdateDealerResponse
 ): DealerPlayDto {
@@ -125,8 +119,8 @@ function mapToDealerPlayDto(
 ): DealerPlayDto {
   let dealingTimeStr = '-'
   if (sitInTime) {
-    const dealingTime = new Date().getTime() - new Date(sitInTime).getTime()
-    dealingTimeStr = dealingTime.toLocaleString()
+    const dealingTimeMs = new Date().getTime() - new Date(sitInTime).getTime()
+    dealingTimeStr = convertMsToTimeString(dealingTimeMs)
   }
 
   return {
