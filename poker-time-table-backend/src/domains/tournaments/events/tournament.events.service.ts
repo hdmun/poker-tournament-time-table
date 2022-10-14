@@ -24,8 +24,7 @@ export class EventService {
       await this.tournamentRepository.getPlayingTournaments();
 
     for (const tournament of playingTournaments) {
-      const tournamentId = tournament.id;
-      const clock = await this.calcClock(tournamentId);
+      const clock = await this.calcClock(tournament);
       if (clock !== null) {
         this.subjects.next(clock);
       }
@@ -33,17 +32,13 @@ export class EventService {
   }
 
   async calcClock(
-    tournamentId: number,
+    tournament: Tournament,
   ): Promise<TournamentClockEventDto | null> {
-    const tournament = await this.tournamentRepository.findOneBy({
-      id: tournamentId,
-    });
-    if (!tournament) {
-      return null;
-    }
+    const tournamentId = tournament.id;
 
+    // todo: join 처리하자
     const blinds = await this.blindRepository.findBy({
-      tournamentId: tournament.id,
+      tournamentId,
     });
     if (blinds.length <= 0) {
       this.logger.error(`not exists blinds tournament ${tournamentId}`);
@@ -106,7 +101,7 @@ export class EventService {
     const blind = getBlindValue(tournament, currentBlind, blinds);
 
     return {
-      tournamentId: tournament.id,
+      tournamentId,
       blindId: currentBlind.id,
       started: tournament.startDateTime !== null,
       playTime: playTimeText,
@@ -172,7 +167,7 @@ export class EventService {
       if (currentBlind.minute <= playTimeMinutes) {
         nowDate.setSeconds(nowDate.getSeconds() + 1);
 
-        const clock = await this.calcClock(tournament.id);
+        const clock = await this.calcClock(tournament);
         clock.blindId = tournament.level + 1;
         if (clock !== null) {
           this.subjects.next(clock);

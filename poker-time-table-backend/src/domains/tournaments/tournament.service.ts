@@ -234,7 +234,7 @@ export class TournamentService {
       },
     );
 
-    return await this.eventService.calcClock(tournament.id);
+    return await this.eventService.calcClock(tournament);
   }
 
   async pause(id: number): Promise<TournamentClockEventDto | null> {
@@ -258,7 +258,7 @@ export class TournamentService {
       },
     );
 
-    return await this.eventService.calcClock(tournament.id);
+    return await this.eventService.calcClock(tournament);
   }
 
   async downBlindLevel(id: number): Promise<TournamentClockEventDto | null> {
@@ -295,7 +295,7 @@ export class TournamentService {
       },
     );
 
-    return await this.eventService.calcClock(tournament.id);
+    return await this.eventService.calcClock(tournament);
   }
 
   async upBlindLevel(id: number): Promise<TournamentClockEventDto | null> {
@@ -335,7 +335,7 @@ export class TournamentService {
       },
     );
 
-    return await this.eventService.calcClock(tournament.id);
+    return await this.eventService.calcClock(tournament);
   }
 
   async getNonDealerTournaments(): Promise<Tournament[]> {
