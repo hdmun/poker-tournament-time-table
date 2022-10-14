@@ -1,4 +1,4 @@
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { CustomRepository } from '~/typeorm-ex/typeorm-ex.decorator';
 import { Tournament } from './entities/tournament.entity';
 
@@ -10,6 +10,15 @@ export class TournamentRepository extends Repository<Tournament> {
       .select('tournament.title')
       .getRawOne();
     return result?.title;
+  }
+
+  async getTournamentsWithBlindsById(
+    tournamentId: number,
+  ): Promise<Tournament> {
+    return await this.findOne({
+      where: { id: tournamentId },
+      relations: ['blinds'],
+    });
   }
 
   async getNonDealerTournaments(): Promise<Tournament[]> {
@@ -31,5 +40,16 @@ export class TournamentRepository extends Repository<Tournament> {
       .andWhere('tournament.level_start IS NOT NULL')
       .andWhere('tournament.end_datetime IS NULL')
       .getMany();
+  }
+
+  async getPlayingTournamentsWithBlinds(): Promise<Tournament[]> {
+    return await this.find({
+      where: {
+        startDateTime: Not(IsNull()),
+        levelStart: Not(IsNull()),
+        endDateTime: IsNull(),
+      },
+      relations: ['blinds'],
+    });
   }
 }

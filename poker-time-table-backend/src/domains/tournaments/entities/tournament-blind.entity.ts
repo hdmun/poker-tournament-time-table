@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Tournament } from './tournament.entity';
 
 @Entity({ name: 'tournament_blind' })
 export class TournamentBlind {
@@ -22,6 +23,12 @@ export class TournamentBlind {
 
   @Column()
   minute: number;
+
+  @ManyToOne(() => Tournament, (tournament) => tournament.blinds, {
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: 'tournament_id', referencedColumnName: 'id' })
+  tournament: Tournament;
 
   static create(
     tournamentId: number,

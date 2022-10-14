@@ -4,8 +4,10 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Dealer } from '../../dealer/entities/dealer.entity';
+import { TournamentBlind } from './tournament-blind.entity';
 
 @Entity({ name: 'tournament' })
 export class Tournament {
@@ -42,6 +44,12 @@ export class Tournament {
   })
   @JoinColumn({ name: 'id', referencedColumnName: 'tournamentId' })
   dealer: Dealer;
+
+  @OneToMany(() => TournamentBlind, (blinds) => blinds.tournament, {
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: 'id', referencedColumnName: 'tournament_id' })
+  blinds: TournamentBlind[];
 
   static Create(title: string, buyIn: number): Tournament {
     const newTournament = new Tournament();

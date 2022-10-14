@@ -43,11 +43,9 @@ export class TournamentService {
   }
 
   async tournamentBy(id: number): Promise<TournamentDetailDto> {
-    const tournament = await this.tournamentRepository.findOneBy({ id });
-    const blinds = await this.blindRepository.findBy({
-      tournamentId: id,
-    });
-    return mapFromTournamentDetail(tournament, blinds);
+    const tournament =
+      await this.tournamentRepository.getTournamentsWithBlindsById(id);
+    return mapFromTournamentDetail(tournament, tournament.blinds);
   }
 
   async tournamentByDate(start: Date, end: Date): Promise<TournamentLogDto[]> {
@@ -155,7 +153,8 @@ export class TournamentService {
       `updateBlind, tournamentId: ${tournamentId}, blinds: ${blinds.length}`,
     );
 
-    // todo transaction
+    // todo transaction 
+    
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
     });
@@ -192,7 +191,8 @@ export class TournamentService {
   async play(id: number): Promise<TournamentClockEventDto | null> {
     this.logger.log(`play, tournamentId: ${id}`);
 
-    const tournament = await this.tournamentRepository.findOneBy({ id });
+    const tournament =
+      await this.tournamentRepository.getTournamentsWithBlindsById(id);
     if (!tournament) {
       throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
     }
@@ -240,7 +240,8 @@ export class TournamentService {
   async pause(id: number): Promise<TournamentClockEventDto | null> {
     this.logger.log(`pause, tournamentId: ${id}`);
 
-    const tournament = await this.tournamentRepository.findOneBy({ id });
+    const tournament =
+      await this.tournamentRepository.getTournamentsWithBlindsById(id);
     if (!tournament) {
       throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
     }
@@ -264,7 +265,8 @@ export class TournamentService {
   async downBlindLevel(id: number): Promise<TournamentClockEventDto | null> {
     this.logger.log(`downBlindLevel, tournamentId: ${id}`);
 
-    const tournament = await this.tournamentRepository.findOneBy({ id });
+    const tournament =
+      await this.tournamentRepository.getTournamentsWithBlindsById(id);
     if (!tournament) {
       throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
     }
@@ -301,17 +303,14 @@ export class TournamentService {
   async upBlindLevel(id: number): Promise<TournamentClockEventDto | null> {
     this.logger.log(`upBlindLevel, tournamentId: ${id}`);
 
-    const tournament = await this.tournamentRepository.findOneBy({ id });
+    const tournament =
+      await this.tournamentRepository.getTournamentsWithBlindsById(id);
     if (!tournament) {
       throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
     }
 
-    const blinds = await this.blindRepository.findBy({
-      tournamentId: id,
-    });
-
     tournament.level += 1;
-    if (blinds.length <= tournament.level) {
+    if (tournament.blinds.length <= tournament.level) {
       throw new InvalidInputError(
         `블라인드 레벨을 올릴 수 없습니다. 마지막 블라인드입니다. level: ${tournament.level}`,
       );

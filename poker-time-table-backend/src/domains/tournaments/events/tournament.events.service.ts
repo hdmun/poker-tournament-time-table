@@ -4,15 +4,11 @@ import { Subject } from 'rxjs';
 import { TournamentClockEventDto } from '../dto/tournament';
 import { TournamentBlind } from '../entities/tournament-blind.entity';
 import { Tournament } from '../entities/tournament.entity';
-import { TournamentBlindRepository } from '../tournament-blind.repository';
 import { TournamentRepository } from '../tournament.repository';
 
 @Injectable()
 export class EventService {
-  constructor(
-    private readonly tournamentRepository: TournamentRepository,
-    private readonly blindRepository: TournamentBlindRepository,
-  ) {}
+  constructor(private readonly tournamentRepository: TournamentRepository) {}
 
   private readonly logger = new Logger(EventService.name);
 
@@ -21,7 +17,7 @@ export class EventService {
   @Cron(CronExpression.EVERY_SECOND)
   async updateClock(): Promise<void> {
     const playingTournaments =
-      await this.tournamentRepository.getPlayingTournaments();
+      await this.tournamentRepository.getPlayingTournamentsWithBlinds();
 
     for (const tournament of playingTournaments) {
       const clock = await this.calcClock(tournament);
@@ -36,11 +32,8 @@ export class EventService {
   ): Promise<TournamentClockEventDto | null> {
     const tournamentId = tournament.id;
 
-    // todo: join 처리하자
-    const blinds = await this.blindRepository.findBy({
-      tournamentId,
-    });
-    if (blinds.length <= 0) {
+    const blinds = tournament.blinds;
+    if (blinds?.length <= 0) {
       this.logger.error(`not exists blinds tournament ${tournamentId}`);
       return null;
     }
@@ -120,7 +113,7 @@ export class EventService {
   @Cron(CronExpression.EVERY_SECOND)
   async updateTournamentBlindLevel(): Promise<void> {
     const playingTournaments =
-      await this.tournamentRepository.getPlayingTournaments();
+      await this.tournamentRepository.getPlayingTournamentsWithBlinds();
 
     for (const tournament of playingTournaments) {
       if (tournament.level < 0) {
@@ -131,10 +124,7 @@ export class EventService {
         continue;
       }
 
-      const blinds = await this.blindRepository.findBy({
-        tournamentId: tournament.id,
-      });
-
+      const blinds = tournament.blinds;
       if (blinds.length === tournament.level) {
         continue;
       }
