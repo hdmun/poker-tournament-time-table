@@ -9,8 +9,10 @@ import {
   TournamentClockEventDto,
   TournamentDetailDto,
   TournamentLogDto,
+  GetSitInTournamentResponse,
 } from '~/dto/tournamentDto'
 import { $axios } from '~/utils/api'
+import { convertMsToTimeString } from '~/utils/time'
 
 export const eTournamentState = {
   Wait: '대기 중',
@@ -50,6 +52,11 @@ export interface TournamentLogItem {
   playTime: string // 00:00:00
 }
 
+export interface TournamentSitIn {
+  tournamentId: number
+  tournamentTitle: string
+}
+
 export interface UpdateTournamentBlindDto {
   id: number
   blinds: TournamentBlindDto[]
@@ -77,6 +84,8 @@ export default class AdminTournamentStore
   readonly clock: TournamentClockDto = createTournamentClockDto()
 
   readonly logs: TournamentLogItem[] = []
+
+  readonly tournamentsSitIn: TournamentSitIn[] = []
 
   @mutation update(tournaments: TournamentItem[]) {
     this.tournaments.splice(0)
@@ -133,6 +142,11 @@ export default class AdminTournamentStore
   @mutation updateLog(logs: TournamentLogItem[]) {
     this.logs.splice(0)
     this.logs.push(...logs)
+  }
+
+  @mutation setSitIn(tournamentsSitIn: TournamentSitIn[]) {
+    this.tournamentsSitIn.splice(0)
+    this.tournamentsSitIn.push(...tournamentsSitIn)
   }
 
   @action async loadTournaments() {
@@ -198,6 +212,20 @@ export default class AdminTournamentStore
       )
       this.updateLog(tournamentsLog)
     }
+  }
+
+  @action async loadNoneDealer() {
+    const response = await $axios.get<GetSitInTournamentResponse[]>(
+      `/api/tournaments/non-dealers`
+    )
+    this.setSitIn(
+      response.data.map<TournamentSitIn>((tournaments) => {
+        return {
+          tournamentId: tournaments.id,
+          tournamentTitle: tournaments.title,
+        }
+      })
+    )
   }
 
   @action async registerBy(dto: TournamentRegisterRequest) {
@@ -290,46 +318,4 @@ function mapToTournamentItem(dto: TournamentDetailDto): TournamentItem {
     name: dto.title,
     buyIn: `${dto.buyIn}`,
   }
-}
-
-interface TimeDto {
-  hours: string
-  minutes: string
-  seconds: string
-}
-
-function convertMsToTimeString(milliseconds: number): string {
-  // https://bobbyhadz.com/blog/typescript-calculate-time-between-dates
-  const time = convertMsToTime(milliseconds)
-
-  // 👇️ If you want to roll hours over, e.g. 00 to 24
-  // 👇️ uncomment the line below
-  // uncommenting next line gets you `00:00:00` instead of `24:00:00`
-  // or `12:15:31` instead of `36:15:31`, etc.
-  // 👇️ (roll hours over)
-  // hours = hours % 24;
-  if (time.hours === '00') {
-    return `${time.minutes}:${time.seconds}`
-  }
-
-  return `${time.hours}:${time.minutes}:${time.seconds}`
-}
-
-function convertMsToTime(milliseconds: number): TimeDto {
-  let seconds = Math.floor(milliseconds / 1000)
-  let minutes = Math.floor(seconds / 60)
-  const hours = Math.floor(minutes / 60)
-
-  seconds = seconds % 60
-  minutes = minutes % 60
-
-  return {
-    hours: padTo2Digits(hours),
-    minutes: padTo2Digits(minutes),
-    seconds: padTo2Digits(seconds),
-  }
-}
-
-function padTo2Digits(num: number): string {
-  return num.toString().padStart(2, '0')
 }

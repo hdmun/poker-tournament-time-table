@@ -144,6 +144,11 @@ export default class DefaultLayout extends Vue {
           title: '블라인드 템플릿',
           to: '/admin/blindStructure',
         },
+        {
+          icon: 'mdi-account',
+          title: '딜러 플레이',
+          to: '/admin/dealers',
+        },
       ],
     },
   ]
