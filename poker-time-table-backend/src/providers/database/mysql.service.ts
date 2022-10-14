@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { BlindStructureMeta } from '~/domains/blind-structures/entities/blind-structure-meta.entity';
 import { BlindStructure } from '~/domains/blind-structures/entities/blind-structure.entity';
+import { DealerPlayLog } from '~/domains/dealer/entities/dealer-play-log.entity';
+import { Dealer } from '~/domains/dealer/entities/dealer.entity';
 import { TournamentBlind } from '~/domains/tournaments/entities/tournament-blind.entity';
 import { Tournament } from '~/domains/tournaments/entities/tournament.entity';
 
@@ -22,6 +24,8 @@ export class MySqlConfigService implements TypeOrmOptionsFactory {
       entities: [
         BlindStructureMeta,
         BlindStructure,
+        Dealer,
+        DealerPlayLog,
         Tournament,
         TournamentBlind,
       ],

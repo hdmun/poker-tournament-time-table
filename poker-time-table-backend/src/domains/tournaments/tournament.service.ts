@@ -337,4 +337,8 @@ export class TournamentService {
 
     return await this.eventService.calcClock(tournament.id);
   }
+
+  async getNonDealerTournaments(): Promise<Tournament[]> {
+    return await this.tournamentRepository.getNonDealerTournaments();
+  }
 }

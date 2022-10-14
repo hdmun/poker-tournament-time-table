@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Dealer } from '../../dealer/entities/dealer.entity';
 
 @Entity({ name: 'tournament' })
 export class Tournament {
@@ -28,6 +35,13 @@ export class Tournament {
 
   @Column({ name: 'pause_seconds' })
   pauseSeconds: number;
+
+  @OneToOne(() => Dealer, (dealer) => dealer, {
+    nullable: true,
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: 'id', referencedColumnName: 'tournamentId' })
+  dealer: Dealer;
 
   static Create(title: string, buyIn: number): Tournament {
     const newTournament = new Tournament();
