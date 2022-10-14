@@ -15,6 +15,7 @@ export interface DealerPlayDto {
   id: number
   name: string
   tournament: string
+  sitInTime?: Date
   dealingTime: string
 }
 
@@ -55,6 +56,7 @@ export default class AdminDealerStore
     const findDealer = this.dealers.find((value) => value.id === dealer.id)
     if (findDealer) {
       findDealer.tournament = dealer.tournament
+      findDealer.sitInTime = dealer.sitInTime
       findDealer.dealingTime = dealer.dealingTime
     }
   }
@@ -151,6 +153,7 @@ function mapToDealerPlayDto(
     id,
     name,
     tournament: tournament ?? '',
+    sitInTime: sitInTime ? new Date(sitInTime) : undefined,
     dealingTime: dealingTimeStr,
   }
 }

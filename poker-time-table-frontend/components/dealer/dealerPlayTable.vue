@@ -72,6 +72,7 @@ import AddDelaerDialog from './addDelaerDialog.vue'
 import { DealerPlayDto } from '~/store/admin/dealer'
 import { TournamentSitIn } from '~/store/admin/tournament'
 import { UpdateDealerRequest } from '~/dto/dealerDto'
+import { convertMsToTimeString } from '~/utils/time'
 
 interface TableHeader {
   text: string
@@ -113,7 +114,23 @@ export default class DealerPlayTable extends Vue {
 
   showSelectDialog: boolean = false
 
-  mounted() {}
+  timer: NodeJS.Timer | null = null
+
+  mounted() {
+    if (this.timer !== null) {
+      clearInterval(this.timer)
+      this.timer = null
+    }
+
+    this.timer = setInterval(this.updateDealingTime, 1000)
+  }
+
+  beforeDestroy() {
+    if (this.timer !== null) {
+      clearInterval(this.timer)
+      this.timer = null
+    }
+  }
 
   get selectItems(): SelectDialogItem[] {
     return this.tournamentsSitIn.map<SelectDialogItem>((value) => {
@@ -165,6 +182,16 @@ export default class DealerPlayTable extends Vue {
 
   onCancelTableInOut() {
     this.showConfirmDialog = false
+  }
+
+  updateDealingTime() {
+    this.dealers?.forEach((dealer) => {
+      if (dealer.sitInTime) {
+        const dealingTimeMs =
+          new Date().getTime() - new Date(dealer.sitInTime).getTime()
+        dealer.dealingTime = convertMsToTimeString(dealingTimeMs)
+      }
+    })
   }
 }
 </script>
