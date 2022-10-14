@@ -9,13 +9,6 @@
       </v-card>
     </v-col>
 
-    <v-col sm="6" md="9" :lg="lgCol" xl="3" class="pa-0">
-      <v-card class="fill-height" color="gray7" outlined tile>
-        <v-card-title class="pt-4 pb-2 ante-title"> Ante </v-card-title>
-        <v-card-title class="info-value"> {{ ante }} </v-card-title>
-      </v-card>
-    </v-col>
-
     <v-col sm="12" md="9" :lg="lgCol" xl="3" class="pa-0">
       <v-card class="fill-height" color="gray7" outlined tile>
         <v-card-actions class="pb-0 justify-center">
@@ -34,6 +27,13 @@
           </template>
           <template v-else> {{ smallBlind }} / {{ bigBlind }} </template>
         </v-card-title>
+      </v-card>
+    </v-col>
+
+    <v-col sm="6" md="9" :lg="lgCol" xl="3" class="pa-0">
+      <v-card class="fill-height" color="gray7" outlined tile>
+        <v-card-title class="pt-4 pb-2 ante-title"> Ante </v-card-title>
+        <v-card-title class="info-value"> {{ ante }} </v-card-title>
       </v-card>
     </v-col>
   </v-row>
