@@ -45,11 +45,15 @@ export default class DealersPage extends Vue {
 
   mounted() {
     this.dealers = vxm.dealer.dealers
+    this.dealerLogs = vxm.dealer.playLogs
     this.tournamentsSitIn = vxm.tournament.tournamentsSitIn
     vxm.dealer.load()
+    vxm.dealer.loadLogs(new Date())
   }
 
-  onPickDate(_date: Date) {}
+  onPickDate(date: Date) {
+    vxm.dealer.loadLogs(date)
+  }
 
   async onAddDealer(name: string) {
     await vxm.dealer.register({
@@ -63,8 +67,12 @@ export default class DealersPage extends Vue {
     }
   }
 
-  async onDealerTableOut(dealerId: number) {
-    await vxm.dealer.update({ dealerId, tournamentId: 0 })
+  async onDealerTableOut(dto?: DealerPlayDto) {
+    await vxm.dealer.update({ dealerId: dto?.id ?? 0, tournamentId: 0 })
+
+    if (dto?.sitInTime) {
+      await vxm.dealer.loadLogs(dto.sitInTime)
+    }
   }
 
   async onLoadTournaments() {

@@ -1,6 +1,7 @@
 import { action, createModule, mutation } from 'vuex-class-component'
 import {
   DealerDto,
+  GetDealerLogResponse,
   GetDealersResponse,
   RegisterDealerRequest,
   RegisterDealerResponse,
@@ -39,6 +40,7 @@ export default class AdminDealerStore
   implements AdminDealerState
 {
   readonly dealers: DealerPlayDto[] = []
+  readonly playLogs: DealerPlayLogDto[] = []
 
   @mutation setDealers(dealers: DealerPlayDto[]) {
     this.dealers.splice(0)
@@ -57,6 +59,11 @@ export default class AdminDealerStore
     }
   }
 
+  @mutation setPlayLogs(logs: DealerPlayLogDto[]) {
+    this.playLogs.splice(0)
+    this.playLogs.push(...logs)
+  }
+
   @action async load() {
     const response = await $axios.get<GetDealersResponse>(`/api/dealers`)
     const dealers = response.data.dealers.map<DealerPlayDto>((dealer) => {
@@ -64,6 +71,23 @@ export default class AdminDealerStore
     })
 
     this.setDealers(dealers)
+  }
+
+  @action async loadLogs(date: Date) {
+    const response = await $axios.get<GetDealerLogResponse[]>(
+      `/api/dealers/logs/${date.getFullYear()}/${
+        date.getMonth() + 1
+      }/${date.getDate()}`
+    )
+
+    // eslint-disable-next-line no-console
+    console.log('loadLogs', response.status, response.data)
+
+    const playLogs = response.data.map<DealerPlayLogDto>((value) => {
+      return mapToPlayLogDtoFromResponse(value)
+    })
+
+    this.setPlayLogs(playLogs)
   }
 
   @action async register(dto: RegisterDealerRequest) {
@@ -128,5 +152,17 @@ function mapToDealerPlayDto(
     name,
     tournament: tournament ?? '',
     dealingTime: dealingTimeStr,
+  }
+}
+
+function mapToPlayLogDtoFromResponse(
+  dto: GetDealerLogResponse
+): DealerPlayLogDto {
+  return {
+    name: dto.dealerName,
+    tournament: dto.tournamentTitle,
+    sitInTime: new Date(dto.sitInTime).toLocaleTimeString(),
+    sitOutTime: new Date(dto.sitOutTime).toLocaleTimeString(),
+    dealingTime: convertMsToTimeString(dto.playSeconds * 1000),
   }
 }

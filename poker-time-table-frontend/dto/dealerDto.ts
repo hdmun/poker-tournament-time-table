@@ -31,3 +31,12 @@ export interface UpdateDealerResponse {
   tournamentTitle: string
   sitInTime: string
 }
+
+export interface GetDealerLogResponse {
+  sitInTime: string
+  sitOutTime: string
+  dealerId: number
+  playSeconds: number
+  tournamentTitle: string
+  dealerName: string
+}

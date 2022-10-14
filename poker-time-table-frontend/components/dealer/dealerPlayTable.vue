@@ -158,9 +158,9 @@ export default class DealerPlayTable extends Vue {
   }
 
   @Emit('dealerTableOut')
-  onConfirmTableOut(): number {
+  onConfirmTableOut(): DealerPlayDto | undefined {
     this.showConfirmDialog = false
-    return this.selectDealer?.id ?? 0
+    return this.selectDealer
   }
 
   onCancelTableInOut() {
