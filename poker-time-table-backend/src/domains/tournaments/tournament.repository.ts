@@ -24,4 +24,12 @@ export class TournamentRepository extends Repository<Tournament> {
       return !tournament.dealer;
     });
   }
+
+  async getPlayingTournaments(): Promise<Tournament[]> {
+    return this.createQueryBuilder('tournament')
+      .andWhere('tournament.start_datetime IS NOT NULL')
+      .andWhere('tournament.level_start IS NOT NULL')
+      .andWhere('tournament.end_datetime IS NULL')
+      .getMany();
+  }
 }

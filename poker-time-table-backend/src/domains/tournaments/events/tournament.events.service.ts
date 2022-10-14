@@ -20,12 +20,8 @@ export class EventService {
 
   @Cron(CronExpression.EVERY_SECOND)
   async updateClock(): Promise<void> {
-    const playingTournaments = await this.tournamentRepository
-      .createQueryBuilder('tournament')
-      .andWhere('tournament.start_datetime IS NOT NULL')
-      .andWhere('tournament.level_start IS NOT NULL')
-      .andWhere('tournament.end_datetime IS NULL')
-      .getMany();
+    const playingTournaments =
+      await this.tournamentRepository.getPlayingTournaments();
 
     for (const tournament of playingTournaments) {
       const tournamentId = tournament.id;
@@ -128,12 +124,8 @@ export class EventService {
 
   @Cron(CronExpression.EVERY_SECOND)
   async updateTournamentBlindLevel(): Promise<void> {
-    const playingTournaments = await this.tournamentRepository
-      .createQueryBuilder('tournament')
-      .andWhere('tournament.start_datetime IS NOT NULL')
-      .andWhere('tournament.level_start IS NOT NULL')
-      .andWhere('tournament.end_datetime IS NULL')
-      .getMany();
+    const playingTournaments =
+      await this.tournamentRepository.getPlayingTournaments();
 
     for (const tournament of playingTournaments) {
       if (tournament.level < 0) {
