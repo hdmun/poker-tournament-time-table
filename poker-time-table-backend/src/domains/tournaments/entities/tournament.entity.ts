@@ -5,7 +5,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { Dealer } from '~/domains/dealer/entities/dealer.entity';
+import { Dealer } from '../../dealer/entities/dealer.entity';
 
 @Entity({ name: 'tournament' })
 export class Tournament {

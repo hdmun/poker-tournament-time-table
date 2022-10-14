@@ -9,10 +9,10 @@ import { DealerService } from './dealer.service';
 @Module({
   imports: [
     TypeOrmExModule.forCustomRepository([
+      DealerRepository,
       DealerPlayLogRepository,
       TournamentRepository,
     ]),
-    TypeOrmExModule.forCustomRepository([DealerRepository]),
   ],
   providers: [DealerService],
   controllers: [DealerController],

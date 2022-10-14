@@ -1,8 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InvalidInputError } from '~/common/exceptions';
 import { TournamentRepository } from '../tournaments/tournament.repository';
+import { DealerPlayLogRepository } from './dealer-play-log.repository';
 import { DealerRepository } from './dealer.repository';
-import { DealerDto, UpdateDealerResultDto } from './dto/dealer';
+import {
+  DealerDto,
+  DealerPlayLogDto,
+  UpdateDealerResultDto,
+} from './dto/dealer';
+import { DealerPlayLog } from './entities/dealer-play-log.entity';
 import { Dealer } from './entities/dealer.entity';
 import { mapFromDelaerToDto } from './mapper/dealer';
 
@@ -12,6 +18,7 @@ export class DealerService {
 
   constructor(
     private readonly dealerRepository: DealerRepository,
+    private readonly dealerPlayLogRepository: DealerPlayLogRepository,
     private readonly tournamentRepository: TournamentRepository,
   ) {}
 
@@ -54,8 +61,19 @@ export class DealerService {
       );
     }
 
+    const now = new Date();
+    if (tournamentId <= 0) {
+      const playLog = DealerPlayLog.Create(
+        dealer.sitInTime,
+        now,
+        dealerId,
+        dealer.tournamentId,
+      );
+      this.dealerPlayLogRepository.insert(playLog);
+    }
+
     dealer.tournamentId = tournamentId;
-    dealer.sitInTime = tournamentId > 0 ? new Date() : null;
+    dealer.sitInTime = tournamentId > 0 ? now : null;
     await this.dealerRepository.save(dealer);
 
     const tournamentTitle = await this.tournamentRepository.getTitleById(
@@ -69,5 +87,11 @@ export class DealerService {
       tournamentTitle: tournamentTitle ?? '',
       sitInTime: dealer.sitInTime,
     };
+  }
+
+  async getLogByDate(start: Date, end: Date): Promise<DealerPlayLogDto[]> {
+    this.logger.log(`getLogByDate, start: ${start}, end: ${end}`);
+
+    return this.dealerPlayLogRepository.getLogByDate(start, end);
   }
 }

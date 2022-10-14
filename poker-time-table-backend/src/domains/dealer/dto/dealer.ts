@@ -13,14 +13,6 @@ export interface RegisterDealerRequest {
   name: string;
 }
 
-export interface GetDealerLogResponse {
-  dealerId: number;
-  tournamentId: number;
-  sitInTime: Date;
-  sitOutTime: Date;
-  playSeconds: number;
-}
-
 export interface RegisterDealerResponse extends DealerDto {}
 
 export interface UpdateDealerRequest {
@@ -42,4 +34,22 @@ export interface UpdateDealerResponse {
   tournamentId: number;
   tournamentTitle: string;
   sitInTime: string;
+}
+
+export interface DealerPlayLogDto {
+  sitInTime: Date;
+  sitOutTime: Date;
+  dealerId: number;
+  playSeconds: number;
+  tournamentTitle: string;
+  dealerName: number;
+}
+
+export interface GetDealerLogResponse {
+  sitInTime: string;
+  sitOutTime: string;
+  dealerId: number;
+  playSeconds: number;
+  tournamentTitle: string;
+  dealerName: number;
 }
