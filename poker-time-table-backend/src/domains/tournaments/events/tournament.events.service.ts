@@ -23,9 +23,7 @@ export class EventService {
     const blindsTotalCount = blinds?.length ?? 0;
     if (blindsTotalCount <= 0) {
       this.logger.error(
-        `not exists blinds tournament ${tournamentId}, ${blinds.length}, ${
-          blinds?.length ?? 0
-        }`,
+        `not exists blinds tournament ${tournamentId}, ${blinds?.length}`,
       );
       return null;
     }
@@ -146,9 +144,9 @@ export class EventService {
         `tournament playTimeMs minus
       , tournamentId: ${tournament.id}
       , playTimeMs: ${playTimeMs}
-      , nowDate: ${nowDate}
-      , tournament.levelStart: ${tournament.levelStart}
-      , tournament.pauseTime: ${tournament.pauseTime}`,
+      , nowDate: ${nowDate.toISOString()}
+      , tournament.levelStart: ${tournament.levelStart.toISOString()}
+      , tournament.pauseTime: ${tournament.pauseTime.toISOString()}`,
       );
     }
 
@@ -256,7 +254,11 @@ function calcReaminTime(
     if (reaminTimeMs < 0) {
       // remainDate === nowDate 가 같아지면 밀리초 때문에 미세하게 음수 발생
       logger.error(
-        `tournament reaminTimeMs minus, id: ${tournamentId}, levelStart: ${levelStart}, nowDate: ${now} remainDate: ${remainDate}`,
+        `tournament reaminTimeMs minus
+        , id: ${tournamentId}
+        , levelStart: ${levelStart.toISOString()}
+        , nowDate: ${now.toISOString()}
+        , remainDate: ${remainDate.toISOString()}`,
       );
       reaminTimeMs = 0;
     }
