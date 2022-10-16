@@ -81,7 +81,7 @@ export class EventService {
     }
 
     const playTimeText = calcPlayTimeText(nowDate, tournament.startDateTime);
-    const blind = getBlindValue(tournament, currentBlind, blinds);
+    const blind = getBlindValue(tournament, currentBlind);
 
     return {
       tournamentId,
@@ -94,9 +94,9 @@ export class EventService {
       reaminSeconds: remainTime.seconds,
       pause: tournament.startDateTime !== null && tournament.pauseTime !== null,
       level: currentBlind.level,
-      ante: currentBlind.ante,
       smallBlind: blind[0],
       bigBlind: blind[1],
+      ante: blind[2],
     };
   }
 
@@ -124,7 +124,7 @@ export class EventService {
   }
 
   // 네이밍..
-  async updateBlindLevel(tournament: Tournament) {
+  async updateBlindLevel(tournament: Tournament): Promise<void> {
     const blinds = tournament.blinds;
     if (blinds.length === tournament.level) {
       return;
@@ -275,17 +275,17 @@ function calcReaminTime(
 function getBlindValue(
   tournament: Tournament,
   currentBlind: TournamentBlind,
-  blinds: TournamentBlind[],
-): [number, number] {
+): [number, number, number] {
   if (tournament.startDateTime) {
     if (currentBlind.level > 0) {
-      return [currentBlind.smallBlind, currentBlind.bigBlind];
-    } else {
-      const prevBlind = blinds[tournament.level - 1];
-      return [prevBlind.smallBlind, prevBlind.bigBlind];
+      return [
+        currentBlind.smallBlind,
+        currentBlind.bigBlind,
+        currentBlind.ante,
+      ];
     }
   }
-  return [0, 0];
+  return [0, 0, 0];
 }
 
 function padTo2Digits(num: number): string {
