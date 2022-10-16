@@ -1,39 +1,55 @@
 <template>
   <v-row class="ma-2" justify="center">
-    <v-col sm="6" md="9" :lg="lgCol" xl="3" class="pa-0">
+    <v-col sm="12" md="9" lg="3" xl="3" class="pa-0">
       <v-card class="fill-height" color="gray7" outlined tile>
         <v-card-title v-if="level > 0" class="blindlevel-value">
           Lv. {{ level }}
         </v-card-title>
-        <v-card-title v-else class="breaktime-text"> Break Time </v-card-title>
-      </v-card>
-    </v-col>
-
-    <v-col sm="6" md="9" :lg="lgCol" xl="3" class="pa-0">
-      <v-card class="fill-height" color="gray7" outlined tile>
-        <v-card-title class="pt-4 pb-2 ante-title"> Ante </v-card-title>
-        <v-card-title class="info-value"> {{ ante }} </v-card-title>
-      </v-card>
-    </v-col>
-
-    <v-col sm="12" md="9" :lg="lgCol" xl="3" class="pa-0">
-      <v-card class="fill-height" color="gray7" outlined tile>
-        <v-card-actions class="pb-0 justify-center">
-          <v-btn
-            text
-            class="blindbtn-title"
-            @click.stop="onToggleShowBlindTable"
-          >
-            <u>BLINDS</u> >
-          </v-btn>
-        </v-card-actions>
-
-        <v-card-title class="info-value">
-          <template v-if="isAddNewLine">
-            {{ smallBlind }} / <br />{{ bigBlind }}
-          </template>
-          <template v-else> {{ smallBlind }} / {{ bigBlind }} </template>
+        <v-card-title v-else class="pr-0 breaktime-text">
+          Break Time
         </v-card-title>
+      </v-card>
+    </v-col>
+
+    <v-col sm="12" md="9" lg="9" xl="9" class="pa-0">
+      <v-card class="fill-height" color="gray7" outlined tile>
+        <v-row class="ma-0">
+          <v-spacer />
+
+          <v-col class="pa-0">
+            <v-card-title class="pt-3 pb-2 ante-title">
+              S.B / B.B (Ante)
+            </v-card-title>
+          </v-col>
+
+          <v-col class="pa-0">
+            <v-card-actions class="pa-0 pt-1 justify-center">
+              <v-btn
+                text
+                class="blindbtn-title"
+                @click.stop="onToggleShowBlindTable"
+              >
+                <u>BLINDS</u> >
+              </v-btn>
+            </v-card-actions>
+          </v-col>
+        </v-row>
+
+        <template v-if="isTwoLineBlind">
+          <v-card-title class="info-value pb-0">
+            {{ smallBlind | toComma }} / {{ bigBlind | toComma }}
+          </v-card-title>
+          <v-card-title class="info-value pt-0">
+            ({{ ante | toComma }})
+          </v-card-title>
+        </template>
+        <template v-else>
+          <v-card-title class="info-value">
+            {{ smallBlind | toComma }} / {{ bigBlind | toComma }} ({{
+              ante | toComma
+            }})
+          </v-card-title>
+        </template>
       </v-card>
     </v-col>
   </v-row>
@@ -59,6 +75,14 @@ export default class BlindCards extends Vue {
   @Prop({ type: Number, required: true })
   bigBlind!: Number
 
+  get isPortrait(): boolean {
+    return this.$vuetify.breakpoint.width < this.$vuetify.breakpoint.height
+  }
+
+  get isLandscape(): boolean {
+    return !this.isPortrait
+  }
+
   get isGalaxyTabA8(): boolean {
     const width = this.$vuetify.breakpoint.width
     const height = this.$vuetify.breakpoint.height
@@ -68,20 +92,26 @@ export default class BlindCards extends Vue {
     return width === 723
   }
 
-  get lgCol(): number {
-    if (this.isGalaxyTabA8) {
-      return 4
+  get isTwoLineBlind(): boolean {
+    if (this.isPortrait && this.isGalaxyTabA8) {
+      return true
     }
-    return 3
+
+    if (this.isAddNewLine) {
+      return true
+    }
+
+    return false
   }
 
   get isAddNewLine(): boolean {
     switch (this.$vuetify.breakpoint.name) {
-      case 'xs':
-      case 'sm':
-      case 'md':
-        return false
-      // return this.isAddNewLineTablet
+      case 'xs': // < 600px
+      case 'sm': // 600px > < 960px
+      case 'md': // 960px > < 1264px
+        return true
+      case 'lg': // 1264px > < 1904px
+      case 'xl': // > 1904px
       default:
         return this.isAddNewLineLarge
     }
@@ -93,15 +123,24 @@ export default class BlindCards extends Vue {
 
   get isAddNewLineLarge(): boolean {
     if (this.isGalaxyTabA8) {
-      return this.bigBlind >= 1000
+      if (this.showBlindTable) {
+        if (this.ante >= 100000) {
+          return true
+        }
+      }
+      return false
+    }
+
+    if (this.ante <= 0) {
+      return false
     }
 
     if (this.showBlindTable) {
-      if (this.smallBlind < 10000) {
-        return true
+      if (this.smallBlind >= 10000) {
+        return false
       }
     }
-    return this.smallBlind >= 100000
+    return false
   }
 
   @Emit('onToggleShowBlindTable')
@@ -152,7 +191,7 @@ export default class BlindCards extends Vue {
   justify-content: center;
 }
 
-$value-text-size: $title-1-size + 1rem;
+$value-text-size: $title-1-size + 0.5rem;
 .info-value {
   @include media('md-and-up') {
     @include title1-bold;
