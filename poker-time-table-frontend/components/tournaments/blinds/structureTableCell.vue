@@ -2,7 +2,7 @@
   <v-card class="pa-0 fill-height" :color="backColor" outlined tile>
     <v-card-title :class="`cell-text ${textColor}--text`">
       <template v-if="value !== null">
-        {{ value }}
+        {{ value | toComma }}
       </template>
       {{ valuePrefix }}
     </v-card-title>

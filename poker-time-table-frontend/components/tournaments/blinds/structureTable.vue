@@ -18,7 +18,7 @@
     <template v-for="(item, index) in blindStructures">
       <v-row v-if="isRender(index)" :key="index" justify="center" class="ma-0">
         <template v-if="item.level > 0">
-          <v-col class="pa-0" :cols="2">
+          <v-col class="pa-0" :cols="1">
             <BlindsStructureTableCell
               :value="item.level"
               :text-color="cellTextColor(index)"
@@ -42,7 +42,7 @@
             />
           </v-col>
 
-          <v-col class="pa-0" :cols="2">
+          <v-col class="pa-0" :cols="colsGrid">
             <BlindsStructureTableCell
               :value="item.ante"
               :text-color="cellTextColor(index)"
@@ -147,9 +147,9 @@ export default class BlindsStructureTable extends Vue {
   headerCols(headerText: string) {
     switch (headerText) {
       case 'LV':
-        return 2
+        return 1
       case 'ANTE':
-        return 2
+        return 3
       case 'TIME':
         return 2
       default:

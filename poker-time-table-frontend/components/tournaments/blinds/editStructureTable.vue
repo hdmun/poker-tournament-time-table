@@ -45,7 +45,7 @@
             />
           </v-col>
 
-          <v-col class="pa-0" :cols="2">
+          <v-col class="pa-0" :cols="colsGrid">
             <EditBlindsStructureTableCell
               :edit-value.sync="blind.ante"
               :back-color="cellBackgroundColor(index)"
@@ -54,7 +54,7 @@
         </template>
 
         <template v-else>
-          <v-col class="pa-0" :cols="colsGrid * 3">
+          <v-col class="pa-0" :cols="colsGrid * 3 + 1">
             <BreakTimeTableCell
               :text-color="cellTextColor(index)"
               :back-color="cellBackgroundColor(index)"
@@ -62,7 +62,7 @@
           </v-col>
         </template>
 
-        <v-col class="pa-0" :cols="2">
+        <v-col class="pa-0" :cols="1">
           <EditBlindsStructureTableCell
             :edit-value.sync="blind.minute"
             :back-color="cellBackgroundColor(index)"
