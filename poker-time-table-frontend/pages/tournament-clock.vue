@@ -13,6 +13,7 @@
           @onPause="onPause"
           @onDownBlind="onDownBlind"
           @onUpBlind="onUpBlind"
+          @onResetBlind="onResetBlind"
         />
       </v-col>
 
@@ -283,6 +284,17 @@ export default class TournamentClockPage extends Vue {
   async onUpBlind() {
     try {
       await vxm.tournament.blindUp(this.tournamentId)
+    } catch (error) {
+      const axiosError = error as AxiosError
+      if (axiosError !== null) {
+        this.onError(axiosError)
+      }
+    }
+  }
+
+  async onResetBlind() {
+    try {
+      await vxm.tournament.blindReset(this.tournamentId)
     } catch (error) {
       const axiosError = error as AxiosError
       if (axiosError !== null) {

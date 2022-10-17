@@ -58,40 +58,58 @@
     </v-row>
 
     <v-row class="mt-lg-0 mb-xl-6" justify="center" align="center">
-      <v-btn
-        large
-        fab
-        outlined
-        color="gray6"
-        :disabled="disabledBlindDown"
-        @click="onDownBlind()"
-      >
-        <v-icon x-large color="white"> mdi-chevron-left </v-icon>
-      </v-btn>
+      <v-spacer />
 
-      <v-btn
-        x-large
-        fab
-        outlined
-        class="ma-6"
-        color="gray6"
-        :disabled="closedTournament"
-        @click="data.pause ? onPlay() : onPause()"
-      >
-        <v-icon v-if="data.pause" x-large color="primary"> mdi-play </v-icon>
-        <v-icon v-else x-large color="accent1"> mdi-pause </v-icon>
-      </v-btn>
+      <v-col class="pa-0" align="center" cols="auto">
+        <v-btn
+          large
+          fab
+          outlined
+          color="gray6"
+          :disabled="disabledBlindDown"
+          @click="onDownBlind()"
+        >
+          <v-icon x-large color="white"> mdi-chevron-left </v-icon>
+        </v-btn>
 
-      <v-btn
-        large
-        fab
-        outlined
-        color="gray6"
-        :disabled="disabledBlindUp"
-        @click="onUpBlind()"
-      >
-        <v-icon x-large color="white"> mdi-chevron-right </v-icon>
-      </v-btn>
+        <v-btn
+          x-large
+          fab
+          outlined
+          class="ma-6"
+          color="gray6"
+          :disabled="closedTournament"
+          @click="data.pause ? onPlay() : onPause()"
+        >
+          <v-icon v-if="data.pause" x-large color="primary"> mdi-play </v-icon>
+          <v-icon v-else x-large color="accent1"> mdi-pause </v-icon>
+        </v-btn>
+
+        <v-btn
+          large
+          fab
+          outlined
+          color="gray6"
+          :disabled="disabledBlindUp"
+          @click="onUpBlind()"
+        >
+          <v-icon x-large color="white"> mdi-chevron-right </v-icon>
+        </v-btn>
+      </v-col>
+
+      <v-col class="pa-0" align="left">
+        <v-btn
+          small
+          fab
+          outlined
+          class="ma-6"
+          color="gray6"
+          :disabled="disabledBlindReset"
+          @click="onResetBlind()"
+        >
+          <v-icon color="white"> mdi-restore </v-icon>
+        </v-btn>
+      </v-col>
     </v-row>
 
     <v-row class="mt-lg-0" justify="center">
@@ -202,6 +220,10 @@ export default class TournamentClock extends Vue {
     return this.currentStep < 1 || !this.starting
   }
 
+  get disabledBlindReset(): boolean {
+    return this.closedTournament
+  }
+
   updated() {
     this.waitRender = false
   }
@@ -217,6 +239,9 @@ export default class TournamentClock extends Vue {
 
   @Emit('onUpBlind')
   onUpBlind() {}
+
+  @Emit('onResetBlind')
+  onResetBlind() {}
 
   onToggleShowBlindTable(toggle: boolean) {
     this.showMiniVariant = toggle
