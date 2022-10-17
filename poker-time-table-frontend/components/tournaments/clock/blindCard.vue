@@ -40,10 +40,11 @@
 
         <template v-if="isTwoLineBlind">
           <v-card-title class="info-value pb-0">
-            {{ smallBlind | toComma }} / {{ bigBlind | toComma }}
+            {{ smallBlind > 0 ? smallBlind : 0 | toComma }} /
+            {{ bigBlind > 0 ? bigBlind : 0 | toComma }}
           </v-card-title>
           <v-card-title class="info-value pt-0">
-            ({{ ante | toComma }})
+            ({{ ante > 0 ? ante : 0 | toComma }})
           </v-card-title>
         </template>
         <template v-else>
