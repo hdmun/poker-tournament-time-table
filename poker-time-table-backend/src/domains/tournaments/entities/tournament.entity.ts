@@ -29,6 +29,9 @@ export class Tournament {
   @Column({ name: 'level' })
   level: number;
 
+  @Column({ name: 'late_reg_blind_id' })
+  lateRegBlindId: number;
+
   @Column({ name: 'level_start', nullable: true })
   levelStart: Date;
 
@@ -51,11 +54,16 @@ export class Tournament {
   @JoinColumn({ name: 'id', referencedColumnName: 'tournament_id' })
   blinds: TournamentBlind[];
 
-  static Create(title: string, buyIn: number): Tournament {
+  static Create(
+    title: string,
+    buyIn: number,
+    lateRegBlindId: number,
+  ): Tournament {
     const newTournament = new Tournament();
     newTournament.title = title;
     newTournament.buyIn = buyIn;
     newTournament.level = -1;
+    newTournament.lateRegBlindId = lateRegBlindId;
     newTournament.pauseSeconds = 0;
     return newTournament;
   }

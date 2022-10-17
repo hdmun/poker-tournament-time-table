@@ -70,18 +70,38 @@ export class EventService {
             return accumulate + current.minute;
           }, 0);
 
-        nextBreakRemainTime = calcNextBreakTime(
+        nextBreakRemainTime = calcRemainTimeAddMinute(
           nowDate,
           tournament.levelStart,
-          nextBreakMinute,
           pauseTimeMs,
           tournament.pauseSeconds,
+          nextBreakMinute,
         );
       }
     }
 
+    let lateRegReaminTime = '--:--';
+    if (tournament.level <= tournament.lateRegBlindId) {
+      const lateRegReaminMinute = blinds
+        .slice(tournament.level)
+        .reduce<number>((accumulate, current) => {
+          if (current.id <= tournament.lateRegBlindId) {
+            return accumulate + current.minute;
+          }
+          return accumulate;
+        }, 0);
+
+      lateRegReaminTime = nextBreakRemainTime = calcRemainTimeAddMinute(
+        nowDate,
+        tournament.levelStart,
+        pauseTimeMs,
+        tournament.pauseSeconds,
+        lateRegReaminMinute,
+      );
+    }
+
     const playTimeText = calcPlayTimeText(nowDate, tournament.startDateTime);
-    const blind = getBlindValue(tournament, currentBlind, blinds);
+    const blind = getBlindValue(tournament, currentBlind);
 
     return {
       tournamentId,
@@ -89,14 +109,15 @@ export class EventService {
       started: tournament.startDateTime !== null,
       playTime: playTimeText,
       nextBreakRemainTime,
+      lateRegReaminTime,
       reaminHours: remainTime.hours,
       reaminMinutes: remainTime.minutes,
       reaminSeconds: remainTime.seconds,
       pause: tournament.startDateTime !== null && tournament.pauseTime !== null,
       level: currentBlind.level,
-      ante: currentBlind.ante,
       smallBlind: blind[0],
       bigBlind: blind[1],
+      ante: blind[2],
     };
   }
 
@@ -124,7 +145,7 @@ export class EventService {
   }
 
   // 네이밍..
-  async updateBlindLevel(tournament: Tournament) {
+  async updateBlindLevel(tournament: Tournament): Promise<void> {
     const blinds = tournament.blinds;
     if (blinds.length === tournament.level) {
       return;
@@ -189,25 +210,25 @@ function calcPlayTimeText(now: Date, start: Date): string {
   return '00:00';
 }
 
-function calcNextBreakTime(
+function calcRemainTimeAddMinute(
   now: Date,
   levelStart: Date,
-  nextBreakMinute: number,
   pauseTimeMs: number,
   pauseSeconds: number,
+  addMinute: number,
 ): string {
   if (levelStart) {
-    const nextBreakReamin = new Date(
+    const remainTime = new Date(
       levelStart.getTime() +
-        nextBreakMinute * 60 * 1000 +
+        addMinute * 60 * 1000 +
         pauseTimeMs +
         pauseSeconds * 1000,
     );
-    let nextBreawkRemainTimeMs = nextBreakReamin.getTime() - now.getTime();
-    if (nextBreawkRemainTimeMs < 0) {
-      nextBreawkRemainTimeMs = 0;
+    let remainTimeMs = remainTime.getTime() - now.getTime();
+    if (remainTimeMs < 0) {
+      remainTimeMs = 0;
     }
-    return convertMsToTimeString(nextBreawkRemainTimeMs);
+    return convertMsToTimeString(remainTimeMs);
   }
 
   return '--:--';
@@ -275,17 +296,17 @@ function calcReaminTime(
 function getBlindValue(
   tournament: Tournament,
   currentBlind: TournamentBlind,
-  blinds: TournamentBlind[],
-): [number, number] {
+): [number, number, number] {
   if (tournament.startDateTime) {
     if (currentBlind.level > 0) {
-      return [currentBlind.smallBlind, currentBlind.bigBlind];
-    } else {
-      const prevBlind = blinds[tournament.level - 1];
-      return [prevBlind.smallBlind, prevBlind.bigBlind];
+      return [
+        currentBlind.smallBlind,
+        currentBlind.bigBlind,
+        currentBlind.ante,
+      ];
     }
   }
-  return [0, 0];
+  return [0, 0, 0];
 }
 
 function padTo2Digits(num: number): string {

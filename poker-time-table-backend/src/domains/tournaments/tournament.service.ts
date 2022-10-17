@@ -68,13 +68,14 @@ export class TournamentService {
   async registerTournament(
     title: string,
     blindStructureId: number,
+    lateRegBlindId: number,
     buyIn: number,
   ): Promise<TournamentRegisterResponse> {
     this.logger.log(
       `registerTournament, title: ${title}, blindStructureId: ${blindStructureId}`,
     );
 
-    const newTornament = Tournament.Create(title, buyIn);
+    const newTornament = Tournament.Create(title, buyIn, lateRegBlindId);
     await this.tournamentRepository.save(newTornament);
 
     const templateStructure = await this.blindStructureRepository.findBy({
@@ -153,8 +154,8 @@ export class TournamentService {
       `updateBlind, tournamentId: ${tournamentId}, blinds: ${blinds.length}`,
     );
 
-    // todo transaction 
-    
+    // todo transaction
+
     const tournament = await this.tournamentRepository.findOneBy({
       id: tournamentId,
     });
