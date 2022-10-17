@@ -11,6 +11,16 @@
     <v-row class="mt-md-0" justify="center">
       <v-col class="pa-md-0" cols="4">
         <v-card-title class="justify-center">
+          <div class="latereg-text">LATE REG</div>
+        </v-card-title>
+
+        <v-card-title class="pt-0 latereg-value">
+          {{ data.lateRegReaminTime }}
+        </v-card-title>
+      </v-col>
+
+      <v-col class="pa-md-0" cols="4">
+        <v-card-title class="justify-center">
           <div class="ma-0 playtime-text">PLAY TIME</div>
         </v-card-title>
 
@@ -26,16 +36,6 @@
 
         <v-card-title class="pt-0 nextbreak-value">
           {{ data.nextBreakRemainTime }}
-        </v-card-title>
-      </v-col>
-
-      <v-col class="pa-md-0" cols="4">
-        <v-card-title class="justify-center">
-          <div class="latereg-text">LATE REG</div>
-        </v-card-title>
-
-        <v-card-title class="pt-0 latereg-value">
-          {{ data.lateRegReaminTime }}
         </v-card-title>
       </v-col>
     </v-row>
