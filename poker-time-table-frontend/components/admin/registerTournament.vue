@@ -38,7 +38,7 @@
         </v-row>
 
         <v-btn
-          class="mr-4"
+          class="mt-4"
           color="primary"
           :disabled="disabledEditButton"
           @click="onRegister"
@@ -63,10 +63,14 @@ export default class RegisterTournament extends Vue {
   @Prop({ type: Array<BlindStructureTemplateDto>, required: true })
   blindTemplates!: BlindStructureTemplateDto[]
 
+  @Prop({ type: Number, default: null })
+  lateRegBlindId!: number | null
+
   selectTemplate: BlindStructureTemplateDto | null = null
 
   get disabledEditButton() {
     if (this.selectTemplate === null) return true
+    if (this.lateRegBlindId === null) return true
     if (this.tournamentName.trim().length <= 0) return true
     return false
   }
@@ -84,13 +88,14 @@ export default class RegisterTournament extends Vue {
 
   @Emit('register')
   onRegister(): TournamentRegisterRequest | null {
-    if (!this.selectTemplate) {
+    if (!this.selectTemplate || this.lateRegBlindId === null) {
       return null
     }
 
     return {
       title: this.tournamentName,
       buyIn: this.buyIn,
+      lateRegBlindId: this.lateRegBlindId,
       blindStructureId: this.selectTemplate.id,
     }
   }

@@ -106,6 +106,7 @@ export default class AdminTournamentStore
     this.clock.started = dto.started
     this.clock.playTime = dto.playTime
     this.clock.nextBreakRemainTime = dto.nextBreakRemainTime
+    this.clock.lateRegReaminTime = dto.lateRegReaminTime
     this.clock.remainHours = dto.reaminHours
     this.clock.remainMinutes = dto.reaminMinutes
     this.clock.remainSeconds = dto.reaminSeconds
@@ -177,7 +178,7 @@ export default class AdminTournamentStore
     this.clock.blindId = tournamentDetail.blindId
     this.clock.pause = tournamentDetail.startDateTime === null
 
-    const blinds = response.data.structures.map<BlindStructureModel>(
+    const blinds = tournamentDetail.structures.map<BlindStructureModel>(
       (value) => {
         return {
           level: value.level,
@@ -188,6 +189,20 @@ export default class AdminTournamentStore
         }
       }
     )
+
+    if (!this.clock.started) {
+      this.clock.playTime = '--:--'
+      this.clock.nextBreakRemainTime = '--:--'
+      this.clock.lateRegReaminTime = '--:--'
+      this.clock.blindId = 0
+
+      const firstBlind = blinds[0]
+      this.clock.level = firstBlind.level
+      this.clock.smallBlind = firstBlind.smallBlind
+      this.clock.bigBlind = firstBlind.bigBlind
+      this.clock.ante = firstBlind.ante
+    }
+
     this.setBlinds(blinds)
   }
 

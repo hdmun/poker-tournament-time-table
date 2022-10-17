@@ -4,6 +4,7 @@ export interface TournamentClockDto {
   started: boolean
   playTime: string
   nextBreakRemainTime: string
+  lateRegReaminTime: string
   remainHours: string
   remainMinutes: string
   remainSeconds: string
@@ -26,6 +27,7 @@ export function createTournamentClockDto(): TournamentClockDto {
     started: false,
     playTime: '00:00:00',
     nextBreakRemainTime: '00:00',
+    lateRegReaminTime: '00:00',
     remainHours: '00',
     remainMinutes: '00',
     remainSeconds: '00',
