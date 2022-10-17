@@ -4,9 +4,16 @@
       <v-col lg="4">
         <AdminRegisterTournament
           :blind-templates="blindTemplates"
+          :late-reg-blind-id="selectLateRegBlind?.id ?? null"
           @selectBlind="onSelectBlind"
           @register="onRegister"
         />
+
+        <v-alert dense type="info" class="mt-4 gray6">
+          <template v-for="message in alertMessage">
+            {{ message }} <br />
+          </template>
+        </v-alert>
 
         <v-card class="mt-4 gray7">
           <v-card-title> 블라인드 스트럭쳐</v-card-title>
@@ -15,6 +22,7 @@
             <template #default>
               <thead>
                 <tr>
+                  <th class="text-left">ID</th>
                   <th class="text-left">Level</th>
                   <th class="text-left">S.B</th>
                   <th class="text-left">B.B</th>
@@ -23,8 +31,13 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in templateStructures" :key="item.name">
+                <tr
+                  v-for="item in templateStructures"
+                  :key="item.id"
+                  @click="onClickBlind(item)"
+                >
                   <template v-if="item.level > 0">
+                    <td>{{ item.id }}</td>
                     <td>{{ item.level }}</td>
                     <td>{{ item.smallBlind }}</td>
                     <td>{{ item.bigBlind }}</td>
@@ -33,6 +46,7 @@
                   </template>
 
                   <template v-else>
+                    <td>{{ item.id }}</td>
                     <td class="text-center" colspan="5">
                       Break Time <strong>{{ item.minute }}</strong> Minute
                     </td>
@@ -87,8 +101,30 @@ export default class AdminTournament extends Vue {
   blindTemplates: BlindStructureTemplateDto[] = []
   templateStructures: BlindStructureDto[] = []
 
+  selectLateRegBlind: BlindStructureDto | null = null
+
   showErrorDialog: boolean = false
   errorDialogMessage: string = ''
+
+  get alertMessage(): string[] {
+    if (this.templateStructures.length <= 0) {
+      return ['블라인드 템플릿을 선택해주세요.']
+    }
+
+    if (this.selectLateRegBlind === null) {
+      return [
+        '아래 블라인드 스트럭쳐에서',
+        '`Late Reg` 마감 기준을 선택해주세요.',
+        '선택한 블라인드가 끝나는 시점이 Late Reg 마감 시간입니다.',
+      ]
+    }
+
+    const blindId = this.selectLateRegBlind.id
+    return [
+      `${blindId}번 블라인드를 선택했습니다.`,
+      `${blindId}번 블라인드가 종료되면 Late Reg가 마감됩니다.`,
+    ]
+  }
 
   async mounted() {
     this.tournaments = vxm.tournament.tournaments
@@ -184,6 +220,10 @@ export default class AdminTournament extends Vue {
     console.error(error.response)
     this.errorDialogMessage = error.response?.data.error
     this.showErrorDialog = true
+  }
+
+  onClickBlind(dto: BlindStructureDto): void {
+    this.selectLateRegBlind = dto
   }
 
   onConfirmErrorDialog() {

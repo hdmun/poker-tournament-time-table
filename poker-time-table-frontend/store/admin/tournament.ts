@@ -106,6 +106,7 @@ export default class AdminTournamentStore
     this.clock.started = dto.started
     this.clock.playTime = dto.playTime
     this.clock.nextBreakRemainTime = dto.nextBreakRemainTime
+    this.clock.lateRegReaminTime = dto.lateRegReaminTime
     this.clock.remainHours = dto.reaminHours
     this.clock.remainMinutes = dto.reaminMinutes
     this.clock.remainSeconds = dto.reaminSeconds
@@ -192,6 +193,7 @@ export default class AdminTournamentStore
     if (!this.clock.started) {
       this.clock.playTime = '--:--'
       this.clock.nextBreakRemainTime = '--:--'
+      this.clock.lateRegReaminTime = '--:--'
       this.clock.blindId = 0
 
       const firstBlind = blinds[0]

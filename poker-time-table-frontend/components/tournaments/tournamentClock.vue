@@ -9,7 +9,7 @@
     </v-row>
 
     <v-row class="mt-md-0" justify="center">
-      <v-col class="pa-md-0" cols="6">
+      <v-col class="pa-md-0" cols="4">
         <v-card-title class="justify-center">
           <div class="ma-0 playtime-text">PLAY TIME</div>
         </v-card-title>
@@ -19,13 +19,23 @@
         </v-card-title>
       </v-col>
 
-      <v-col class="pa-md-0" cols="6">
+      <v-col class="pa-md-0" cols="4">
         <v-card-title class="justify-center">
           <div class="nextbreak-text">NEXT BREAK</div>
         </v-card-title>
 
         <v-card-title class="pt-0 nextbreak-value">
           {{ data.nextBreakRemainTime }}
+        </v-card-title>
+      </v-col>
+
+      <v-col class="pa-md-0" cols="4">
+        <v-card-title class="justify-center">
+          <div class="latereg-text">LATE REG</div>
+        </v-card-title>
+
+        <v-card-title class="pt-0 latereg-value">
+          {{ data.lateRegReaminTime }}
         </v-card-title>
       </v-col>
     </v-row>
@@ -232,6 +242,11 @@ export default class TournamentClock extends Vue {
   @include gray2-color;
 }
 
+.latereg-text {
+  @include sub-copy;
+  @include accent1-color;
+}
+
 $top-text-size: $title-1-size + 1rem;
 .playtime-value {
   @include media('lg-and-up') {
@@ -274,6 +289,28 @@ $top-text-size: $title-1-size + 1rem;
   }
 
   @include gray2-color;
+  justify-content: center;
+}
+
+.latereg-value {
+  @include media('lg-and-up') {
+    font-size: $top-text-size !important;
+    line-height: $top-text-size;
+
+    @include galaxy-tab-a8-landscape() {
+      @include title2-bold;
+    }
+  }
+
+  @include media('md-only') {
+    @include title1-bold;
+  }
+
+  @include media('sm-and-down') {
+    @include title2-bold;
+  }
+
+  @include accent1-color;
   justify-content: center;
 }
 

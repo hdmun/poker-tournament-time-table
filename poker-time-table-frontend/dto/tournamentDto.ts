@@ -9,6 +9,7 @@ export interface TournamentBlindDto {
 export interface TournamentRegisterRequest {
   title: string
   buyIn: number
+  lateRegBlindId: number
   blindStructureId: number
 }
 
@@ -40,6 +41,7 @@ export interface TournamentClockEventDto {
   started: boolean
   playTime: string
   nextBreakRemainTime: string
+  lateRegReaminTime: string
   reaminHours: string
   reaminMinutes: string
   reaminSeconds: string
