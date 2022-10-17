@@ -60,7 +60,7 @@
     <v-row class="mt-lg-0 mb-xl-6" justify="center" align="center">
       <v-spacer />
 
-      <v-col class="pa-0" align="center" cols="auto">
+      <v-col class="pa-0" cols="auto">
         <v-btn
           large
           fab
@@ -123,6 +123,18 @@
           @onToggleShowBlindTable="onToggleShowBlindTable"
         />
 
+        <TournamentClockBlindCards
+          v-if="nextBlind !== null"
+          :show-blind-btn="false"
+          back-color="gray6"
+          prefix-text="Next"
+          :level="nextBlind.level"
+          :ante="nextBlind.ante"
+          :small-blind="nextBlind.smallBlind"
+          :big-blind="nextBlind.bigBlind"
+          @onToggleShowBlindTable="onToggleShowBlindTable"
+        />
+
         <v-row v-if="false" justify="center">
           <v-col cols="3" class="pa-0">
             <TournamentClockSubInfoCard
@@ -166,6 +178,7 @@ import { Component, Emit, Prop, PropSync, Vue } from 'nuxt-property-decorator'
 import TournamentClockBlindCards from './clock/blindCard.vue'
 import TournamentClockSubInfoCard from './clock/subInfoCard.vue'
 import { TournamentClockDto } from '~/dto/tournamentClockDto'
+import { BlindStructureModel } from '~/store/admin/tournament'
 
 @Component({
   components: {
@@ -183,8 +196,8 @@ export default class TournamentClock extends Vue {
   @Prop({ type: Number, default: 0 })
   currentStep!: number
 
-  @Prop({ type: Number, default: 0 })
-  blindCount!: number
+  @Prop({ type: Array<BlindStructureModel>, required: true })
+  blindStructures!: BlindStructureModel[]
 
   @Prop({ type: Boolean, default: true })
   starting!: boolean
@@ -203,6 +216,18 @@ export default class TournamentClock extends Vue {
     }
 
     return '로딩 중...'
+  }
+
+  get nextBlind(): BlindStructureModel | null {
+    const nextBlindId = this.currentStep + 1
+    if (this.blindCount <= nextBlindId) {
+      return null
+    }
+    return this.blindStructures[nextBlindId]
+  }
+
+  get blindCount(): number {
+    return this.blindStructures.length
   }
 
   get closedTournament(): boolean {

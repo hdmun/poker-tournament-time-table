@@ -1,7 +1,11 @@
 <template>
-  <v-row class="ma-2" justify="center">
+  <v-row class="ma-1" justify="center">
     <v-col sm="12" md="9" lg="3" xl="3" class="pa-0">
-      <v-card class="fill-height" color="gray7" outlined tile>
+      <v-card class="fill-height" :color="backColor" outlined tile>
+        <v-card-title class="pt-3 pb-2 ante-title">
+          {{ prefixText }}
+        </v-card-title>
+
         <v-card-title v-if="level > 0" class="blindlevel-value">
           Lv. {{ level }}
         </v-card-title>
@@ -12,9 +16,9 @@
     </v-col>
 
     <v-col sm="12" md="9" lg="9" xl="9" class="pa-0">
-      <v-card class="fill-height" color="gray7" outlined tile>
+      <v-card class="fill-height" :color="backColor" outlined tile>
         <v-row class="ma-0">
-          <v-spacer />
+          <v-spacer v-if="showBlindBtn" />
 
           <v-col class="pa-0">
             <v-card-title class="pt-3 pb-2 ante-title">
@@ -22,7 +26,7 @@
             </v-card-title>
           </v-col>
 
-          <v-col class="pa-0">
+          <v-col v-if="showBlindBtn" class="pa-0">
             <v-card-actions class="pa-0 pt-1 justify-center">
               <v-btn
                 text
@@ -45,8 +49,9 @@
         </template>
         <template v-else>
           <v-card-title class="info-value">
-            {{ smallBlind | toComma }} / {{ bigBlind | toComma }} ({{
-              ante | toComma
+            {{ smallBlind > 0 ? smallBlind : 0 | toComma }} /
+            {{ bigBlind > 0 ? bigBlind : 0 | toComma }} ({{
+              ante > 0 ? ante : 0 | toComma
             }})
           </v-card-title>
         </template>
@@ -60,8 +65,17 @@ import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class BlindCards extends Vue {
-  @Prop({ type: Boolean, required: true })
+  @Prop({ type: Boolean, default: true })
+  showBlindBtn!: boolean
+
+  @Prop({ type: Boolean, default: false })
   showBlindTable!: boolean
+
+  @Prop({ type: String, default: 'gray7' })
+  backColor!: string
+
+  @Prop({ type: String, default: '' })
+  prefixText!: string
 
   @Prop({ type: Number, required: true })
   level!: Number
@@ -158,7 +172,6 @@ export default class BlindCards extends Vue {
   @include primary-color;
 
   justify-content: center;
-  height: 100%;
 }
 
 .breaktime-text {
@@ -173,7 +186,6 @@ export default class BlindCards extends Vue {
   @include accent1-color;
 
   justify-content: center;
-  height: 100%;
 }
 
 .ante-title {
