@@ -6,7 +6,7 @@
           :data="clock"
           :show-variant.sync="showBlindTable"
           :current-step="clock.blindId"
-          :blind-count="blindStructure.length"
+          :blind-structures="blindStructure"
           :starting="clock.started"
           :edit-mode="editBlindTable"
           @onPlay="onPlay"
