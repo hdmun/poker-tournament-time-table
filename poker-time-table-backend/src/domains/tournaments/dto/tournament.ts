@@ -39,6 +39,7 @@ export interface TournamentRegisterRequest {
   title: string;
   buyIn: number;
   blindStructureId: number;
+  lateRegBlindId: number;
 }
 
 export interface TournamentRegisterResponse {
@@ -66,6 +67,7 @@ export interface TournamentClockEventDto {
   started: boolean;
   playTime: string;
   nextBreakRemainTime: string;
+  lateRegReaminTime: string;
   reaminHours: string;
   reaminMinutes: string;
   reaminSeconds: string;

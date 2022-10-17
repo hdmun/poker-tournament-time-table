@@ -70,14 +70,34 @@ export class EventService {
             return accumulate + current.minute;
           }, 0);
 
-        nextBreakRemainTime = calcNextBreakTime(
+        nextBreakRemainTime = calcRemainTimeAddMinute(
           nowDate,
           tournament.levelStart,
-          nextBreakMinute,
           pauseTimeMs,
           tournament.pauseSeconds,
+          nextBreakMinute,
         );
       }
+    }
+
+    let lateRegReaminTime = '--:--';
+    if (tournament.level <= tournament.lateRegBlindId) {
+      const lateRegReaminMinute = blinds
+        .slice(tournament.level)
+        .reduce<number>((accumulate, current) => {
+          if (current.id <= tournament.lateRegBlindId) {
+            return accumulate + current.minute;
+          }
+          return accumulate;
+        }, 0);
+
+      lateRegReaminTime = nextBreakRemainTime = calcRemainTimeAddMinute(
+        nowDate,
+        tournament.levelStart,
+        pauseTimeMs,
+        tournament.pauseSeconds,
+        lateRegReaminMinute,
+      );
     }
 
     const playTimeText = calcPlayTimeText(nowDate, tournament.startDateTime);
@@ -89,6 +109,7 @@ export class EventService {
       started: tournament.startDateTime !== null,
       playTime: playTimeText,
       nextBreakRemainTime,
+      lateRegReaminTime,
       reaminHours: remainTime.hours,
       reaminMinutes: remainTime.minutes,
       reaminSeconds: remainTime.seconds,
@@ -189,25 +210,25 @@ function calcPlayTimeText(now: Date, start: Date): string {
   return '00:00';
 }
 
-function calcNextBreakTime(
+function calcRemainTimeAddMinute(
   now: Date,
   levelStart: Date,
-  nextBreakMinute: number,
   pauseTimeMs: number,
   pauseSeconds: number,
+  addMinute: number,
 ): string {
   if (levelStart) {
-    const nextBreakReamin = new Date(
+    const remainTime = new Date(
       levelStart.getTime() +
-        nextBreakMinute * 60 * 1000 +
+        addMinute * 60 * 1000 +
         pauseTimeMs +
         pauseSeconds * 1000,
     );
-    let nextBreawkRemainTimeMs = nextBreakReamin.getTime() - now.getTime();
-    if (nextBreawkRemainTimeMs < 0) {
-      nextBreawkRemainTimeMs = 0;
+    let remainTimeMs = remainTime.getTime() - now.getTime();
+    if (remainTimeMs < 0) {
+      remainTimeMs = 0;
     }
-    return convertMsToTimeString(nextBreawkRemainTimeMs);
+    return convertMsToTimeString(remainTimeMs);
   }
 
   return '--:--';

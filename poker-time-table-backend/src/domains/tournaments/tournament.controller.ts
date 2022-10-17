@@ -9,7 +9,6 @@ import {
   Param,
   Post,
   Put,
-  Res,
 } from '@nestjs/common';
 import { InvalidInputError } from '~/common/exceptions';
 import {
@@ -99,6 +98,7 @@ export class TournamentController {
       return await this.tournamentService.registerTournament(
         dto.title,
         dto.blindStructureId,
+        dto.lateRegBlindId,
         dto.buyIn,
       );
     } catch (error) {
