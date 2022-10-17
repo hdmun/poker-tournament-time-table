@@ -275,4 +275,30 @@ export class TournamentController {
       throw error;
     }
   }
+
+  @Put('/:id/blind/reset')
+  async blindTimeReset(
+    @Param('id') id: number,
+  ): Promise<TournamentClockEventDto | null> {
+    try {
+      const clock = await this.tournamentService.resetBlindsTime(id);
+      if (clock === null) {
+        return null;
+      }
+      return clock;
+    } catch (error) {
+      if (error instanceof InvalidInputError) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: error.message,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      this.logger.error(error);
+      throw error;
+    }
+  }
 }

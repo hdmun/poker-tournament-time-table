@@ -312,6 +312,14 @@ export default class AdminTournamentStore
 
     this.updateClock(response.data)
   }
+
+  @action async blindReset(tournamentId: number) {
+    const response = await $axios.put(
+      `/api/tournaments/${tournamentId}/blind/reset`
+    )
+
+    this.updateClock(response.data)
+  }
 }
 
 function mapToTournamentItem(dto: TournamentDetailDto): TournamentItem {

@@ -338,6 +338,35 @@ export class TournamentService {
     return await this.eventService.calcClock(tournament);
   }
 
+  async resetBlindsTime(id: number): Promise<TournamentClockEventDto | null> {
+    this.logger.log(`resetBlindsTime, tournamentId: ${id}`);
+
+    const tournament =
+      await this.tournamentRepository.getTournamentsWithBlindsById(id);
+    if (!tournament) {
+      throw new InvalidInputError(`잘못된 토너먼트 'id'로 요청했습니다. ${id}`);
+    }
+
+    const levelStartDate = new Date();
+    levelStartDate.setSeconds(levelStartDate.getSeconds() + 1);
+    tournament.levelStart = levelStartDate;
+
+    if (tournament.pauseTime) {
+      tournament.pauseTime = levelStartDate;
+    }
+
+    await this.tournamentRepository.update(
+      { id: tournament.id },
+      {
+        levelStart: tournament.levelStart,
+        pauseTime: tournament.pauseTime,
+        pauseSeconds: 0,
+      },
+    );
+
+    return await this.eventService.calcClock(tournament);
+  }
+
   async getNonDealerTournaments(): Promise<Tournament[]> {
     return await this.tournamentRepository.getNonDealerTournaments();
   }
