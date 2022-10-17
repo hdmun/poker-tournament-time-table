@@ -2,12 +2,11 @@
   <v-row class="ma-1" justify="center">
     <v-col sm="12" md="9" lg="3" xl="3" class="pa-0">
       <v-card class="fill-height" :color="backColor" outlined tile>
-        <v-card-title class="pt-3 pb-2 ante-title">
-          {{ prefixText }}
-        </v-card-title>
+        <v-card-title class="pt-3 pb-2" />
 
         <v-card-title v-if="level > 0" class="blindlevel-value">
-          Lv. {{ level }}
+          <template v-if="customText !== ''">{{ customText }} </template>
+          <template v-else> Lv. {{ level }} </template>
         </v-card-title>
         <v-card-title v-else class="pr-0 breaktime-text">
           Break Time
@@ -75,7 +74,7 @@ export default class BlindCards extends Vue {
   backColor!: string
 
   @Prop({ type: String, default: '' })
-  prefixText!: string
+  customText!: string
 
   @Prop({ type: Number, required: true })
   level!: Number

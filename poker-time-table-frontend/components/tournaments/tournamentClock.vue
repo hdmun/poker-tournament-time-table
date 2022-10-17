@@ -116,6 +116,7 @@
       <v-col class="pa-lg-0" cols="12" sm="12" md="12" lg="12" xl="12">
         <TournamentClockBlindCards
           :show-blind-table="showMiniVariant"
+          back-color="gray6"
           :level="data.level"
           :ante="data.ante"
           :small-blind="data.smallBlind"
@@ -126,8 +127,7 @@
         <TournamentClockBlindCards
           v-if="nextBlind !== null"
           :show-blind-btn="false"
-          back-color="gray6"
-          prefix-text="Next"
+          custom-text="Next Blind"
           :level="nextBlind.level"
           :ante="nextBlind.ante"
           :small-blind="nextBlind.smallBlind"
