@@ -70,7 +70,6 @@ export default class RegisterTournament extends Vue {
 
   get disabledEditButton() {
     if (this.selectTemplate === null) return true
-    if (this.lateRegBlindId === null) return true
     if (this.tournamentName.trim().length <= 0) return true
     return false
   }
@@ -88,14 +87,14 @@ export default class RegisterTournament extends Vue {
 
   @Emit('register')
   onRegister(): TournamentRegisterRequest | null {
-    if (!this.selectTemplate || this.lateRegBlindId === null) {
+    if (!this.selectTemplate) {
       return null
     }
 
     return {
       title: this.tournamentName,
       buyIn: this.buyIn,
-      lateRegBlindId: this.lateRegBlindId,
+      lateRegBlindId: this.lateRegBlindId ?? -1,
       blindStructureId: this.selectTemplate.id,
     }
   }
