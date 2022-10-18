@@ -91,7 +91,7 @@ export class EventService {
           return accumulate;
         }, 0);
 
-      lateRegReaminTime = nextBreakRemainTime = calcRemainTimeAddMinute(
+      lateRegReaminTime = calcRemainTimeAddMinute(
         nowDate,
         tournament.levelStart,
         pauseTimeMs,
