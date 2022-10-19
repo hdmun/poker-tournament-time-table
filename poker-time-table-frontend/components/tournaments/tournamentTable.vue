@@ -161,22 +161,22 @@ export default class TournamentTable extends Vue {
 
   @Emit('close')
   onClickCloseTournament(): number {
+    this.closeDialog = false
+
     if (!this.deleteTournment) {
-      this.closeDialog = false
       return 0
     }
 
-    this.closeDialog = false
     return this.deleteTournment.id
   }
 
   @Emit('delete')
   onClickDeleteTournament(): number {
+    this.deleteDialog = false
+
     if (!this.deleteTournment) {
-      this.deleteDialog = false
       return 0
     }
-
     return this.deleteTournment.id
   }
 }
